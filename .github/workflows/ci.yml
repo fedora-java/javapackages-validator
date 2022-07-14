@@ -1,0 +1,23 @@
+name: Continuous Integration
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install git-core podman
+      - name: Checkout sources
+        uses: actions/checkout@v3
+      - name: Build local image
+        run: ./ci_test.sh build_local_image
+      - name: Set up test environment
+        run: ./ci_test.sh prepare
+      - name: Execute tests
+        run: ./ci_test.sh execute
