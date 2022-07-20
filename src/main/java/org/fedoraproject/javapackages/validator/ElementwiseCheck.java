@@ -34,7 +34,7 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
     }
 
     @Override
-    protected Collection<String> check(List<Path> testRpms) throws IOException {
+    public Collection<String> check(List<Path> testRpms) throws IOException {
         var result = new ArrayList<String>(0);
 
         for (Path rpmPath : testRpms) {

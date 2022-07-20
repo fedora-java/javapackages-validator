@@ -25,6 +25,7 @@ import static org.fedoraproject.javadeptools.rpm.Rpm.RPMRC_NOKEY;
 import static org.fedoraproject.javadeptools.rpm.Rpm.RPMRC_NOTFOUND;
 import static org.fedoraproject.javadeptools.rpm.Rpm.RPMRC_NOTTRUSTED;
 import static org.fedoraproject.javadeptools.rpm.Rpm.RPMRC_OK;
+import static org.fedoraproject.javadeptools.rpm.Rpm.RPMTAG_BUILDARCHS;
 import static org.fedoraproject.javadeptools.rpm.Rpm.RPMTAG_CONFLICTNAME;
 import static org.fedoraproject.javadeptools.rpm.Rpm.RPMTAG_ENHANCENAME;
 import static org.fedoraproject.javadeptools.rpm.Rpm.RPMTAG_EXCLUSIVEARCH;
@@ -123,6 +124,7 @@ public class RpmInfo implements Nevra {
                 MemoryAddress h = MemoryAddress.ofLong(ph.toLongArray()[0]);
                 try {
                     nevra = new NEVRA(h);
+                    buildArchs = headerGetList(h, RPMTAG_BUILDARCHS);
                     exclusiveArch = headerGetList(h, RPMTAG_EXCLUSIVEARCH);
                     provides = headerGetList(h, RPMTAG_PROVIDENAME);
                     requires = headerGetList(h, RPMTAG_REQUIRENAME);
@@ -150,6 +152,7 @@ public class RpmInfo implements Nevra {
 
     private final NEVRA nevra;
     private final boolean sourcePackage;
+    private final List<String> buildArchs;
     private final List<String> exclusiveArch;
     private final List<String> provides;
     private final List<String> requires;
@@ -200,6 +203,10 @@ public class RpmInfo implements Nevra {
 
     public boolean isSourcePackage() {
         return sourcePackage;
+    }
+
+    public List<String> getBuildArchs() {
+        return buildArchs;
     }
 
     public List<String> getExclusiveArch() {

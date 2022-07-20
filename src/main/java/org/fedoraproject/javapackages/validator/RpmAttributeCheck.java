@@ -11,6 +11,14 @@ import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.config.RpmPackage;
 
 public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
+    public RpmAttributeCheck() {
+        super();
+    }
+
+    public RpmAttributeCheck(Config config) {
+        super(config);
+    }
+
     @Override
     protected Collection<String> check(Path rpmPath, RpmInfo rpmInfo) throws IOException {
         var result = new ArrayList<String>(0);

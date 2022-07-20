@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rpmbuild -bb SPECS/*.spec -D "_topdir $(pwd)"
+rpmbuild -ba SPECS/*.spec -D "_topdir $(pwd)"
