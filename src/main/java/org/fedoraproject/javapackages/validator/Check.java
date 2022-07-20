@@ -197,6 +197,11 @@ public abstract class Check<Config> {
 
         config = getConfig(configClass);
 
+        if (config == null && !NoConfig.class.equals(configClass)) {
+            System.err.println("[INFO] Configuration class not found, ignoring the test");
+            return 0;
+        }
+
         int result = 0;
 
         for (var message : check(new ArgFileIterator(argList))) {

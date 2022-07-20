@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
@@ -29,11 +28,6 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
 
     @Override
     public final Collection<String> check(Iterator<RpmInfo> testRpms) throws IOException {
-        if (getConfig() == null) {
-            System.err.println("[INFO] Configuration class not found, ignoring the test");
-            return Collections.emptyList();
-        }
-
         var result = new ArrayList<String>(0);
 
         while (testRpms.hasNext()) {
