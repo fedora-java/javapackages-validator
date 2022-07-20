@@ -6,7 +6,7 @@
   
   <groupId>org.fedoraproject.javapackages-validator</groupId>
   <artifactId>validator</artifactId>
-  <version>0.3</version>
+  <version>0.4</version>
   <packaging>jar</packaging>
   
   <properties>
