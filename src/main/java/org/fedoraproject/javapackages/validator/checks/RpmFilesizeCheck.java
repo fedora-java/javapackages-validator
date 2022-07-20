@@ -2,7 +2,6 @@ package org.fedoraproject.javapackages.validator.checks;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -16,16 +15,16 @@ import org.fedoraproject.javapackages.validator.config.RpmFilesizeConfig;
 
 public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
     @Override
-    public Collection<String> check(Path rpmPath, RpmInfo rpmInfo) throws IOException {
+    public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        long filesize = Files.size(rpmPath);
+        long filesize = Files.size(rpm.getPath());
         String formattedFilesize = NumberFormat.getInstance(Locale.ENGLISH).format(filesize);
 
-        if (!getConfig().allowedFilesize(new RpmPackageImpl(rpmInfo), filesize)) {
-            result.add(MessageFormat.format("[FAIL] {0}: file size is: {1} bytes", rpmPath, formattedFilesize));
+        if (!getConfig().allowedFilesize(new RpmPackageImpl(rpm), filesize)) {
+            result.add(MessageFormat.format("[FAIL] {0}: file size is: {1} bytes", rpm.getPath(), formattedFilesize));
         } else {
-            System.err.println(MessageFormat.format("[INFO] {0}: file size is: {1} bytes", rpmPath, formattedFilesize));
+            System.err.println(MessageFormat.format("[INFO] {0}: file size is: {1} bytes", rpm.getPath(), formattedFilesize));
         }
 
         return result;

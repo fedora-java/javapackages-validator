@@ -16,22 +16,22 @@ import org.fedoraproject.javapackages.validator.config.FilesConfig;
 
 public class FilesCheck extends ElementwiseCheck<FilesConfig> {
     @Override
-    public Collection<String> check(Path rpmPath, RpmInfo rpmInfo) throws IOException {
+    public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        try (var is = new RpmArchiveInputStream(rpmPath)) {
+        try (var is = new RpmArchiveInputStream(rpm.getPath())) {
             boolean ok = true;
             for (CpioArchiveEntry rpmEntry; ((rpmEntry = is.getNextEntry()) != null);) {
                 Path entryName = Common.getEntryPath(rpmEntry);
-                if (!getConfig().allowedFile(new RpmPackageImpl(rpmInfo), entryName)) {
+                if (!getConfig().allowedFile(new RpmPackageImpl(rpm), entryName)) {
                     ok = false;
                     result.add(MessageFormat.format("[FAIL] {0}: Illegal file: {1}",
-                            rpmPath, entryName));
+                            rpm.getPath(), entryName));
                 }
             }
 
             if (ok) {
-                System.err.println(MessageFormat.format("[INFO] {0}: ok", rpmPath));
+                System.err.println(MessageFormat.format("[INFO] {0}: ok", rpm.getPath()));
             }
         }
 

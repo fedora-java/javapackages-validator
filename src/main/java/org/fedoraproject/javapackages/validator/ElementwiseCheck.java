@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
 
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
 
@@ -18,14 +18,14 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
         super(config);
     }
 
-    abstract protected Collection<String> check(Path rpmPath, RpmInfo rpmInfo) throws IOException;
+    abstract protected Collection<String> check(RpmInfo rpm) throws IOException;
 
     public final Collection<String> check(Path rpmPath) throws IOException {
-        return check(rpmPath, new RpmInfo(rpmPath));
+        return check(new RpmInfo(rpmPath));
     }
 
     @Override
-    public final Collection<String> check(List<Path> testRpms) throws IOException {
+    public final Collection<String> check(Iterator<RpmInfo> testRpms) throws IOException {
         if (getConfig() == null) {
             System.err.println("[INFO] Configuration class not found, ignoring the test");
             return Collections.emptyList();
@@ -33,9 +33,8 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
 
         var result = new ArrayList<String>(0);
 
-        for (Path rpmPath : testRpms) {
-            var rpmInfo = new RpmInfo(rpmPath);
-            result.addAll(check(rpmPath, rpmInfo));
+        while (testRpms.hasNext()) {
+            result.addAll(check(testRpms.next()));
         }
 
         return result;

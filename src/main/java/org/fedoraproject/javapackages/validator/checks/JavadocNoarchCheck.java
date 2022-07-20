@@ -1,7 +1,6 @@
 package org.fedoraproject.javapackages.validator.checks;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,22 +12,22 @@ import org.fedoraproject.javapackages.validator.ElementwiseCheck;
 
 public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
     @Override
-    public Collection<String> check(Path rpmPath, RpmInfo rpmInfo) throws IOException {
+    public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        String rpmName = rpmInfo.getName();
+        String rpmName = rpm.getName();
 
         if (rpmName.endsWith("-javadocs")) {
             rpmName = rpmName.substring(0, rpmName.length() - 1);
         }
 
-        if (!rpmInfo.isSourcePackage() && rpmName.equals(Common.getPackageName(rpmInfo.getSourceRPM()) + "-javadoc")) {
-            if (!"noarch".equals(rpmInfo.getArch())) {
+        if (!rpm.isSourcePackage() && rpmName.equals(Common.getPackageName(rpm.getSourceRPM()) + "-javadoc")) {
+            if (!"noarch".equals(rpm.getArch())) {
                 result.add(MessageFormat.format(
-                        "[FAIL] {0} is a javadoc package but its architecture is not noarch", rpmPath));
+                        "[FAIL] {0} is a javadoc package but its architecture is not noarch", rpm.getPath()));
             } else {
                 System.err.println(MessageFormat.format(
-                        "[INFO] {0} is a javadoc package and its architecture is noarch", rpmPath));
+                        "[INFO] {0} is a javadoc package and its architecture is noarch", rpm.getPath()));
             }
         }
 

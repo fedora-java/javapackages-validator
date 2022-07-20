@@ -25,14 +25,14 @@ public class SymlinkCheck extends ElementwiseCheck<SymlinkConfig> {
     }
 
     @Override
-    protected Collection<String> check(Path rpmPath, RpmInfo rpmInfo) throws IOException {
-        if (rpmInfo.isSourcePackage()) {
+    protected Collection<String> check(RpmInfo rpm) throws IOException {
+        if (rpm.isSourcePackage()) {
             return Collections.emptyList();
         }
 
         var result = new ArrayList<String>(0);
 
-        for (var entry : Common.rpmFilesAndSymlinks(rpmPath).entrySet()) {
+        for (var entry : Common.rpmFilesAndSymlinks(rpm.getPath()).entrySet()) {
             Path link = Common.getEntryPath(entry.getKey());
             Path target = entry.getValue();
 
@@ -44,10 +44,10 @@ public class SymlinkCheck extends ElementwiseCheck<SymlinkConfig> {
 
                 if (location == null) {
                     result.add(MessageFormat.format("[FAIL] {0}: Link {1} points to {2} (normalized as {3}) which was not found",
-                            rpmPath, link, target, target.normalize()));
+                            rpm.getPath(), link, target, target.normalize()));
                 } else {
                     System.err.println(MessageFormat.format("[INFO] {0}: Link {1} points to {2} (normalized as {3}) located in {4}",
-                            rpmPath, link, target, target.normalize(), location));
+                            rpm.getPath(), link, target, target.normalize(), location));
                 }
             }
         }

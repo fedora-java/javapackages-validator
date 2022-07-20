@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
@@ -27,16 +27,17 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
     }
 
     @Override
-    protected Collection<String> check(List<Path> testRpms) throws IOException {
+    protected Collection<String> check(Iterator<RpmInfo> testRpms) throws IOException {
         var result = new ArrayList<String>(0);
 
         // The union of file paths present in all RPM files mapped to the RPM file names they are present in
         var files = new TreeMap<String, ArrayList<Path>>();
 
-        for (var rpmPath : testRpms) {
-            if (!new RpmInfo(rpmPath).isSourcePackage()) {
-                for (var pair : Common.rpmFilesAndSymlinks(rpmPath).entrySet()) {
-                    files.computeIfAbsent(pair.getKey().getName().substring(1), key -> new ArrayList<Path>()).add(rpmPath);
+        while (testRpms.hasNext()) {
+            RpmInfo rpm = testRpms.next();
+            if (!new RpmInfo(rpm.getPath()).isSourcePackage()) {
+                for (var pair : Common.rpmFilesAndSymlinks(rpm.getPath()).entrySet()) {
+                    files.computeIfAbsent(pair.getKey().getName().substring(1), key -> new ArrayList<Path>()).add(rpm.getPath());
                 }
             }
         }

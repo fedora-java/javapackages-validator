@@ -18,7 +18,6 @@ package org.fedoraproject.javapackages.validator.checks;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,10 +35,10 @@ import org.fedoraproject.javapackages.validator.config.BytecodeVersionConfig;
 
 public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig> {
     @Override
-    public Collection<String> check(Path rpmPath, RpmInfo rpmInfo) throws IOException {
+    public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        try (var is = new RpmArchiveInputStream(rpmPath)) {
+        try (var is = new RpmArchiveInputStream(rpm.getPath())) {
             for (CpioArchiveEntry rpmEntry; ((rpmEntry = is.getNextEntry()) != null);) {
                 var content = new byte[(int) rpmEntry.getSize()];
 
@@ -70,12 +69,12 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
                                 }
 
                                 var version = versionBuffer.getShort();
-                                var range = getConfig().versionRangeOf(new RpmPackageImpl(rpmInfo), jarName, className);
+                                var range = getConfig().versionRangeOf(new RpmPackageImpl(rpm), jarName, className);
 
                                 if (!range.contains(version)) {
                                     result.add(MessageFormat.format(
                                             "[FAIL] {0}: {1}: {2}: class bytecode version is {3} which is not in range [{4}-{5}]",
-                                            rpmPath, jarName, className, version, range.min, range.max));
+                                            rpm.getPath(), jarName, className, version, range.min, range.max));
                                     foundVersions = null;
                                 } else if (foundVersions != null) {
                                     foundVersions.add(version);
@@ -86,7 +85,7 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
                         if (foundVersions != null) {
                             System.err.println(MessageFormat.format(
                                     "[INFO] {0}: {1}: found bytecode versions: {2}",
-                                    rpmPath, jarName, foundVersions));
+                                    rpm.getPath(), jarName, foundVersions));
                         }
                     }
                 }
