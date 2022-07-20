@@ -2,7 +2,6 @@ package org.fedoraproject.javapackages.validator;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -112,71 +111,6 @@ public abstract class Check<Config> {
     }
 
     abstract protected Collection<String> check(Iterator<RpmInfo> testRpms) throws IOException;
-
-    private static class ArgFileIterator implements Iterator<RpmInfo> {
-        private Iterator<String> argIterator;
-        private Iterator<Path> pathIterator = null;
-
-        private ArgFileIterator(List<String> argList) {
-            this.argIterator = argList.iterator();
-            pathIterator = advance();
-
-            if (pathIterator == null) {
-                pathIterator = Arrays.<Path>asList().iterator();
-            }
-        }
-
-        private Iterator<Path> advance() {
-            while (argIterator.hasNext()) {
-                Path argPath = Paths.get(argIterator.next()).resolve(".").toAbsolutePath().normalize();
-
-                try {
-                    if (Files.isSymbolicLink(argPath)) {
-                        argPath = argPath.toRealPath();
-                    }
-
-                    if (Files.notExists(argPath)) {
-                        throw new RuntimeException("File " + argPath + " does not exist");
-                    } else if (Files.isRegularFile(argPath)) {
-                        return Arrays.asList(argPath).iterator();
-                    } else if (Files.isDirectory(argPath)) {
-                        return Files.find(argPath, Integer.MAX_VALUE, (path, attributes) ->
-                                attributes.isRegularFile() && path.toString().endsWith(".rpm")).iterator();
-                    } else {
-                        throw new IllegalStateException("File " + argPath + " of unknown type");
-                    }
-                } catch (IOException ex) {
-                    throw new UncheckedIOException(ex);
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        public boolean hasNext() {
-            if (pathIterator.hasNext()) {
-                return true;
-            }
-
-            pathIterator = advance();
-
-            if (pathIterator != null) {
-                return true;
-            }
-
-            return false;
-        }
-
-        @Override
-        public RpmInfo next() {
-            try {
-                return new RpmInfo(pathIterator.next());
-            } catch (IOException ex) {
-                throw new UncheckedIOException(ex);
-            }
-        }
-    }
 
     protected int executeCheck(Class<Config> configClass, String... args) throws IOException {
         List<String> argList = new ArrayList<>();
