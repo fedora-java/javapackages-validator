@@ -5,7 +5,6 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Common;
@@ -17,19 +16,16 @@ import org.fedoraproject.javapackages.validator.config.SymlinkConfig;
  */
 public class SymlinkCheck extends ElementwiseCheck<SymlinkConfig> {
     public SymlinkCheck() {
-        super();
+        this(null);
     }
 
     public SymlinkCheck(SymlinkConfig config) {
         super(config);
+        setFilter((rpm) -> !rpm.isSourcePackage());
     }
 
     @Override
     protected Collection<String> check(RpmInfo rpm) throws IOException {
-        if (rpm.isSourcePackage()) {
-            return Collections.emptyList();
-        }
-
         var result = new ArrayList<String>(0);
 
         for (var entry : Common.rpmFilesAndSymlinks(rpm.getPath()).entrySet()) {

@@ -48,10 +48,6 @@ public abstract class Check<Config> {
         return config;
     }
 
-    protected Check() {
-        this(null);
-    }
-
     protected Check(Config config) {
         this.config = config;
     }

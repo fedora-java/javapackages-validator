@@ -34,6 +34,14 @@ import org.fedoraproject.javapackages.validator.RpmPackageImpl;
 import org.fedoraproject.javapackages.validator.config.BytecodeVersionConfig;
 
 public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig> {
+    public BytecodeVersionCheck() {
+        this(null);
+    }
+
+    public BytecodeVersionCheck(BytecodeVersionConfig config) {
+        super(config);
+    }
+
     @Override
     public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);

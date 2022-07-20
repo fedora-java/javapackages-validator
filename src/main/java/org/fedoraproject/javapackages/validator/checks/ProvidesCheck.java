@@ -4,6 +4,14 @@ import org.fedoraproject.javapackages.validator.RpmAttributeCheck;
 import org.fedoraproject.javapackages.validator.config.ProvidesConfig;
 
 public class ProvidesCheck extends RpmAttributeCheck<ProvidesConfig> {
+    public ProvidesCheck() {
+        this(null);
+    }
+
+    public ProvidesCheck(ProvidesConfig config) {
+        super(config);
+    }
+
     public static void main(String[] args) throws Exception {
         System.exit(new ProvidesCheck().executeCheck(ProvidesConfig.class, args));
     }

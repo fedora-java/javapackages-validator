@@ -10,11 +10,7 @@ import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.config.RpmPackage;
 
 public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
-    public RpmAttributeCheck() {
-        super();
-    }
-
-    public RpmAttributeCheck(Config config) {
+    protected RpmAttributeCheck(Config config) {
         super(config);
     }
 

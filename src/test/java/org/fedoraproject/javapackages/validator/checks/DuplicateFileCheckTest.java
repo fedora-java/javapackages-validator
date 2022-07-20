@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.fedoraproject.javapackages.validator.TestCommon;
 import org.junit.jupiter.api.Test;
@@ -16,13 +16,15 @@ public class DuplicateFileCheckTest {
 
     @Test
     void testIllegalDuplicateFile() throws IOException {
-        var result = new DuplicateFileCheck().check(Arrays.asList(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM));
+        var result = new DuplicateFileCheck().check(TestCommon.iteratorFrom(Stream.of(
+                DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM)));
         assertEquals(1, result.size());
     }
 
     @Test
     void testAllowedDuplicateFile() throws IOException {
-        var result = new DuplicateFileCheck((filename, providerRpms) -> true).check(Arrays.asList(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM));
+        var result = new DuplicateFileCheck((filename, providerRpms) -> true).check(
+                TestCommon.iteratorFrom(Stream.of(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM)));
         assertEquals(0, result.size());
     }
 }

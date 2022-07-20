@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.function.Predicate;
 
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
 
 public abstract class ElementwiseCheck<Config> extends Check<Config> {
-    public ElementwiseCheck() {
-        super();
+    private Predicate<RpmInfo> filter = rpm -> true;
+
+    protected ElementwiseCheck(Config config) {
+        super(config);
     }
 
-    public ElementwiseCheck(Config config) {
-        super(config);
+    protected void setFilter(Predicate<RpmInfo> filter) {
+        this.filter = filter;
     }
 
     abstract protected Collection<String> check(RpmInfo rpm) throws IOException;
@@ -34,7 +37,10 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
         var result = new ArrayList<String>(0);
 
         while (testRpms.hasNext()) {
-            result.addAll(check(testRpms.next()));
+            RpmInfo next = testRpms.next();
+            if (filter.test(next)) {
+                result.addAll(check(next));
+            }
         }
 
         return result;

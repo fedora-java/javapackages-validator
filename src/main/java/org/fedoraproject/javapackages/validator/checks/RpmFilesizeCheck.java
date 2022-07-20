@@ -14,6 +14,14 @@ import org.fedoraproject.javapackages.validator.RpmPackageImpl;
 import org.fedoraproject.javapackages.validator.config.RpmFilesizeConfig;
 
 public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
+    public RpmFilesizeCheck() {
+        this(null);
+    }
+
+    public RpmFilesizeCheck(RpmFilesizeConfig config) {
+        super(config);
+    }
+
     @Override
     public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);

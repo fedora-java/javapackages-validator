@@ -19,7 +19,7 @@ import org.fedoraproject.javapackages.validator.config.DuplicateFileConfig;
  */
 public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
     public DuplicateFileCheck() {
-        super();
+        this(null);
     }
 
     DuplicateFileCheck(DuplicateFileConfig config) {

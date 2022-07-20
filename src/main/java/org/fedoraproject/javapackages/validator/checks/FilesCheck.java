@@ -15,6 +15,14 @@ import org.fedoraproject.javapackages.validator.RpmPackageImpl;
 import org.fedoraproject.javapackages.validator.config.FilesConfig;
 
 public class FilesCheck extends ElementwiseCheck<FilesConfig> {
+    public FilesCheck() {
+        this(null);
+    }
+
+    public FilesCheck(FilesConfig config) {
+        super(config);
+    }
+
     @Override
     public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);

@@ -11,6 +11,14 @@ import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
 
 public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
+    public JavadocNoarchCheck() {
+        this(null);
+    }
+
+    public JavadocNoarchCheck(NoConfig config) {
+        super(config);
+    }
+
     @Override
     public Collection<String> check(RpmInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);

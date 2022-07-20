@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import org.fedoraproject.javapackages.validator.TestCommon;
 import org.junit.jupiter.api.Test;
@@ -17,25 +18,29 @@ public class JavadocNoarchCheckTest {
 
     @Test
     void testIllegalArchfulJavadoc() throws IOException {
-        var result = new JavadocNoarchCheck().check(ARCH_ARCH_RPM);
+        var result = new JavadocNoarchCheck().check(
+                TestCommon.iteratorFrom(Stream.of(ARCH_ARCH_RPM)));
         assertEquals(1, result.size());
     }
 
     @Test
     void testAllowedNoarchJavadocArchfulPackage() throws IOException {
-        var result = new JavadocNoarchCheck().check(ARCH_NOARCH_RPM);
+        var result = new JavadocNoarchCheck().check(
+                TestCommon.iteratorFrom(Stream.of(ARCH_NOARCH_RPM)));
         assertEquals(0, result.size());
     }
 
     @Test
     void testAllowedNoarchJavadocNoarchPackage() throws IOException {
-        var result = new JavadocNoarchCheck().check(NOARCH_NOARCH_RPM);
+        var result = new JavadocNoarchCheck().check(
+                TestCommon.iteratorFrom(Stream.of(NOARCH_NOARCH_RPM)));
         assertEquals(0, result.size());
     }
 
     @Test
     void testIgnoreNonJavadoc() throws IOException {
-        var result = new JavadocNoarchCheck().check(NON_JAVADOC_RPM);
+        var result = new JavadocNoarchCheck().check(
+                TestCommon.iteratorFrom(Stream.of(NON_JAVADOC_RPM)));
         assertEquals(0, result.size());
     }
 }

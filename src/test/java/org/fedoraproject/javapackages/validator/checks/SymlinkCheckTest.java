@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import org.fedoraproject.javapackages.validator.TestCommon;
 import org.fedoraproject.javapackages.validator.config.SymlinkConfig;
@@ -16,13 +17,15 @@ public class SymlinkCheckTest {
 
     @Test
     void testDanglingSymlink() throws IOException {
-        var result = new SymlinkCheck(new SymlinkConfig.Envroot(Paths.get("/"))).check(DANGLING_SYMLINK_RPM);
+        var result = new SymlinkCheck(new SymlinkConfig.Envroot(Paths.get("/"))).check(
+                TestCommon.iteratorFrom(Stream.of(DANGLING_SYMLINK_RPM)));
         assertEquals(1, result.size());
     }
 
     @Test
     void testValidSymlink() throws IOException {
-        var result = new SymlinkCheck(new SymlinkConfig.Envroot(Paths.get("/"))).check(VALID_SYMLINK_RPM);
+        var result = new SymlinkCheck(new SymlinkConfig.Envroot(Paths.get("/"))).check(
+                TestCommon.iteratorFrom(Stream.of(VALID_SYMLINK_RPM)));
         assertEquals(0, result.size());
     }
 }
