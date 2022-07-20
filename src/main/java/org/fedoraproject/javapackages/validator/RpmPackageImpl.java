@@ -1,5 +1,7 @@
 package org.fedoraproject.javapackages.validator;
 
+import java.util.List;
+
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.config.RpmPackage;
 
@@ -48,5 +50,10 @@ public class RpmPackageImpl implements RpmPackage {
     @Override
     public boolean isSourceRpm() {
         return rpmInfo.isSourcePackage();
+    }
+
+    @Override
+    public List<String> getBuildArchs() {
+        return rpmInfo.getBuildArchs();
     }
 }
