@@ -24,22 +24,18 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
         return check(rpmPath, new RpmInfo(rpmPath));
     }
 
-    private Collection<String> checkNonNull(Path rpmPath, RpmInfo rpmInfo) throws IOException {
+    @Override
+    public final Collection<String> check(List<Path> testRpms) throws IOException {
         if (getConfig() == null) {
             System.err.println("[INFO] Configuration class not found, ignoring the test");
             return Collections.emptyList();
         }
 
-        return check(rpmPath, rpmInfo);
-    }
-
-    @Override
-    public Collection<String> check(List<Path> testRpms) throws IOException {
         var result = new ArrayList<String>(0);
 
         for (Path rpmPath : testRpms) {
             var rpmInfo = new RpmInfo(rpmPath);
-            result.addAll(checkNonNull(rpmPath, rpmInfo));
+            result.addAll(check(rpmPath, rpmInfo));
         }
 
         return result;
