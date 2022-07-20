@@ -11,8 +11,8 @@ import org.fedoraproject.javapackages.validator.TestCommon;
 import org.junit.jupiter.api.Test;
 
 public class DuplicateFileCheckTest {
-    private static final Path DUPLICATE_FILE1_RPM = Paths.get(TestCommon.RPM_PATH_PREFIX + "/noarch/duplicate-file1-1-1.noarch.rpm");
-    private static final Path DUPLICATE_FILE2_RPM = Paths.get(TestCommon.RPM_PATH_PREFIX + "/noarch/duplicate-file2-1-1.noarch.rpm");
+    private static final Path DUPLICATE_FILE1_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file1-1-1.noarch.rpm"));
+    private static final Path DUPLICATE_FILE2_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file2-1-1.noarch.rpm"));
 
     @Test
     void testIllegalDuplicateFile() throws IOException {

@@ -11,8 +11,8 @@ import org.fedoraproject.javapackages.validator.config.SymlinkConfig;
 import org.junit.jupiter.api.Test;
 
 public class SymlinkCheckTest {
-    private static final Path DANGLING_SYMLINK_RPM = Paths.get(TestCommon.RPM_PATH_PREFIX + "/noarch/dangling-symlink-1-1.noarch.rpm");
-    private static final Path VALID_SYMLINK_RPM = Paths.get(TestCommon.RPM_PATH_PREFIX + "/noarch/valid-symlink-1-1.noarch.rpm");
+    private static final Path DANGLING_SYMLINK_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/dangling-symlink-1-1.noarch.rpm"));
+    private static final Path VALID_SYMLINK_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/valid-symlink-1-1.noarch.rpm"));
 
     @Test
     void testDanglingSymlink() throws IOException {
