@@ -5,9 +5,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
-import org.fedoraproject.javapackages.validator.RpmPackageImpl;
+import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.config.ExclusiveArchConfig;
 
 public class ExclusiveArchCheck extends ElementwiseCheck<ExclusiveArchConfig> {
@@ -17,19 +16,19 @@ public class ExclusiveArchCheck extends ElementwiseCheck<ExclusiveArchConfig> {
 
     public ExclusiveArchCheck(ExclusiveArchConfig config) {
         super(config);
-        setFilter((rpm) -> rpm.isSourcePackage());
+        setFilter((rpm) -> rpm.getInfo().isSourcePackage());
     }
 
     @Override
-    protected Collection<String> check(RpmInfo rpm) throws IOException {
+    protected Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        if (!getConfig().allowedExclusiveArch(new RpmPackageImpl(rpm), rpm.getExclusiveArch())) {
+        if (!getConfig().allowedExclusiveArch(rpm.getRpmPackage(), rpm.getInfo().getExclusiveArch())) {
             result.add(MessageFormat.format("[FAIL] {0}: ExclusiveArch with values {1} failed",
-                    rpm.getPath(), rpm.getExclusiveArch()));
+                    rpm.getPath(), rpm.getInfo().getExclusiveArch()));
         } else {
             System.err.println(MessageFormat.format("[INFO] {0}: ExclusiveArch with values {1} passed",
-                    rpm.getPath(), rpm.getExclusiveArch()));
+                    rpm.getPath(), rpm.getInfo().getExclusiveArch()));
         }
 
         return result;

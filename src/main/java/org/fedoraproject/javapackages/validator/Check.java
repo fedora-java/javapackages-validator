@@ -21,7 +21,6 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
 import org.apache.commons.lang3.ClassUtils;
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -110,7 +109,7 @@ public abstract class Check<Config> {
         return configClass.cast(configurations.get(configClass));
     }
 
-    abstract protected Collection<String> check(Iterator<RpmInfo> testRpms) throws IOException;
+    abstract protected Collection<String> check(Iterator<? extends RpmPathInfo> testRpms) throws IOException;
 
     protected int executeCheck(Class<Config> configClass, String... args) throws IOException {
         List<String> argList = new ArrayList<>();

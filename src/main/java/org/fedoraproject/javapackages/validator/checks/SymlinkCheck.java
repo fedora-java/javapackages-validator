@@ -6,9 +6,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
+import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.config.SymlinkConfig;
 
 /**
@@ -21,11 +21,11 @@ public class SymlinkCheck extends ElementwiseCheck<SymlinkConfig> {
 
     public SymlinkCheck(SymlinkConfig config) {
         super(config);
-        setFilter((rpm) -> !rpm.isSourcePackage());
+        setFilter((rpm) -> !rpm.getInfo().isSourcePackage());
     }
 
     @Override
-    protected Collection<String> check(RpmInfo rpm) throws IOException {
+    protected Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
         for (var entry : Common.rpmFilesAndSymlinks(rpm.getPath()).entrySet()) {

@@ -11,7 +11,8 @@ import java.util.TreeMap;
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Check;
 import org.fedoraproject.javapackages.validator.Common;
-import org.fedoraproject.javapackages.validator.RpmPackageImpl;
+import org.fedoraproject.javapackages.validator.RpmPackageInfo;
+import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.config.DuplicateFileConfig;
 
 /**
@@ -27,14 +28,14 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
     }
 
     @Override
-    protected Collection<String> check(Iterator<RpmInfo> testRpms) throws IOException {
+    protected Collection<String> check(Iterator<? extends RpmPathInfo> testRpms) throws IOException {
         var result = new ArrayList<String>(0);
 
         // The union of file paths present in all RPM files mapped to the RPM file names they are present in
         var files = new TreeMap<String, ArrayList<Path>>();
 
         while (testRpms.hasNext()) {
-            RpmInfo rpm = testRpms.next();
+            RpmPathInfo rpm = testRpms.next();
             if (!new RpmInfo(rpm.getPath()).isSourcePackage()) {
                 for (var pair : Common.rpmFilesAndSymlinks(rpm.getPath()).entrySet()) {
                     files.computeIfAbsent(pair.getKey().getName().substring(1), key -> new ArrayList<Path>()).add(rpm.getPath());
@@ -44,9 +45,9 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
 
         for (var entry : files.entrySet()) {
             if (entry.getValue().size() > 1) {
-                var providers = new ArrayList<RpmPackageImpl>(entry.getValue().size());
+                var providers = new ArrayList<RpmPackageInfo>(entry.getValue().size());
                 for (var providerRpmPath : entry.getValue()) {
-                    providers.add(new RpmPackageImpl(new RpmInfo(providerRpmPath)));
+                    providers.add(new RpmPackageInfo(providerRpmPath));
                 }
                 if (getConfig() != null && getConfig().allowedDuplicateFile(entry.getKey(), providers)) {
                     System.err.println(MessageFormat.format("[INFO] Allowed duplicate file {0} provided by multiple RPMs: {1}",

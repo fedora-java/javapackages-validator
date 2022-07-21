@@ -5,10 +5,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Check;
 import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
+import org.fedoraproject.javapackages.validator.RpmPathInfo;
 
 public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
     public JavadocNoarchCheck() {
@@ -20,17 +20,17 @@ public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
     }
 
     @Override
-    public Collection<String> check(RpmInfo rpm) throws IOException {
+    public Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        String rpmName = rpm.getName();
+        String rpmName = rpm.getInfo().getName();
 
         if (rpmName.endsWith("-javadocs")) {
             rpmName = rpmName.substring(0, rpmName.length() - 1);
         }
 
-        if (!rpm.isSourcePackage() && rpmName.equals(Common.getPackageName(rpm.getSourceRPM()) + "-javadoc")) {
-            if (!"noarch".equals(rpm.getArch())) {
+        if (!rpm.getInfo().isSourcePackage() && rpmName.equals(Common.getPackageName(rpm.getInfo().getSourceRPM()) + "-javadoc")) {
+            if (!"noarch".equals(rpm.getInfo().getArch())) {
                 result.add(MessageFormat.format(
                         "[FAIL] {0} is a javadoc package but its architecture is not noarch", rpm.getPath()));
             } else {

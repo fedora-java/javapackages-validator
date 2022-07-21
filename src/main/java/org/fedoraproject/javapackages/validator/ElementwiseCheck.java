@@ -7,31 +7,29 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
-
 public abstract class ElementwiseCheck<Config> extends Check<Config> {
-    private Predicate<RpmInfo> filter = rpm -> true;
+    private Predicate<RpmPathInfo> filter = rpm -> true;
 
     protected ElementwiseCheck(Config config) {
         super(config);
     }
 
-    protected void setFilter(Predicate<RpmInfo> filter) {
+    protected void setFilter(Predicate<RpmPathInfo> filter) {
         this.filter = filter;
     }
 
-    abstract protected Collection<String> check(RpmInfo rpm) throws IOException;
+    abstract protected Collection<String> check(RpmPathInfo rpm) throws IOException;
 
     public final Collection<String> check(Path rpmPath) throws IOException {
-        return check(new RpmInfo(rpmPath));
+        return check(new RpmPackageInfo(rpmPath));
     }
 
     @Override
-    public final Collection<String> check(Iterator<RpmInfo> testRpms) throws IOException {
+    public final Collection<String> check(Iterator<? extends RpmPathInfo> testRpms) throws IOException {
         var result = new ArrayList<String>(0);
 
         while (testRpms.hasNext()) {
-            RpmInfo next = testRpms.next();
+            RpmPathInfo next = testRpms.next();
             if (filter.test(next)) {
                 result.addAll(check(next));
             }

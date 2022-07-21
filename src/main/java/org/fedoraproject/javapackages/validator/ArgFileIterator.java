@@ -9,9 +9,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
-
-public class ArgFileIterator implements Iterator<RpmInfo> {
+public class ArgFileIterator implements Iterator<RpmPathInfo> {
     private Iterator<String> argIterator;
     private Iterator<Path> pathIterator = null;
 
@@ -67,11 +65,7 @@ public class ArgFileIterator implements Iterator<RpmInfo> {
     }
 
     @Override
-    public RpmInfo next() {
-        try {
-            return new RpmInfo(pathIterator.next());
-        } catch (IOException ex) {
-            throw new UncheckedIOException(ex);
-        }
+    public RpmPathInfo next() {
+        return new RpmPackageInfo(pathIterator.next());
     }
 }

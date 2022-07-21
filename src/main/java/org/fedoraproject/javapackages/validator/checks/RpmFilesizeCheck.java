@@ -8,9 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
-import org.fedoraproject.javapackages.validator.RpmPackageImpl;
+import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.config.RpmFilesizeConfig;
 
 public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
@@ -23,13 +22,13 @@ public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
     }
 
     @Override
-    public Collection<String> check(RpmInfo rpm) throws IOException {
+    public Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
         long filesize = Files.size(rpm.getPath());
         String formattedFilesize = NumberFormat.getInstance(Locale.ENGLISH).format(filesize);
 
-        if (!getConfig().allowedFilesize(new RpmPackageImpl(rpm), filesize)) {
+        if (!getConfig().allowedFilesize(rpm.getRpmPackage(), filesize)) {
             result.add(MessageFormat.format("[FAIL] {0}: file size is: {1} bytes", rpm.getPath(), formattedFilesize));
         } else {
             System.err.println(MessageFormat.format("[INFO] {0}: file size is: {1} bytes", rpm.getPath(), formattedFilesize));

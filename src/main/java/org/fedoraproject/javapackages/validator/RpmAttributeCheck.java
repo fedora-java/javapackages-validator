@@ -15,7 +15,7 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
     }
 
     @Override
-    protected Collection<String> check(RpmInfo rpm) throws IOException {
+    protected Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
         String attributeName = getDeclaredConfigClass().getSimpleName();
@@ -30,7 +30,7 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
                 var attributeValue = String.class.cast(attributeObject);
                 boolean ok = true;
 
-                if (!Boolean.class.cast(filter.invoke(getConfig(), new RpmPackageImpl(rpm), attributeValue))) {
+                if (!Boolean.class.cast(filter.invoke(getConfig(), rpm.getRpmPackage(), attributeValue))) {
                     ok = false;
                     result.add(MessageFormat.format("[FAIL] {0}: Attribute [{1}] with invalid value: {2}",
                             rpm.getPath(), attributeName, attributeValue));

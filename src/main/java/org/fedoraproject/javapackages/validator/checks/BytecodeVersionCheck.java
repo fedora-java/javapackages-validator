@@ -27,10 +27,9 @@ import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
 import org.fedoraproject.javadeptools.rpm.RpmArchiveInputStream;
-import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
-import org.fedoraproject.javapackages.validator.RpmPackageImpl;
+import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.config.BytecodeVersionConfig;
 
 public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig> {
@@ -43,7 +42,7 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
     }
 
     @Override
-    public Collection<String> check(RpmInfo rpm) throws IOException {
+    public Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {
@@ -77,7 +76,7 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
                                 }
 
                                 var version = versionBuffer.getShort();
-                                var range = getConfig().versionRangeOf(new RpmPackageImpl(rpm), jarName, className);
+                                var range = getConfig().versionRangeOf(rpm.getRpmPackage(), jarName, className);
 
                                 if (!range.contains(version)) {
                                     result.add(MessageFormat.format(
