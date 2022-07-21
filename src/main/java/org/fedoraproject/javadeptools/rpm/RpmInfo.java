@@ -102,7 +102,6 @@ public class RpmInfo implements Nevra {
     }
 
     public RpmInfo(Path path) throws IOException {
-        this.path = path;
         var ts = rpmtsCreate();
         var fd = Fopen(path.toString(), "r");
         try {
@@ -151,7 +150,6 @@ public class RpmInfo implements Nevra {
         }
     }
 
-    private final Path path;
     private final NEVRA nevra;
     private final boolean sourcePackage;
     private final List<String> buildArchs;
@@ -172,10 +170,6 @@ public class RpmInfo implements Nevra {
 
     public NEVRA getNEVRA() {
         return nevra;
-    }
-
-    public Path getPath() {
-        return path;
     }
 
     @Override
