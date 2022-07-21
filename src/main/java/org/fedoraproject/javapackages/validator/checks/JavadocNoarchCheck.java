@@ -17,26 +17,31 @@ public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
 
     public JavadocNoarchCheck(NoConfig config) {
         super(config);
+        setFilter((rpm) -> {
+            if (rpm.getInfo().isSourcePackage()) {
+                return false;
+            }
+
+            String rpmName = rpm.getInfo().getName();
+
+            if (rpmName.endsWith("-javadocs")) {
+                rpmName = rpmName.substring(0, rpmName.length() - 1);
+            }
+
+            return rpmName.equals(Common.getPackageName(rpm.getInfo().getSourceRPM()) + "-javadoc");
+        });
     }
 
     @Override
     public Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        String rpmName = rpm.getInfo().getName();
-
-        if (rpmName.endsWith("-javadocs")) {
-            rpmName = rpmName.substring(0, rpmName.length() - 1);
-        }
-
-        if (!rpm.getInfo().isSourcePackage() && rpmName.equals(Common.getPackageName(rpm.getInfo().getSourceRPM()) + "-javadoc")) {
-            if (!"noarch".equals(rpm.getInfo().getArch())) {
-                result.add(MessageFormat.format(
-                        "[FAIL] {0} is a javadoc package but its architecture is not noarch", rpm.getPath()));
-            } else {
-                System.err.println(MessageFormat.format(
-                        "[INFO] {0} is a javadoc package and its architecture is noarch", rpm.getPath()));
-            }
+        if (!"noarch".equals(rpm.getInfo().getArch())) {
+            result.add(MessageFormat.format(
+                    "[FAIL] {0} is a javadoc package but its architecture is not noarch", rpm.getPath()));
+        } else {
+            System.err.println(MessageFormat.format(
+                    "[INFO] {0} is a javadoc package and its architecture is noarch", rpm.getPath()));
         }
 
         return result;
