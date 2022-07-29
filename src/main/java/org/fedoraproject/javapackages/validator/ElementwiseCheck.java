@@ -14,8 +14,9 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
         super(config);
     }
 
-    protected void setFilter(Predicate<RpmPathInfo> filter) {
+    protected ElementwiseCheck<?> setFilter(Predicate<RpmPathInfo> filter) {
         this.filter = filter;
+        return this;
     }
 
     abstract protected Collection<String> check(RpmPathInfo rpm) throws IOException;

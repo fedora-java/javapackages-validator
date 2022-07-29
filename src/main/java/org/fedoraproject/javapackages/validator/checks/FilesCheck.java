@@ -20,7 +20,7 @@ import org.fedoraproject.javapackages.validator.config.FilesConfig;
 import org.fedoraproject.javapackages.validator.config.FilesConfig.ExpectedProperties;
 
 public class FilesCheck extends ElementwiseCheck<FilesConfig> {
-    public FilesCheck() {
+    protected FilesCheck() {
         this(null);
     }
 
