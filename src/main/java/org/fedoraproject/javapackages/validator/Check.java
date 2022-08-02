@@ -2,11 +2,13 @@ package org.fedoraproject.javapackages.validator;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,12 +16,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.ToolProvider;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -72,10 +76,26 @@ public abstract class Check<Config> {
         public static final NoConfig INSTANCE = new NoConfig() {};
     }
 
+    private static FileTime lastModified(Stream<Path> paths) {
+        return paths.map(path -> {
+            try {
+                return Files.getLastModifiedTime(path);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
+            }
+        }).reduce((lp, rp) -> lp.compareTo(rp) < 0 ? rp : lp).get();
+    }
+
     @SuppressFBWarnings({"DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"})
     protected Config getConfig(Class<Config> configClass) throws IOException {
-        if (Files.notExists(config_bin_dir) || Files.find(config_bin_dir, Integer.MAX_VALUE,
-                (path, attributes) -> attributes.isRegularFile()).count() == 0) {
+        FileTime lastModifiedSrc = lastModified(Files.find(config_src_dir, Integer.MAX_VALUE, (path, attributes) -> true));
+        if (Files.notExists(config_bin_dir) || lastModifiedSrc.compareTo(lastModified(
+                Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) -> true))) > 0) {
+            if (Files.isDirectory(config_bin_dir)) {
+                FileUtils.deleteDirectory(config_bin_dir.toFile());
+            } else {
+                Files.deleteIfExists(config_bin_dir);
+            }
             compileFiles(config_src_dir, Arrays.asList("-d", config_bin_dir.toString()));
         }
 
