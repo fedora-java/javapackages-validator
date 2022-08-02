@@ -60,6 +60,9 @@ public interface FilesConfig {
         }
 
         public Set<PosixFilePermission> getPermissions() {
+            if (permissions == null) {
+                return null;
+            }
             return Collections.unmodifiableSet(permissions);
         }
     }
