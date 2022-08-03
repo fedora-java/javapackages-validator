@@ -9,10 +9,10 @@ public class RecommendsCheck extends RpmAttributeCheck<RecommendsConfig> {
     }
 
     public RecommendsCheck(RecommendsConfig config) {
-        super(config);
+        super(RecommendsConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new RecommendsCheck().executeCheck(RecommendsConfig.class, args));
+        System.exit(new RecommendsCheck().executeCheck(args));
     }
 }

@@ -18,7 +18,7 @@ public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
     }
 
     public RpmFilesizeCheck(RpmFilesizeConfig config) {
-        super(config);
+        super(RpmFilesizeConfig.class, config);
     }
 
     @Override
@@ -38,6 +38,6 @@ public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new RpmFilesizeCheck().executeCheck(RpmFilesizeConfig.class, args));
+        System.exit(new RpmFilesizeCheck().executeCheck(args));
     }
 }

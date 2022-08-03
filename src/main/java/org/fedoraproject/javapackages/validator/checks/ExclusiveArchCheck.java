@@ -15,7 +15,7 @@ public class ExclusiveArchCheck extends ElementwiseCheck<ExclusiveArchConfig> {
     }
 
     public ExclusiveArchCheck(ExclusiveArchConfig config) {
-        super(config);
+        super(ExclusiveArchConfig.class, config);
         setFilter((rpm) -> rpm.getInfo().isSourcePackage());
     }
 
@@ -35,6 +35,6 @@ public class ExclusiveArchCheck extends ElementwiseCheck<ExclusiveArchConfig> {
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new ExclusiveArchCheck().executeCheck(ExclusiveArchConfig.class, args));
+        System.exit(new ExclusiveArchCheck().executeCheck(args));
     }
 }

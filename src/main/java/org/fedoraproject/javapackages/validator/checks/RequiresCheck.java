@@ -9,10 +9,10 @@ public class RequiresCheck extends RpmAttributeCheck<RequiresConfig> {
     }
 
     public RequiresCheck(RequiresConfig config) {
-        super(config);
+        super(RequiresConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new RequiresCheck().executeCheck(RequiresConfig.class, args));
+        System.exit(new RequiresCheck().executeCheck(args));
     }
 }

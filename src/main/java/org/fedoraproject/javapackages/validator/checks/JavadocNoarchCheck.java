@@ -16,7 +16,7 @@ public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
     }
 
     public JavadocNoarchCheck(NoConfig config) {
-        super(config);
+        super(Check.NoConfig.class, config);
         setFilter((rpm) -> {
             if (rpm.getInfo().isSourcePackage()) {
                 return false;
@@ -48,6 +48,6 @@ public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new JavadocNoarchCheck().executeCheck(Check.NoConfig.class, args));
+        System.exit(new JavadocNoarchCheck().executeCheck(args));
     }
 }

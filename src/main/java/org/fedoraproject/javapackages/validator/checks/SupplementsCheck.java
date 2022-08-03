@@ -9,10 +9,10 @@ public class SupplementsCheck extends RpmAttributeCheck<SupplementsConfig> {
     }
 
     public SupplementsCheck(SupplementsConfig config) {
-        super(config);
+        super(SupplementsConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new SupplementsCheck().executeCheck(SupplementsConfig.class, args));
+        System.exit(new SupplementsCheck().executeCheck(args));
     }
 }

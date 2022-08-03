@@ -9,10 +9,10 @@ public class EnhancesCheck extends RpmAttributeCheck<EnhancesConfig> {
     }
 
     public EnhancesCheck(EnhancesConfig config) {
-        super(config);
+        super(EnhancesConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new EnhancesCheck().executeCheck(EnhancesConfig.class, args));
+        System.exit(new EnhancesCheck().executeCheck(args));
     }
 }

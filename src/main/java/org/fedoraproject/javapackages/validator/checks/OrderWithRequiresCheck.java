@@ -9,10 +9,10 @@ public class OrderWithRequiresCheck extends RpmAttributeCheck<OrderWithRequiresC
     }
 
     public OrderWithRequiresCheck(OrderWithRequiresConfig config) {
-        super(config);
+        super(OrderWithRequiresConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new OrderWithRequiresCheck().executeCheck(OrderWithRequiresConfig.class, args));
+        System.exit(new OrderWithRequiresCheck().executeCheck(args));
     }
 }

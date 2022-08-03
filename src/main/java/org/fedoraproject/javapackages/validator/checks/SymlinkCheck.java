@@ -20,7 +20,7 @@ public class SymlinkCheck extends ElementwiseCheck<SymlinkConfig> {
     }
 
     public SymlinkCheck(SymlinkConfig config) {
-        super(config);
+        super(SymlinkConfig.class, config);
         setFilter((rpm) -> !rpm.getInfo().isSourcePackage());
     }
 
@@ -52,6 +52,6 @@ public class SymlinkCheck extends ElementwiseCheck<SymlinkConfig> {
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new SymlinkCheck().executeCheck(SymlinkConfig.class, args));
+        System.exit(new SymlinkCheck().executeCheck(args));
     }
 }

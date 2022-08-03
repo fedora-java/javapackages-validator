@@ -10,8 +10,8 @@ import java.util.function.Predicate;
 public abstract class ElementwiseCheck<Config> extends Check<Config> {
     private Predicate<RpmPathInfo> filter = rpm -> true;
 
-    protected ElementwiseCheck(Config config) {
-        super(config);
+    protected ElementwiseCheck(Class<Config> configClass, Config config) {
+        super(configClass, config);
     }
 
     protected ElementwiseCheck<?> setFilter(Predicate<RpmPathInfo> filter) {

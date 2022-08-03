@@ -38,7 +38,7 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
     }
 
     public BytecodeVersionCheck(BytecodeVersionConfig config) {
-        super(config);
+        super(BytecodeVersionConfig.class, config);
     }
 
     @Override
@@ -103,6 +103,6 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new BytecodeVersionCheck().executeCheck(BytecodeVersionConfig.class, args));
+        System.exit(new BytecodeVersionCheck().executeCheck(args));
     }
 }

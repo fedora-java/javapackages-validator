@@ -9,10 +9,10 @@ public class ObsoletesCheck extends RpmAttributeCheck<ObsoletesConfig> {
     }
 
     public ObsoletesCheck(ObsoletesConfig config) {
-        super(config);
+        super(ObsoletesConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new ObsoletesCheck().executeCheck(ObsoletesConfig.class, args));
+        System.exit(new ObsoletesCheck().executeCheck(args));
     }
 }

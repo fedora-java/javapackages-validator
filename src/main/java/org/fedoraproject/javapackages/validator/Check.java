@@ -39,18 +39,23 @@ public abstract class Check<Config> {
     private Map<Class<?>, Object> configurations = null;
     private Path config_src_dir = Paths.get("/mnt/config/src");
     private Path config_bin_dir = Paths.get("/mnt/config/bin");
-    private Class<Config> declaredConfigClass;
+    private Class<Config> configClass;
     private Config config;
 
-    protected Class<Config> getDeclaredConfigClass() {
-        return declaredConfigClass;
+    public Class<Config> getConfigClass() {
+        return configClass;
     }
 
     protected Config getConfig() {
         return config;
     }
 
-    protected Check(Config config) {
+    protected Check(Class<Config> configClass) {
+        this.configClass = configClass;
+    }
+
+    protected Check(Class<Config> configClass, Config config) {
+        this(configClass);
         this.config = config;
     }
 
@@ -87,7 +92,7 @@ public abstract class Check<Config> {
     }
 
     @SuppressFBWarnings({"DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"})
-    protected Config getConfig(Class<Config> configClass) throws IOException {
+    protected Config getConfigInstance() throws IOException {
         FileTime lastModifiedSrc = lastModified(Files.find(config_src_dir, Integer.MAX_VALUE, (path, attributes) -> true));
         if (Files.notExists(config_bin_dir) || lastModifiedSrc.compareTo(lastModified(
                 Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) -> true))) > 0) {
@@ -100,7 +105,6 @@ public abstract class Check<Config> {
         }
 
         if (configurations == null) {
-            declaredConfigClass = configClass;
             configurations = new HashMap<>();
             configurations.put(NoConfig.class, NoConfig.INSTANCE);
             var classes = Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) ->
@@ -131,7 +135,7 @@ public abstract class Check<Config> {
 
     abstract protected Collection<String> check(Iterator<? extends RpmPathInfo> testRpms) throws IOException;
 
-    protected int executeCheck(Class<Config> configClass, String... args) throws IOException {
+    public int executeCheck(String... args) throws IOException {
         List<String> argList = new ArrayList<>();
 
         for (int i = 0; i != args.length; ++i) {
@@ -148,7 +152,7 @@ public abstract class Check<Config> {
             }
         }
 
-        config = getConfig(configClass);
+        config = getConfigInstance();
 
         if (config == null && !NoConfig.class.equals(configClass)) {
             System.err.println("[INFO] Configuration class not found, ignoring the test");

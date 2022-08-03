@@ -10,15 +10,15 @@ import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.config.RpmPackage;
 
 public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
-    protected RpmAttributeCheck(Config config) {
-        super(config);
+    protected RpmAttributeCheck(Class<Config> configClass, Config config) {
+        super(configClass, config);
     }
 
     @Override
     protected Collection<String> check(RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
 
-        String attributeName = getDeclaredConfigClass().getSimpleName();
+        String attributeName = getConfigClass().getSimpleName();
         // Remove "Config" suffix
         attributeName = attributeName.substring(0, attributeName.length() - 6);
 

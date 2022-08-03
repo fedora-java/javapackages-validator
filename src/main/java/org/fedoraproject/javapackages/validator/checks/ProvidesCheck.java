@@ -9,10 +9,10 @@ public class ProvidesCheck extends RpmAttributeCheck<ProvidesConfig> {
     }
 
     public ProvidesCheck(ProvidesConfig config) {
-        super(config);
+        super(ProvidesConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new ProvidesCheck().executeCheck(ProvidesConfig.class, args));
+        System.exit(new ProvidesCheck().executeCheck(args));
     }
 }

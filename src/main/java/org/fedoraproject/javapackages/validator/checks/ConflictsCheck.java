@@ -9,10 +9,10 @@ public class ConflictsCheck extends RpmAttributeCheck<ConflictsConfig> {
     }
 
     public ConflictsCheck(ConflictsConfig config) {
-        super(config);
+        super(ConflictsConfig.class, config);
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new ConflictsCheck().executeCheck(ConflictsConfig.class, args));
+        System.exit(new ConflictsCheck().executeCheck(args));
     }
 }

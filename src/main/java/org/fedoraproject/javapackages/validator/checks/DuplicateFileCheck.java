@@ -23,8 +23,8 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
         this(null);
     }
 
-    DuplicateFileCheck(DuplicateFileConfig config) {
-        super(config);
+    public DuplicateFileCheck(DuplicateFileConfig config) {
+        super(DuplicateFileConfig.class, config);
     }
 
     @Override
@@ -63,6 +63,6 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new DuplicateFileCheck().executeCheck(DuplicateFileConfig.class, args));
+        System.exit(new DuplicateFileCheck().executeCheck(args));
     }
 }

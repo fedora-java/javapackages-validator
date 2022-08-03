@@ -20,12 +20,12 @@ import org.fedoraproject.javapackages.validator.config.FilesConfig;
 import org.fedoraproject.javapackages.validator.config.FilesConfig.ExpectedProperties;
 
 public class FilesCheck extends ElementwiseCheck<FilesConfig> {
-    protected FilesCheck() {
+    public FilesCheck() {
         this(null);
     }
 
     public FilesCheck(FilesConfig config) {
-        super(config);
+        super(FilesConfig.class, config);
     }
 
     private static Set<PosixFilePermission> permissions(CpioArchiveEntry entry) {
@@ -122,6 +122,6 @@ public class FilesCheck extends ElementwiseCheck<FilesConfig> {
     }
 
     public static void main(String[] args) throws Exception {
-        System.exit(new FilesCheck().executeCheck(FilesConfig.class, args));
+        System.exit(new FilesCheck().executeCheck(args));
     }
 }
