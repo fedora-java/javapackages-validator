@@ -100,20 +100,21 @@ public abstract class Check<Config> {
 
     @SuppressFBWarnings({"DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"})
     protected Config getConfigInstance() throws IOException {
-        FileTime lastModifiedSrc = lastModified(Files.find(config_src_dir, Integer.MAX_VALUE, (path, attributes) -> true));
-        if (Files.notExists(config_bin_dir) || lastModifiedSrc.compareTo(lastModified(
-                Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) -> true))) > 0) {
-            if (Files.isDirectory(config_bin_dir)) {
-                FileUtils.deleteDirectory(config_bin_dir.toFile());
-            } else {
-                Files.deleteIfExists(config_bin_dir);
-            }
-            compileFiles(config_src_dir, Arrays.asList("-d", config_bin_dir.toString()));
-        }
-
         if (configurations == null) {
             configurations = new HashMap<>();
             configurations.put(NoConfig.class, NoConfig.INSTANCE);
+
+            FileTime lastModifiedSrc = lastModified(Files.find(config_src_dir, Integer.MAX_VALUE, (path, attributes) -> true));
+            if (Files.notExists(config_bin_dir) || lastModifiedSrc.compareTo(lastModified(
+                    Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) -> true))) > 0) {
+                if (Files.isDirectory(config_bin_dir)) {
+                    FileUtils.deleteDirectory(config_bin_dir.toFile());
+                } else {
+                    Files.deleteIfExists(config_bin_dir);
+                }
+                compileFiles(config_src_dir, Arrays.asList("-d", config_bin_dir.toString()));
+            }
+
             var classes = Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) ->
                     attributes.isRegularFile() && path.toString().endsWith(".class"))
                     .map(Path::toString).toArray(String[]::new);
