@@ -61,7 +61,7 @@ public abstract class Check<Config> {
 
     private static void compileFiles(Path sourceDir, Iterable<String> compilerOptions) throws IOException {
         List<File> inputFiles = Files.find(sourceDir, Integer.MAX_VALUE,
-                (path, attributes) -> attributes.isRegularFile() && path.toString().endsWith(".java"))
+                (path, attributes) -> !attributes.isDirectory() && path.toString().endsWith(".java"))
                 .map(Path::toFile).toList();
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -84,11 +84,18 @@ public abstract class Check<Config> {
     private static FileTime lastModified(Stream<Path> paths) {
         return paths.map(path -> {
             try {
-                return Files.getLastModifiedTime(path);
+                var result = Files.getLastModifiedTime(path);
+                if (Files.isSymbolicLink(path)) {
+                    var targetTime = Files.getLastModifiedTime(Files.readSymbolicLink(path));
+                    if (targetTime.compareTo(result) > 0) {
+                        return targetTime;
+                    }
+                }
+                return result;
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-        }).reduce((lp, rp) -> lp.compareTo(rp) < 0 ? rp : lp).get();
+        }).max((lp, rp) -> lp.compareTo(rp)).get();
     }
 
     @SuppressFBWarnings({"DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"})
