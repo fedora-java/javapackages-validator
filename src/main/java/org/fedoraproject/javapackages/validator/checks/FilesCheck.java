@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,7 +14,9 @@ import org.apache.commons.compress.archivers.cpio.CpioConstants;
 import org.fedoraproject.javadeptools.rpm.RpmArchiveInputStream;
 import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
+import org.fedoraproject.javapackages.validator.Main;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
+import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 import org.fedoraproject.javapackages.validator.config.FilesConfig;
 import org.fedoraproject.javapackages.validator.config.FilesConfig.ExpectedProperties;
 
@@ -58,41 +59,57 @@ public class FilesCheck extends ElementwiseCheck<FilesConfig> {
                 entrySet.add(entryName);
                 ExpectedProperties fileProperties = getConfig().fileProperties(rpm.getRpmPackage(), entryName);
                 if (fileProperties == null) {
-                    result.add(MessageFormat.format("[FAIL] {0}: Illegal file: {1}",
-                            rpm.getPath(), entryName));
+                    result.add(failMessage("{0}: Illegal file: {1}",
+                            Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                            Main.getDecorator().decorate(entryName, Decoration.bright_blue)));
                     continue;
                 }
 
                 if (fileProperties.getUid() != null && fileProperties.getUid() != rpmEntry.getUID()) {
-                    result.add(MessageFormat.format("[FAIL] {0}: {1}: Illegal user ID: {2}, expected: {3}",
-                            rpm.getPath(), entryName, rpmEntry.getUID(), fileProperties.getUid()));
+                    result.add(failMessage("{0}: {1}: Illegal user ID: {2}, expected: {3}",
+                            Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                            Main.getDecorator().decorate(entryName, Decoration.bright_blue),
+                            Main.getDecorator().decorate(rpmEntry.getUID(), Decoration.bright_cyan, Decoration.bold),
+                            Main.getDecorator().decorate(fileProperties.getUid(), Decoration.bright_magenta, Decoration.bold)));
                 }
                 if (fileProperties.getGid() != null && fileProperties.getGid() != rpmEntry.getGID()) {
-                    result.add(MessageFormat.format("[FAIL] {0}: {1}: Illegal group ID: {2}, expected: {3}",
-                            rpm.getPath(), entryName, rpmEntry.getGID(), fileProperties.getGid()));
+                    result.add(failMessage("{0}: {1}: Illegal group ID: {2}, expected: {3}",
+                            Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                            Main.getDecorator().decorate(entryName, Decoration.bright_blue),
+                            Main.getDecorator().decorate(rpmEntry.getGID(), Decoration.bright_cyan, Decoration.bold),
+                            Main.getDecorator().decorate(fileProperties.getGid(), Decoration.bright_magenta, Decoration.bold)));
                 }
                 if (fileProperties.getMaxSize() != null && fileProperties.getMaxSize() < rpmEntry.getSize()) {
-                    result.add(MessageFormat.format("[FAIL] {0}: {1}: Illegal file size: {2} exceeds expected {3}",
-                            rpm.getPath(), entryName, rpmEntry.getSize(), fileProperties.getMaxSize()));
+                    result.add(failMessage("{0}: {1}: Illegal file size: {2} exceeds expected {3}",
+                            Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                            Main.getDecorator().decorate(entryName, Decoration.bright_blue),
+                            Main.getDecorator().decorate(rpmEntry.getSize(), Decoration.bright_cyan, Decoration.bold),
+                            Main.getDecorator().decorate(fileProperties.getMaxSize(), Decoration.bright_magenta, Decoration.bold)));
                 }
                 if (fileProperties.getFileType() != null) {
                     switch (fileProperties.getFileType()) {
                     case REGULAR:
                         if (!rpmEntry.isRegularFile()) {
-                            result.add(MessageFormat.format("[FAIL] {0}: {1}: Illegal file type, expected regular file",
-                                    rpm.getPath(), entryName));
+                            result.add(failMessage("{0}: {1}: Illegal file type, expected {2}",
+                                    Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                                    Main.getDecorator().decorate(entryName, Decoration.bright_blue),
+                                    Main.getDecorator().decorate("regular file", Decoration.bright_magenta)));
                         }
                         break;
                     case DIRECTORY:
                         if (!rpmEntry.isDirectory()) {
-                            result.add(MessageFormat.format("[FAIL] {0}: {1}: Illegal file type, expected symbolic link",
-                                    rpm.getPath(), entryName));
+                            result.add(failMessage("{0}: {1}: Illegal file type, expected {2}",
+                                    Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                                    Main.getDecorator().decorate(entryName, Decoration.bright_blue),
+                                    Main.getDecorator().decorate("symbolic link", Decoration.bright_magenta)));
                         }
                         break;
                     case SYMLINK:
                         if (!rpmEntry.isSymbolicLink()) {
-                            result.add(MessageFormat.format("[FAIL] {0}: {1}: Illegal file type, expected directory",
-                                    rpm.getPath(), entryName));
+                            result.add(failMessage("{0}: {1}: Illegal file type, expected {2}",
+                                    Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                                    Main.getDecorator().decorate(entryName, Decoration.bright_blue),
+                                    Main.getDecorator().decorate("directory", Decoration.bright_magenta)));
                         }
                         break;
                     }
@@ -101,21 +118,24 @@ public class FilesCheck extends ElementwiseCheck<FilesConfig> {
                 if (expectedPermissions != null) {
                     var entryPermissions = permissions(rpmEntry);
                     if (!entryPermissions.equals(expectedPermissions)) {
-                        result.add(MessageFormat.format("[FAIL] {0}: {1}: Illegal file permissions: {2}, expected: {3}",
-                                rpm.getPath(), entryName, PosixFilePermissions.toString(entryPermissions),
-                                PosixFilePermissions.toString(expectedPermissions)));
+                        result.add(failMessage("{0}: {1}: Illegal file permissions: {2}, expected: {3}",
+                                Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                                Main.getDecorator().decorate(entryName, Decoration.bright_blue),
+                                Main.getDecorator().decorate(PosixFilePermissions.toString(entryPermissions), Decoration.bright_cyan),
+                                Main.getDecorator().decorate(PosixFilePermissions.toString(expectedPermissions), Decoration.bright_magenta)));
                     }
                 }
             }
 
             if (previousSize == result.size()) {
-                System.err.println(MessageFormat.format("[INFO] {0}: ok", rpm.getPath()));
+                getLogger().pass("{0}: ok", Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red));
             }
         }
 
         for (Path missingFile : getConfig().missingFiles(rpm.getRpmPackage(), entrySet)) {
-            result.add(MessageFormat.format("[FAIL] {0}: Missing file: {1}",
-                    rpm.getPath(), missingFile));
+            result.add(failMessage("{0}: Missing file: {1}",
+                    Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                    Main.getDecorator().decorate(missingFile, Decoration.bright_blue)));
         }
 
         return result;

@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -82,8 +81,8 @@ public class All extends Check<Check.NoConfig> {
                 check.inherit(this);
 
                 if (check.getConfig() == null && !NoConfig.class.equals(check.getConfigClass())) {
-                    System.err.println(MessageFormat.format("[INFO] {0}: Configuration class not found, ignoring the test",
-                            check.getClass().getSimpleName()));
+                    getLogger().info("{0}: Configuration class not found, ignoring the test",
+                            check.getClass().getSimpleName());
                 } else {
                     result.addAll(check.check(rpmList.iterator()));
                 }

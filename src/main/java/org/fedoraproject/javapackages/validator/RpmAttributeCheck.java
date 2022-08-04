@@ -1,12 +1,12 @@
 package org.fedoraproject.javapackages.validator;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
+import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 import org.fedoraproject.javapackages.validator.config.RpmPackage;
 
 public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
@@ -32,13 +32,16 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
 
                 if (!Boolean.class.cast(filter.invoke(getConfig(), rpm.getRpmPackage(), attributeValue))) {
                     ok = false;
-                    result.add(MessageFormat.format("[FAIL] {0}: Attribute [{1}] with invalid value: {2}",
-                            rpm.getPath(), attributeName, attributeValue));
+                    result.add(failMessage("{0}: Attribute {1} with invalid value: {2}",
+                            Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                            Main.getDecorator().decorate(attributeName, Decoration.bright_cyan),
+                            Main.getDecorator().decorate(attributeValue, Decoration.bright_magenta)));
                 }
 
                 if (ok) {
-                    System.err.println(MessageFormat.format("[INFO] {0}: Attribute [{1}]: ok",
-                            rpm.getPath(), attributeName));
+                    getLogger().pass("{0}: Attribute [{1}]: ok",
+                            Main.getDecorator().decorate(rpm.getPath(), Decoration.bright_red),
+                            Main.getDecorator().decorate(attributeName, Decoration.bright_cyan));
                 }
             }
         } catch (ReflectiveOperationException ex) {

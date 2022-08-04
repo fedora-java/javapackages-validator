@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import javax.tools.ToolProvider;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -42,6 +44,20 @@ public abstract class Check<Config> {
     private Path config_bin_dir = Paths.get("/mnt/config/bin");
     private Class<Config> configClass;
     private Config config;
+    private Logger logger = new Logger();
+
+    protected Logger getLogger() {
+        return logger;
+    }
+
+    protected static String failMessage(String pattern, Object... arguments) {
+        String result = "";
+        result += "[";
+        result += Main.getDecorator().decorate("FAIL", Decoration.red, Decoration.bold);
+        result += "] ";
+        result += MessageFormat.format(pattern, arguments);
+        return result;
+    }
 
     public Class<Config> getConfigClass() {
         return configClass;
@@ -64,6 +80,7 @@ public abstract class Check<Config> {
         this.configurations = Collections.unmodifiableMap(parent.configurations);
         this.config_src_dir = parent.config_src_dir;
         this.config_bin_dir = parent.config_bin_dir;
+        this.logger = parent.logger;
         this.config = getConfigInstance();
         return this;
     }
@@ -172,7 +189,7 @@ public abstract class Check<Config> {
         config = getConfigInstance();
 
         if (config == null && !NoConfig.class.equals(configClass)) {
-            System.err.println("[INFO] Configuration class not found, ignoring the test");
+            getLogger().info("{0}: Configuration class not found, ignoring the test", getClass().getSimpleName());
             return 0;
         }
 
