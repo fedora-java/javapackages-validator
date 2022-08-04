@@ -58,18 +58,19 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
                     }
                     return cmp;
                 });
+                String decoratedProviders = entry.getValue().stream().map(path -> Main.getDecorator().decorate(path, Decoration.bright_red)).toList().toString();
                 if (ok[0]) {
                     getLogger().pass("File {0} provided by RPMs of unique architectures: {1}",
                             Main.getDecorator().decorate(entry.getKey(), Decoration.bright_cyan),
-                            Main.getDecorator().decorate(entry.getValue(), Decoration.bright_red));
+                            decoratedProviders);
                 } else if (getConfig() != null && getConfig().allowedDuplicateFile(entry.getKey(), providers)) {
                     getLogger().pass("Allowed duplicate file {0} provided by multiple RPMs: {1}",
                             Main.getDecorator().decorate(entry.getKey(), Decoration.bright_cyan),
-                            Main.getDecorator().decorate(entry.getValue(), Decoration.bright_red));
+                            decoratedProviders);
                 } else {
                     result.add(failMessage("File {0} provided by multiple RPMs: {1}",
                             Main.getDecorator().decorate(entry.getKey(), Decoration.bright_cyan),
-                            Main.getDecorator().decorate(entry.getValue(), Decoration.bright_red)));
+                            decoratedProviders));
                 }
             }
         }
