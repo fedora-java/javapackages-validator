@@ -5,6 +5,9 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -40,14 +43,15 @@ public interface SymlinkConfig {
     }
 
     public static class RpmSet implements SymlinkConfig {
-        private Map<Path, String> files = new TreeMap<Path, String>();
+        private Map<Path, List<String>> files = new TreeMap<>();
 
-        public RpmSet(Path topdir) {
+        public RpmSet(Iterator<Path> rpms) {
             try {
-                for (Path rmpPath : Files.find(topdir, Integer.MAX_VALUE, ((path, attributes) ->
-                        attributes.isRegularFile() && path.toString().endsWith(".rpm"))).toArray(Path[]::new)) {
-                    for (var entry : Common.rpmFilesAndSymlinks(rmpPath).keySet()) {
-                        files.put(Common.getEntryPath(entry), rmpPath.toString());
+                while (rpms.hasNext()) {
+                    Path rpmPath = rpms.next();
+                    for (var entry : Common.rpmFilesAndSymlinks(rpmPath).keySet()) {
+                        files.computeIfAbsent(Common.getEntryPath(entry),
+                                (path) -> new ArrayList<>()).add(rpmPath.toString());
                     }
                 }
             } catch (IOException ex) {
@@ -57,7 +61,13 @@ public interface SymlinkConfig {
 
         @Override
         public String targetLocation(Path target) {
-            return files.get(target);
+            var result = files.get(target.normalize());
+
+            if (result != null) {
+                return result.toString();
+            }
+
+            return null;
         }
     }
 }
