@@ -43,19 +43,15 @@ public class Common {
 
         try (var is = new RpmArchiveInputStream(rpmPath)) {
             for (CpioArchiveEntry rpmEntry; (rpmEntry = is.getNextEntry()) != null;) {
-                if (rpmEntry.isDirectory()) {
-                    continue;
-                }
-
-                var content = new byte[(int) rpmEntry.getSize()];
-
-                if (is.read(content) != content.length) {
-                    throw Common.INCOMPLETE_READ;
-                }
-
                 Path target = null;
 
                 if (rpmEntry.isSymbolicLink()) {
+                    var content = new byte[(int) rpmEntry.getSize()];
+
+                    if (is.read(content) != content.length) {
+                        throw Common.INCOMPLETE_READ;
+                    }
+
                     target = Paths.get(new String(content, StandardCharsets.UTF_8));
                 }
 
