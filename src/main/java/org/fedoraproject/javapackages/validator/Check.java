@@ -12,6 +12,7 @@ import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,7 @@ public abstract class Check<Config> {
         return configClass;
     }
 
-    protected Config getConfig() {
+    public Config getConfig() {
         return config;
     }
 
@@ -57,6 +58,14 @@ public abstract class Check<Config> {
     protected Check(Class<Config> configClass, Config config) {
         this(configClass);
         this.config = config;
+    }
+
+    public final Check<Config> inherit(Check<?> parent) throws IOException {
+        this.configurations = Collections.unmodifiableMap(parent.configurations);
+        this.config_src_dir = parent.config_src_dir;
+        this.config_bin_dir = parent.config_bin_dir;
+        this.config = getConfigInstance();
+        return this;
     }
 
     private static void compileFiles(Path sourceDir, Iterable<String> compilerOptions) throws IOException {
@@ -141,7 +150,7 @@ public abstract class Check<Config> {
         return configClass.cast(configurations.get(configClass));
     }
 
-    abstract protected Collection<String> check(Iterator<? extends RpmPathInfo> testRpms) throws IOException;
+    abstract public Collection<String> check(Iterator<? extends RpmPathInfo> testRpms) throws IOException;
 
     public int executeCheck(String... args) throws IOException {
         List<String> argList = new ArrayList<>();
