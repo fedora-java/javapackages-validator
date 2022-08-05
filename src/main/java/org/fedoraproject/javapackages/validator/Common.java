@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.fedoraproject.javadeptools.rpm.RpmArchiveInputStream;
+import org.fedoraproject.javadeptools.rpm.RpmInfo;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -57,6 +61,39 @@ public class Common {
 
                 result.put(rpmEntry, target);
             }
+        }
+
+        return result;
+    }
+
+    public static Collection<RpmInfo> transitiveDependencies(RpmInfo rpm, Collection<? extends RpmInfo> rpms) {
+        var result = new HashSet<RpmInfo>();
+
+        var providers = new TreeMap<String, RpmInfo>();
+        for (var otherRpm : rpms) {
+            for (var provider : otherRpm.getProvides()) {
+                providers.put(provider, otherRpm);
+            }
+        }
+
+        var satisfiedRequirements = new TreeSet<String>();
+        var unsatisfiedRequirements = new TreeSet<String>(rpm.getRequires());
+
+        boolean change = true;
+        while (change) {
+            change = false;
+            var newRequirements = new TreeSet<String>();
+            for (var req : unsatisfiedRequirements) {
+                var provider = providers.get(req);
+                if (provider != null) {
+                    change = true;
+                    result.add(provider);
+                    satisfiedRequirements.add(req);
+                    newRequirements.addAll(provider.getRequires());
+                }
+            }
+            unsatisfiedRequirements.addAll(newRequirements);
+            unsatisfiedRequirements.removeAll(satisfiedRequirements);
         }
 
         return result;
