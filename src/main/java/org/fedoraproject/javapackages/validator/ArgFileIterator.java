@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-public class ArgFileIterator implements Iterator<RpmPathInfo> {
+public class ArgFileIterator implements Iterator<RpmPackageInfo> {
     private Iterator<String> argIterator;
     private Iterator<Path> pathIterator = null;
 
@@ -65,7 +65,7 @@ public class ArgFileIterator implements Iterator<RpmPathInfo> {
     }
 
     @Override
-    public RpmPathInfo next() {
+    public RpmPackageInfo next() {
         return new RpmPackageInfo(pathIterator.next());
     }
 }
