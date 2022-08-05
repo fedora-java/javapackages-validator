@@ -2,14 +2,21 @@ package org.fedoraproject.javapackages.validator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.fedoraproject.javapackages.validator.Logger.LogEvent;
 
 public class Main {
     private static TextDecorator DECORATOR = TextDecorator.NO_DECORATOR;
+    static Collection<RpmPackageInfo> TEST_RPMS;
 
     public static TextDecorator getDecorator() {
         return DECORATOR;
+    }
+
+    public static Collection<? extends RpmPathInfo> getTestRpms() {
+        return Collections.unmodifiableCollection(TEST_RPMS);
     }
 
     public static void main(String[] args) throws Exception {

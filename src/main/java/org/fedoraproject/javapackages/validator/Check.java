@@ -169,6 +169,7 @@ public abstract class Check<Config> {
 
     abstract public Collection<String> check(Iterator<? extends RpmPathInfo> testRpms) throws IOException;
 
+    @SuppressFBWarnings(value = {"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"}, justification = "Needs rework")
     public int executeCheck(String... args) throws IOException {
         List<String> argList = new ArrayList<>();
 
@@ -195,7 +196,13 @@ public abstract class Check<Config> {
 
         int result = 0;
 
-        for (var message : check(new ArgFileIterator(argList))) {
+        // TODO
+        Main.TEST_RPMS = new ArrayList<>();
+        for (var rpmIt = new ArgFileIterator(argList); rpmIt.hasNext();) {
+            Main.TEST_RPMS.add(rpmIt.next());
+        }
+
+        for (var message : check(Main.getTestRpms().iterator())) {
             result = 1;
             System.out.println(message);
         }
