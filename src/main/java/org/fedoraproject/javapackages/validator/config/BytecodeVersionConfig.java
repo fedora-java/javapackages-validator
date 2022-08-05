@@ -19,6 +19,10 @@ public interface BytecodeVersionConfig {
         }
     }
 
+    public static int bytecodeVersionForJava(int javaVersion) {
+        return javaVersion + 44;
+    }
+
     /**
      * Return the allowed version range for a given class.
      * @param rpmPackage RpmPackage.
