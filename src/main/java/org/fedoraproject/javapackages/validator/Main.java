@@ -10,6 +10,8 @@ import java.util.Collections;
 
 import org.fedoraproject.javapackages.validator.Logger.LogEvent;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class Main {
     private static TextDecorator DECORATOR = TextDecorator.NO_DECORATOR;
     private static PrintStream debugOutputStream = new PrintStream(OutputStream.nullOutputStream(), false, StandardCharsets.UTF_8);
@@ -19,6 +21,7 @@ public class Main {
         return DECORATOR;
     }
 
+    @SuppressFBWarnings({"MS_EXPOSE_REP"})
     public static PrintStream getDebugOutputStream() {
         return debugOutputStream;
     }

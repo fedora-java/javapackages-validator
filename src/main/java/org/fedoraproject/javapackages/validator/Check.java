@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.tools.JavaCompiler;
@@ -85,13 +86,15 @@ public abstract class Check<Config> {
         return this;
     }
 
-    private static void compileFiles(Path sourceDir, Iterable<String> compilerOptions) throws IOException {
+    private void compileFiles(Path sourceDir, Iterable<String> compilerOptions) throws IOException {
         List<File> inputFiles = Files.find(sourceDir, Integer.MAX_VALUE,
                 (path, attributes) -> !attributes.isDirectory() && path.toString().endsWith(".java"))
                 .map(Path::toFile).toList();
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+        logger.debug("Compiling source configuration files: {0}", inputFiles);
 
         try {
             Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(inputFiles);
@@ -131,12 +134,17 @@ public abstract class Check<Config> {
             configurations.put(NoConfig.class, NoConfig.INSTANCE);
 
             FileTime lastModifiedSrc = lastModified(Files.find(config_src_dir, Integer.MAX_VALUE, (path, attributes) -> true));
-            if (Files.notExists(config_bin_dir) || lastModifiedSrc.compareTo(lastModified(
+            logger.debug("Source configuration was last modified: {0}", lastModifiedSrc);
+            FileTime lastModifiedBin = null;
+            if (Files.notExists(config_bin_dir) || lastModifiedSrc.compareTo(lastModifiedBin = lastModified(
                     Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) -> true))) > 0) {
                 if (Files.isDirectory(config_bin_dir)) {
                     FileUtils.deleteDirectory(config_bin_dir.toFile());
                 } else {
                     Files.deleteIfExists(config_bin_dir);
+                }
+                if (lastModifiedBin != null) {
+                    logger.debug("Compiled configuration was last modified: {0}", lastModifiedBin);
                 }
                 compileFiles(config_src_dir, Arrays.asList("-d", config_bin_dir.toString()));
             }
@@ -144,6 +152,9 @@ public abstract class Check<Config> {
             var classes = Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) ->
                     attributes.isRegularFile() && path.toString().endsWith(".class"))
                     .map(Path::toString).toArray(String[]::new);
+
+            logger.debug("Compiled configuration files: [{0}]", Stream.of(classes)
+                    .collect(Collectors.joining(", ")));
 
             for (int i = 0; i != classes.length; ++i) {
                 classes[i] = classes[i].substring(config_bin_dir.toString().length() + 1);
@@ -162,6 +173,9 @@ public abstract class Check<Config> {
             } catch (ReflectiveOperationException ex) {
                 throw new RuntimeException(ex);
             }
+
+            logger.debug("Configurations: [{0}]", configurations.keySet().stream()
+                    .map(Class::getSimpleName).collect(Collectors.joining(", ")));
         }
 
         return configClass.cast(configurations.get(configClass));
@@ -186,6 +200,10 @@ public abstract class Check<Config> {
                 argList.add(args[i]);
             }
         }
+
+        logger.debug("Compile source directory: {0}", config_src_dir);
+        logger.debug("Compile target directory: {0}", config_bin_dir);
+        logger.debug("Arguments: {0}", argList);
 
         config = getConfigInstance();
 
