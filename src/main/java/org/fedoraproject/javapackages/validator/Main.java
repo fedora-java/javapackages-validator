@@ -1,5 +1,8 @@
 package org.fedoraproject.javapackages.validator;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,10 +12,15 @@ import org.fedoraproject.javapackages.validator.Logger.LogEvent;
 
 public class Main {
     private static TextDecorator DECORATOR = TextDecorator.NO_DECORATOR;
+    private static PrintStream debugOutputStream = new PrintStream(OutputStream.nullOutputStream(), false, StandardCharsets.UTF_8);
     static Collection<RpmPackageInfo> TEST_RPMS;
 
     public static TextDecorator getDecorator() {
         return DECORATOR;
+    }
+
+    public static PrintStream getDebugOutputStream() {
+        return debugOutputStream;
     }
 
     public static Collection<? extends RpmPathInfo> getTestRpms() {
@@ -26,6 +34,7 @@ public class Main {
             System.out.println("Optional flags:");
             System.out.println("    --config-src [/mnt/config/src] - directory containing configuration sources");
             System.out.println("    --config-bin [/mnt/config/bin] - directory where compiled class files will be put");
+            System.out.println("    -x, --debug - Display debugging output");
             System.out.println("    -r, --color - Display colored output");
             System.exit(1);
         }
@@ -34,6 +43,9 @@ public class Main {
         for (String arg : args) {
             if (arg.equals("-r") || arg.equals("--color")) {
                 DECORATOR = AnsiDecorator.INSTANCE;
+                continue;
+            } else if (arg.equals("-x") || arg.equals("--debug")) {
+                debugOutputStream = System.err;
                 continue;
             }
 

@@ -10,6 +10,7 @@ import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 
 public class Logger {
     public enum LogEvent {
+        debug("DEBUG"),
         info("INFO"),
         warn("WARN"),
         pass("PASS"),
@@ -25,6 +26,7 @@ public class Logger {
     private EnumMap<LogEvent, PrintStream> streams = new EnumMap<>(LogEvent.class);
 
     public Logger() {
+        setStream(LogEvent.debug, Main.getDebugOutputStream());
         setStream(LogEvent.info, System.err);
         setStream(LogEvent.warn, System.err);
         setStream(LogEvent.pass, new PrintStream(OutputStream.nullOutputStream(), false, StandardCharsets.UTF_8));
@@ -39,6 +41,9 @@ public class Logger {
         stream.print('[');
         Decoration[] decorations;
         switch (logEvent) {
+        case debug:
+            decorations = new Decoration[] {Decoration.bright_magenta, Decoration.bold};
+            break;
         case info:
             decorations = new Decoration[] {Decoration.cyan, Decoration.bold};
             break;
@@ -55,6 +60,10 @@ public class Logger {
         stream.print(Main.getDecorator().decorate(logEvent.text, decorations));
         stream.print("] ");
         stream.println(MessageFormat.format(pattern, arguments));
+    }
+
+    public void debug(String pattern, Object... arguments) {
+        log(LogEvent.debug, pattern, arguments);
     }
 
     public void info(String pattern, Object... arguments) {
