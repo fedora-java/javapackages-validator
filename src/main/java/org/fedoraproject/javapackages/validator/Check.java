@@ -110,8 +110,8 @@ public abstract class Check<Config> {
         public static final NoConfig INSTANCE = new NoConfig() {};
     }
 
-    private static FileTime lastModified(Stream<Path> paths) {
-        return paths.map(path -> {
+    private static FileTime lastModifiedRecursive(Path root) throws IOException {
+        return Files.find(root, Integer.MAX_VALUE, (path, attributes) -> true).map(path -> {
             try {
                 var result = Files.getLastModifiedTime(path);
                 if (Files.isSymbolicLink(path)) {
@@ -133,20 +133,28 @@ public abstract class Check<Config> {
             configurations = new HashMap<>();
             configurations.put(NoConfig.class, NoConfig.INSTANCE);
 
-            FileTime lastModifiedSrc = lastModified(Files.find(config_src_dir, Integer.MAX_VALUE, (path, attributes) -> true));
-            logger.debug("Source configuration was last modified: {0}", lastModifiedSrc);
-            FileTime lastModifiedBin = null;
-            if (Files.notExists(config_bin_dir) || lastModifiedSrc.compareTo(lastModifiedBin = lastModified(
-                    Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) -> true))) > 0) {
-                if (Files.isDirectory(config_bin_dir)) {
-                    FileUtils.deleteDirectory(config_bin_dir.toFile());
-                } else {
-                    Files.deleteIfExists(config_bin_dir);
+            if (!Files.isDirectory(config_src_dir)) {
+                logger.debug("Configuration source directory does not exist");
+            } else {
+                FileTime lastModifiedSrc = lastModifiedRecursive(config_src_dir);
+                logger.debug("Source configuration was last modified: {0}", lastModifiedSrc);
+                FileTime lastModifiedBin = null;
+
+                if (!Files.exists(config_bin_dir) || FileUtils.isEmptyDirectory(config_bin_dir.toFile()) ||
+                        lastModifiedSrc.compareTo(lastModifiedBin = lastModifiedRecursive(config_bin_dir)) > 0) {
+                    System.out.println("inside");
+                    if (Files.isDirectory(config_bin_dir)) {
+                        FileUtils.cleanDirectory(config_bin_dir.toFile());
+                    } else {
+                        Files.deleteIfExists(config_bin_dir);
+                    }
+                    if (lastModifiedBin != null) {
+                        logger.debug("Compiled configuration was last modified: {0}", lastModifiedBin);
+                    }
+                    Files.createDirectories(config_bin_dir);
+                    logger.debug("Created directories up to: {0}", config_bin_dir);
+                    compileFiles(config_src_dir, Arrays.asList("-d", config_bin_dir.toString()));
                 }
-                if (lastModifiedBin != null) {
-                    logger.debug("Compiled configuration was last modified: {0}", lastModifiedBin);
-                }
-                compileFiles(config_src_dir, Arrays.asList("-d", config_bin_dir.toString()));
             }
 
             var classes = Files.find(config_bin_dir, Integer.MAX_VALUE, (path, attributes) ->
