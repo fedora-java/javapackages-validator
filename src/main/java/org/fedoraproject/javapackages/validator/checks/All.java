@@ -84,6 +84,7 @@ public class All extends Check<Check.NoConfig> {
                     getLogger().info("{0}: Configuration class not found, ignoring the test",
                             check.getClass().getSimpleName());
                 } else {
+                    getLogger().info("Executing {0}", getClass().getSimpleName());
                     result.addAll(check.check(rpmList.iterator()));
                 }
             }
