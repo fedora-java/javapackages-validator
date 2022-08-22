@@ -50,10 +50,6 @@ public abstract class Check<Config> {
         return Main.getDecorator().decorate(object, decorations);
     }
 
-    protected static String listDecorate(Collection<?> list, Decoration... decorations) {
-        return "[" + list.stream().map(arch -> textDecorate(arch, decorations)).collect(Collectors.joining(", ")) + "]";
-    }
-
     protected static String failMessage(String pattern, Object... arguments) {
         String result = "";
         result += "[";
