@@ -39,24 +39,13 @@ public class Logger {
     private void log(LogEvent logEvent, String pattern, Object... arguments) {
         var stream = streams.get(logEvent);
         stream.print('[');
-        Decoration[] decorations;
-        switch (logEvent) {
-        case debug:
-            decorations = new Decoration[] {Decoration.bright_magenta, Decoration.bold};
-            break;
-        case info:
-            decorations = new Decoration[] {Decoration.cyan, Decoration.bold};
-            break;
-        case warn:
-            decorations = new Decoration[] {Decoration.yellow, Decoration.bold};
-            break;
-        case pass:
-            decorations = new Decoration[] {Decoration.green, Decoration.bold};
-            break;
-        default:
-            decorations = new Decoration[0];
-            break;
-        }
+        var decorations = switch (logEvent) {
+            case debug -> new Decoration[] {Decoration.bright_magenta, Decoration.bold};
+            case info -> new Decoration[] {Decoration.cyan, Decoration.bold};
+            case warn -> new Decoration[] {Decoration.yellow, Decoration.bold};
+            case pass -> new Decoration[] {Decoration.green, Decoration.bold};
+            default -> new Decoration[0];
+        };
         stream.print(Main.getDecorator().decorate(logEvent.text, decorations));
         stream.print("] ");
         stream.println(MessageFormat.format(pattern, arguments));
