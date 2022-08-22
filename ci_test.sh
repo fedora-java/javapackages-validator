@@ -3,8 +3,8 @@
 set -ex
 
 jp_validator_image='javapackages-validator'
-test_artifacts_dir='/opt/test_artifacts'
-jpv_tests_dir='/opt/javapackages-validator-tests'
+test_artifacts_dir='/tmp/test_artifacts'
+jpv_tests_dir='/tmp/javapackages-validator-tests'
 jpv_tests_url='https://pagure.io/javapackages-validator-tests'
 
 build_local_image() {
