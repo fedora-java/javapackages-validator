@@ -22,7 +22,7 @@ prepare_test_env() {
     download_ci_env
     git -C "${jpv_tests_dir%/*}" clone "${jpv_tests_url}.git"
     git -C "${jpv_tests_dir}" checkout 'cc9538d898bd000ceeef53d8cb4009701ad172dd'
-    find "${test_artifacts_dir}" -mindepth 3 -maxdepth 3 -wholename '*/*/plans/javapackages.fmf' -exec sed -i "s|url: ${jpv_tests_url}|path: ${jpv_tests_dir}|" {} +
+    find "${test_artifacts_dir}/rpms" -mindepth 3 -maxdepth 3 -wholename '*/*/plans/javapackages.fmf' -exec sed -i "s|url: ${jpv_tests_url}|path: ${jpv_tests_dir}|" {} +
 }
 
 execute_symlink_check() {
@@ -41,7 +41,7 @@ public class SymlinkConfigJP extends SymlinkConfig.RpmSetImpl {
 }
 " > "${jpv_tests_dir}/src/SymlinkConfigJP.java"
     pushd "${jpv_tests_dir}"
-    TEST_ARTIFACTS="${test_artifacts_dir}" JP_VALIDATOR_IMAGE="${jp_validator_image}" ./jp_validator.sh -r -x SymlinkCheck -c /mnt/config/SymlinkConfigJP.java
+    TEST_ARTIFACTS="${test_artifacts_dir}/rpms" JP_VALIDATOR_IMAGE="${jp_validator_image}" ./jp_validator.sh -r -x SymlinkCheck -c /mnt/config/SymlinkConfigJP.java
     popd
     echo "public class SymlinkConfigJP {}" > "${jpv_tests_dir}/src/SymlinkConfigJP.java"
 }
@@ -49,10 +49,10 @@ public class SymlinkConfigJP extends SymlinkConfig.RpmSetImpl {
 execute() {
     execute_symlink_check
     
-    for component in $(ls ${test_artifacts_dir}); do
-        if [ -f "${test_artifacts_dir}/${component}/plans/javapackages.fmf" ]; then
-            tmt --root "${test_artifacts_dir}/${component}" run \
-                -e TEST_ARTIFACTS="${test_artifacts_dir}/${component}"\
+    for component in $(ls ${test_artifacts_dir}/rpms); do
+        if [ -f "${test_artifacts_dir}/rpms/${component}/plans/javapackages.fmf" ]; then
+            tmt --root "${test_artifacts_dir}/rpms/${component}" run \
+                -e TEST_ARTIFACTS="${test_artifacts_dir}/rpms/${component}"\
                 -e JP_VALIDATOR_IMAGE="${jp_validator_image}"\
                 discover --how fmf --path "${jpv_tests_dir}"\
                 provision --how local\
