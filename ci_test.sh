@@ -23,10 +23,6 @@ prepare_test_env() {
     git -C "${jpv_tests_dir%/*}" clone "${jpv_tests_url}.git"
     git -C "${jpv_tests_dir}" checkout 'cc9538d898bd000ceeef53d8cb4009701ad172dd'
     find "${test_artifacts_dir}" -mindepth 3 -maxdepth 3 -wholename '*/*/plans/javapackages.fmf' -exec sed -i "s|url: ${jpv_tests_url}|path: ${jpv_tests_dir}|" {} +
-    
-    # https://github.com/teemtee/tmt/pull/1349
-    sudo rm /bin/sh
-    sudo ln -s /bin/bash /bin/sh
 }
 
 execute_symlink_check() {
