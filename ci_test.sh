@@ -28,7 +28,7 @@ execute() {
     for component in $(ls ${test_artifacts_dir}/rpms); do
         if [ -f "${test_artifacts_dir}/rpms/${component}/plans/javapackages.fmf" ]; then
             tmt --root "${test_artifacts_dir}/rpms/${component}" run \
-                -e TEST_ARTIFACTS="${test_artifacts_dir}/rpms/${component}"\
+                -e TEST_ARTIFACTS="${test_artifacts_dir}/rpms/${component}/rpms"\
                 -e JP_VALIDATOR_IMAGE="${jp_validator_image}"\
                 -e ENVROOT="${test_artifacts_dir}/envroot"\
                 discover --how fmf --url "${jpv_tests_dir}" --ref "${jpv_tests_ref}"\
