@@ -4,8 +4,9 @@ set -ex
 
 jp_validator_image='javapackages-validator'
 test_artifacts_dir='/tmp/test_artifacts'
-jpv_tests_dir='/tmp/javapackages-validator-tests'
+jpv_tests_dir='/tmp/javapackages-validator-tests.git'
 jpv_tests_url='https://pagure.io/javapackages-validator-tests'
+jpv_tests_ref='17acc96ee933e080640f244918bd12e74b92aae2'
 
 build_local_image() {
     # Add colored and debug outputs
@@ -20,9 +21,7 @@ download_ci_env() {
 
 prepare_test_env() {
     download_ci_env
-    git -C "${jpv_tests_dir%/*}" clone "${jpv_tests_url}.git"
-    git -C "${jpv_tests_dir}" checkout '17acc96ee933e080640f244918bd12e74b92aae2'
-    find "${test_artifacts_dir}/rpms" -mindepth 3 -maxdepth 3 -wholename '*/*/plans/javapackages.fmf' -exec sed -i "s|url: ${jpv_tests_url}|path: ${jpv_tests_dir}|" {} +
+    git clone --mirror "${jpv_tests_url}" "${jpv_tests_dir}"
 }
 
 execute() {
@@ -32,7 +31,7 @@ execute() {
                 -e TEST_ARTIFACTS="${test_artifacts_dir}/rpms/${component}"\
                 -e JP_VALIDATOR_IMAGE="${jp_validator_image}"\
                 -e ENVROOT="${test_artifacts_dir}/envroot"\
-                discover --how fmf --path "${jpv_tests_dir}"\
+                discover --how fmf --url "${jpv_tests_dir}" --ref "${jpv_tests_ref}"\
                 provision --how local\
                 execute\
                 report -vvv\
