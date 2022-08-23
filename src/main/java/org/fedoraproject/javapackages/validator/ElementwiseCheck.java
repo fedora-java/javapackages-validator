@@ -1,7 +1,6 @@
 package org.fedoraproject.javapackages.validator;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -19,10 +18,6 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
     }
 
     abstract protected Collection<String> check(Config config, RpmPathInfo rpm) throws IOException;
-
-    public final Collection<String> check(Config config, Path rpmPath) throws IOException {
-        return check(config, new RpmPathInfo(rpmPath));
-    }
 
     @Override
     public final Collection<String> check(Config config, Collection<RpmPathInfo> testRpms) throws IOException {
