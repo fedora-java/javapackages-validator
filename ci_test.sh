@@ -21,39 +21,44 @@ prepare_test_env() {
     git clone --mirror "${jpv_tests_url}" "${jpv_tests_dir}"
 }
 
+execute_one() {
+    component="${1}"
+    run_id="jpv-ci-${component}"
+    echo "::group::Run tests for ${component}"
+
+    # Discover tests
+    if ! tmt -q --root "${test_artifacts_dir}/rpms/${component}" \
+         run --scratch \
+             --id "${run_id}" \
+         discover --how fmf \
+                  --url "${jpv_tests_dir}" \
+                  --ref "${jpv_tests_ref}" \
+         plan --name /plans/javapackages
+    then
+        echo "::endgroup::"
+        return
+    fi
+
+    # Execute tests
+    if tmt -q \
+       run --id "${run_id}" \
+           -e TEST_ARTIFACTS="${test_artifacts_dir}/rpms/${component}/rpms" \
+           -e JP_VALIDATOR_IMAGE="${jp_validator_image}" \
+           -e ENVROOT="${test_artifacts_dir}/envroot" \
+       provision --how local \
+       execute --how tmt --no-progress-bar
+    then
+        echo "::endgroup::"
+        return
+    fi
+
+    # Display test report if testing failed
+    tmt -vvv run --id "${run_id}" report
+}
+
 execute() {
     for component in $(ls ${test_artifacts_dir}/rpms); do
-        run_id="jpv-ci-${component}"
-        echo "::group::Run tests for ${component}"
-
-        # Discover tests
-        if ! tmt -q --root "${test_artifacts_dir}/rpms/${component}" \
-             run --scratch \
-                 --id "${run_id}" \
-             discover --how fmf \
-                      --url "${jpv_tests_dir}" \
-                      --ref "${jpv_tests_ref}" \
-             plan --name /plans/javapackages
-        then
-            echo "::endgroup::"
-            continue
-        fi
-
-        # Execute tests
-        if tmt -q \
-           run --id "${run_id}" \
-               -e TEST_ARTIFACTS="${test_artifacts_dir}/rpms/${component}/rpms" \
-               -e JP_VALIDATOR_IMAGE="${jp_validator_image}" \
-               -e ENVROOT="${test_artifacts_dir}/envroot" \
-           provision --how local \
-           execute --how tmt --no-progress-bar
-        then
-            echo "::endgroup::"
-            continue
-        fi
-
-        # Display test report if testing failed
-        tmt -vvv run --id "${run_id}" report
+        execute_one "${component}"
     done
 }
 
@@ -63,6 +68,8 @@ elif [ "${1}" = 'prepare' ]; then
     prepare_test_env
 elif [ "${1}" = 'execute' ]; then
     execute
+elif [ "${1}" = 'execute_one' ]; then
+    execute_one "${2}"
 else
     echo "Unrecognized option: ${1}"
     exit 1
