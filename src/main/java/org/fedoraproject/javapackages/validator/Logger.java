@@ -12,7 +12,6 @@ public class Logger {
     public enum LogEvent {
         debug("DEBUG"),
         info("INFO"),
-        warn("WARN"),
         pass("PASS"),
         ;
 
@@ -28,7 +27,6 @@ public class Logger {
     public Logger() {
         setStream(LogEvent.debug, Main.getDebugOutputStream());
         setStream(LogEvent.info, System.err);
-        setStream(LogEvent.warn, System.err);
         setStream(LogEvent.pass, new PrintStream(OutputStream.nullOutputStream(), false, StandardCharsets.UTF_8));
     }
 
@@ -42,7 +40,6 @@ public class Logger {
         var decorations = switch (logEvent) {
             case debug -> new Decoration[] {Decoration.bright_magenta, Decoration.bold};
             case info -> new Decoration[] {Decoration.cyan, Decoration.bold};
-            case warn -> new Decoration[] {Decoration.yellow, Decoration.bold};
             case pass -> new Decoration[] {Decoration.green, Decoration.bold};
             default -> new Decoration[0];
         };
@@ -57,10 +54,6 @@ public class Logger {
 
     public void info(String pattern, Object... arguments) {
         log(LogEvent.info, pattern, arguments);
-    }
-
-    public void warn(String pattern, Object... arguments) {
-        log(LogEvent.warn, pattern, arguments);
     }
 
     public void pass(String pattern, Object... arguments) {
