@@ -2,6 +2,7 @@ package org.fedoraproject.javapackages.validator;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +37,8 @@ public class ArgFileIterator implements Iterator<RpmPathInfo> {
                     return Arrays.asList(argPath).iterator();
                 } else if (Files.isDirectory(argPath)) {
                     return Files.find(argPath, Integer.MAX_VALUE, (path, attributes) ->
-                            attributes.isRegularFile() && path.toString().endsWith(".rpm")).iterator();
+                            !attributes.isDirectory() && path.toString().endsWith(".rpm"),
+                            FileVisitOption.FOLLOW_LINKS).iterator();
                 } else {
                     throw new IllegalStateException("File " + argPath + " of unknown type");
                 }
