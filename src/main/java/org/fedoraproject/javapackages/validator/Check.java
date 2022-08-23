@@ -67,13 +67,6 @@ public abstract class Check<Config> {
         this.configClass = configClass;
     }
 
-    public final Check<Config> inherit(Check<?> parent) throws IOException {
-        this.configurations = Collections.unmodifiableMap(parent.configurations);
-        this.config_uris = Collections.unmodifiableList(parent.config_uris);
-        this.logger = parent.logger;
-        return this;
-    }
-
     private Map<String, ? extends JavaFileObject> compileFiles(Iterable<URI> sourceURIs, Iterable<String> compilerOptions) throws IOException {
         var compilationUnits = new ArrayList<JavaFileObject>();
         for (URI sourceURI : sourceURIs) {
