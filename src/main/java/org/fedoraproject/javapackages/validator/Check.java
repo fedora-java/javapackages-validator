@@ -173,6 +173,9 @@ public abstract class Check<Config> {
         }
 
         Main.readTestRpmArgs(argList);
+        if (Main.getTestRpms().isEmpty()) {
+            throw new RuntimeException("No test rpms found");
+        }
 
         var messages = new ArrayList<String>();
         for (Config configInstance : configInstances) {
