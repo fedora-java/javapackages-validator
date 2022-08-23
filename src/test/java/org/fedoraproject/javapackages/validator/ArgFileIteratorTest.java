@@ -1,9 +1,11 @@
 package org.fedoraproject.javapackages.validator;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
 
@@ -53,15 +55,21 @@ public class ArgFileIteratorTest {
     }
 
     @Test
-    void testDir() {
+    void testDirSymlink() {
         var it = new ArgFileIterator(Arrays.asList(
-                "src/test/resources/arg_file_iterator"));
-        assertTrue(it.hasNext());
-        it.next();
+                "src/test/resources/arg_file_iterator/dir_symlink"));
         assertTrue(it.hasNext());
         it.next();
         assertTrue(it.hasNext());
         it.next();
         assertFalse(it.hasNext());
+    }
+
+    @Test
+    void testDirDanglingSymlink() {
+        var it = new ArgFileIterator(Arrays.asList(
+                "src/test/resources/arg_file_iterator/dir_dangling_symlink"));
+        var ex = assertThrows(Exception.class, () -> it.next());
+        assertFalse(ex instanceof NoSuchElementException);
     }
 }
