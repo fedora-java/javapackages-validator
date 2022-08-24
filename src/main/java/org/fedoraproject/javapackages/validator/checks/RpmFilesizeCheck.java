@@ -25,11 +25,11 @@ public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
 
         if (!config.allowedFilesize(rpm, filesize)) {
             result.add("{0}: file size is: {1} bytes",
-                    Decorated.rpm(rpm.getPath()),
+                    Decorated.rpm(rpm),
                     Decorated.actual(formattedFilesize));
         } else {
             getLogger().pass("{0}: file size is: {1} bytes",
-                    Decorated.rpm(rpm.getPath()),
+                    Decorated.rpm(rpm),
                     Decorated.actual(formattedFilesize));
         }
 

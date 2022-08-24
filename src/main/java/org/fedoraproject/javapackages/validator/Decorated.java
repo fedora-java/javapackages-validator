@@ -23,7 +23,7 @@ public class Decorated {
         this.decorations = decorations;
     }
 
-    public static Decorated rpm(Object rpm) {
+    public static Decorated rpm(RpmPathInfo rpm) {
         return new Decorated(rpm, DECORATION_RPM);
     }
 
@@ -47,10 +47,10 @@ public class Decorated {
         return new Decorated(obj);
     }
 
-    public static Decorated custom(Object obj, Decoration...decorations) {
-        return new Decorated(obj,decorations);
+    public static Decorated custom(Object obj, Decoration... decorations) {
+        return new Decorated(obj, decorations);
     }
-    
+
     public String toString() {
         return Main.getDecorator().decorate(object, decorations);
     }

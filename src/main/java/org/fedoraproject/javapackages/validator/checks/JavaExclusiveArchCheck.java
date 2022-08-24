@@ -31,10 +31,10 @@ public class JavaExclusiveArchCheck extends ElementwiseCheck<Check.NoConfig> {
 
         if (expected.equals(actual)) {
             getLogger().pass("{0}: ExclusiveArch with %java_arches - ok",
-                    Decorated.rpm(rpm.getPath()));
+                    Decorated.rpm(rpm));
         } else {
             result.add("{0}: expected ExclusiveArch \"{1}\" but was \"{2}\"",
-                    Decorated.rpm(rpm.getPath()), Decorated.expected(expected),
+                    Decorated.rpm(rpm), Decorated.expected(expected),
                     Decorated.actual(actual));
         }
 

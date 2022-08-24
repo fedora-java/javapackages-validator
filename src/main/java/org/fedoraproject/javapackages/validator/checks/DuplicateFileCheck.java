@@ -1,7 +1,6 @@
 package org.fedoraproject.javapackages.validator.checks;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,14 +32,14 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
 
         var result = new CheckResult();
 
-        // The union of file paths present in all RPM files mapped to the RPM file names they are present in
-        var files = new TreeMap<String, ArrayList<Pair<CpioArchiveEntry, Path>>>();
+        // The union of file paths present in all RPM files mapped to the RPMs they are present in
+        var files = new TreeMap<String, ArrayList<Pair<CpioArchiveEntry, RpmPathInfo>>>();
 
         for (RpmPathInfo rpm : testRpms) {
             if (!new RpmPathInfo(rpm.getPath()).isSourcePackage()) {
                 for (var pair : Common.rpmFilesAndSymlinks(rpm.getPath()).entrySet()) {
                     files.computeIfAbsent(Common.getEntryPath(pair.getKey()).toString(), key -> new ArrayList<>())
-                        .add(Pair.of(pair.getKey(), rpm.getPath()));
+                        .add(Pair.of(pair.getKey(), rpm));
                 }
             }
         }
@@ -49,7 +48,7 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
             if (entry.getValue().size() > 1) {
                 var providers = new ArrayList<RpmInfo>(entry.getValue().size());
                 for (var providerPair : entry.getValue()) {
-                    providers.add(new RpmInfo(providerPair.getValue()));
+                    providers.add(providerPair.getValue());
                 }
                 var okDifferentArchs = new Boolean[] {true};
                 // If all providers are of different architecture (with the

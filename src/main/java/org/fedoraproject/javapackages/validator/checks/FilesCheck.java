@@ -28,13 +28,13 @@ public class FilesCheck extends ElementwiseCheck<FilesConfig> {
                 if (!config.allowedFile(rpm, entryName)) {
                     pass = false;
                     result.add("{0}: Illegal file: {1}",
-                            Decorated.rpm(rpm.getPath()),
+                            Decorated.rpm(rpm),
                             Decorated.actual(entryName));
                 }
             }
 
             if (pass) {
-                getLogger().pass("{0}: ok", Decorated.rpm(rpm.getPath()));
+                getLogger().pass("{0}: ok", Decorated.rpm(rpm));
             }
         }
 

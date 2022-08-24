@@ -29,14 +29,14 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
                 if (!Boolean.class.cast(filter.invoke(config, rpm, attributeValue))) {
                     ok = false;
                     result.add("{0}: Attribute {1} with invalid value: {2}",
-                            Decorated.rpm(rpm.getPath()),
+                            Decorated.rpm(rpm),
                             Decorated.outer(attributeName),
                             Decorated.actual(attributeValue));
                 }
 
                 if (ok) {
                     getLogger().pass("{0}: Attribute [{1}]: ok",
-                            Decorated.rpm(rpm.getPath()),
+                            Decorated.rpm(rpm),
                             Decorated.outer(attributeName));
                 }
             }

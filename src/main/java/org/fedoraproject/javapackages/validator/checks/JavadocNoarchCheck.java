@@ -19,11 +19,11 @@ public class JavadocNoarchCheck extends ElementwiseCheck<Check.NoConfig> {
 
         if (!"noarch".equals(rpm.getArch())) {
             result.add("{0} is a javadoc package but its architecture is {1}",
-                    Decorated.rpm(rpm.getPath()),
+                    Decorated.rpm(rpm),
                     Decorated.actual(rpm.getArch()));
         } else {
             getLogger().pass("{0} is a javadoc package and its architecture is {1}",
-                    Decorated.rpm(rpm.getPath()),
+                    Decorated.rpm(rpm),
                     Decorated.actual("noarch"));
         }
 

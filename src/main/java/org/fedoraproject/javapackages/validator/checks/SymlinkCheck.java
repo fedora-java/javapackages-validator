@@ -38,13 +38,13 @@ public class SymlinkCheck extends ElementwiseCheck<SymlinkConfig> {
 
                 if (location == null) {
                     result.add("{0}: Link {1} points to {2} (normalized as {3}) which was not found",
-                            Decorated.rpm(rpm.getPath()),
+                            Decorated.rpm(rpm),
                             Decorated.custom(link, Decoration.bright_cyan),
                             Decorated.custom(target, Decoration.bright_magenta),
                             Decorated.custom(target.normalize(), Decoration.magenta));
                 } else {
                     getLogger().pass("{0}: Link {1} points to {2} (normalized as {3}) located in {4}",
-                            Decorated.rpm(rpm.getPath()),
+                            Decorated.rpm(rpm),
                             Decorated.custom(link, Decoration.bright_cyan),
                             Decorated.custom(target, Decoration.bright_magenta),
                             Decorated.custom(target.normalize(), Decoration.magenta),

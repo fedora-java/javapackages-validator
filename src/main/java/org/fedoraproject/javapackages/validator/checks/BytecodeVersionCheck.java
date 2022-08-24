@@ -75,7 +75,7 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
 
                                 if (!config.allowedVersion(rpm, jarName, className, version)) {
                                     result.add("{0}: {1}: {2}: illegal class bytecode version {3}",
-                                            Decorated.rpm(rpm.getPath()),
+                                            Decorated.rpm(rpm),
                                             Decorated.outer(jarName),
                                             Decorated.custom(className, Decoration.bright_yellow),
                                             Decorated.actual(version));
@@ -88,7 +88,7 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
 
                         if (foundVersions != null) {
                             getLogger().pass("{0}: {1}: found bytecode versions: {2}",
-                                    Decorated.rpm(rpm.getPath()),
+                                    Decorated.rpm(rpm),
                                     Decorated.outer(jarName),
                                     Decorated.actual(foundVersions));
                         }
