@@ -44,6 +44,15 @@ public abstract class Check<Config> {
     private Class<Config> configClass;
     private Logger logger = new Logger();
 
+    protected static final Decoration DECORATION_RPM = Decoration.bright_red;
+    protected static final Decoration DECORATION_EXPECTED = Decoration.bright_cyan;
+    protected static final Decoration DECORATION_ACTUAL = Decoration.bright_magenta;
+
+    /**
+     * Decoration used for describing objects which hold inspected values
+     */
+    protected static final Decoration DECORATION_OUTER = Decoration.bright_blue;
+
     protected Logger getLogger() {
         return logger;
     }

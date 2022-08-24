@@ -9,7 +9,6 @@ import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Check;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
-import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 
 public class JavaExclusiveArchCheck extends ElementwiseCheck<Check.NoConfig> {
     /**
@@ -25,7 +24,7 @@ public class JavaExclusiveArchCheck extends ElementwiseCheck<Check.NoConfig> {
     @Override
     protected Collection<String> check(Check.NoConfig config, RpmPathInfo rpm) throws IOException {
         var result = new ArrayList<String>(0);
-        String decoratedRpm = textDecorate(rpm.getPath(), Decoration.bright_red);
+        String decoratedRpm = textDecorate(rpm.getPath(), DECORATION_RPM);
 
         boolean noarch = rpm.getBuildArchs().equals(Collections.singletonList("noarch"));
         String expected = noarch ? JAVA_ARCHES + " noarch" : JAVA_ARCHES;
@@ -35,8 +34,8 @@ public class JavaExclusiveArchCheck extends ElementwiseCheck<Check.NoConfig> {
             getLogger().pass("{0}: ExclusiveArch with %java_arches - ok", decoratedRpm);
         } else {
             result.add(failMessage("{0}: expected ExclusiveArch \"{1}\" but was \"{2}\"",
-                    decoratedRpm, textDecorate(expected, Decoration.bright_magenta),
-                    textDecorate(actual, Decoration.bright_magenta)));
+                    decoratedRpm, textDecorate(expected, DECORATION_EXPECTED),
+                    textDecorate(actual, DECORATION_ACTUAL)));
         }
 
         return result;

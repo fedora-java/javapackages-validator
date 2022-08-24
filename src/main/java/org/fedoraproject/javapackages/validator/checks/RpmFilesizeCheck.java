@@ -9,7 +9,6 @@ import java.util.Locale;
 
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
-import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 import org.fedoraproject.javapackages.validator.config.RpmFilesizeConfig;
 
 public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
@@ -26,12 +25,12 @@ public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
 
         if (!config.allowedFilesize(rpm, filesize)) {
             result.add(failMessage("{0}: file size is: {1} bytes",
-                    textDecorate(rpm.getPath(), Decoration.bright_red),
-                    textDecorate(formattedFilesize, Decoration.bright_cyan)));
+                    textDecorate(rpm.getPath(), DECORATION_RPM),
+                    textDecorate(formattedFilesize, DECORATION_ACTUAL)));
         } else {
             getLogger().pass("{0}: file size is: {1} bytes",
-                    textDecorate(rpm.getPath(), Decoration.bright_red),
-                    textDecorate(formattedFilesize, Decoration.bright_cyan));
+                    textDecorate(rpm.getPath(), DECORATION_RPM),
+                    textDecorate(formattedFilesize, DECORATION_ACTUAL));
         }
 
         return result;

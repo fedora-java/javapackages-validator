@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
-import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 
 public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
     protected RpmAttributeCheck(Class<Config> configClass) {
@@ -32,15 +31,15 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
                 if (!Boolean.class.cast(filter.invoke(config, rpm, attributeValue))) {
                     ok = false;
                     result.add(failMessage("{0}: Attribute {1} with invalid value: {2}",
-                            textDecorate(rpm.getPath(), Decoration.bright_red),
-                            textDecorate(attributeName, Decoration.bright_cyan),
-                            textDecorate(attributeValue, Decoration.bright_magenta)));
+                            textDecorate(rpm.getPath(), DECORATION_RPM),
+                            textDecorate(attributeName, DECORATION_OUTER),
+                            textDecorate(attributeValue, DECORATION_ACTUAL)));
                 }
 
                 if (ok) {
                     getLogger().pass("{0}: Attribute [{1}]: ok",
-                            textDecorate(rpm.getPath(), Decoration.bright_red),
-                            textDecorate(attributeName, Decoration.bright_cyan));
+                            textDecorate(rpm.getPath(), DECORATION_RPM),
+                            textDecorate(attributeName, DECORATION_OUTER));
                 }
             }
         } catch (ReflectiveOperationException ex) {

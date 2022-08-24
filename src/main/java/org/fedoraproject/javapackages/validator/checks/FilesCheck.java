@@ -10,7 +10,6 @@ import org.fedoraproject.javadeptools.rpm.RpmArchiveInputStream;
 import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
-import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 import org.fedoraproject.javapackages.validator.config.FilesConfig;
 
 public class FilesCheck extends ElementwiseCheck<FilesConfig> {
@@ -29,13 +28,13 @@ public class FilesCheck extends ElementwiseCheck<FilesConfig> {
 
                 if (!config.allowedFile(rpm, entryName)) {
                     result.add(failMessage("{0}: Illegal file: {1}",
-                            textDecorate(rpm.getPath(), Decoration.bright_red),
-                            textDecorate(entryName, Decoration.bright_blue)));
+                            textDecorate(rpm.getPath(), DECORATION_RPM),
+                            textDecorate(entryName, DECORATION_ACTUAL)));
                 }
             }
 
             if (previousSize == result.size()) {
-                getLogger().pass("{0}: ok", textDecorate(rpm.getPath(), Decoration.bright_red));
+                getLogger().pass("{0}: ok", textDecorate(rpm.getPath(), DECORATION_RPM));
             }
         }
 
