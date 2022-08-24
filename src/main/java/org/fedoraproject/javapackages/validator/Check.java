@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -133,7 +134,7 @@ public abstract class Check<Config> {
         return configurations.getOrDefault(configClass, Collections.emptyList()).stream().map(configClass::cast).toList();
     }
 
-    abstract public Collection<String> check(Config config, Collection<RpmPathInfo> testRpms) throws IOException;
+    abstract public Collection<String> check(Config config, Iterator<RpmPathInfo> rpmIt) throws IOException;
 
     public int executeCheck(String... args) throws IOException {
         List<String> argList = new ArrayList<>();
@@ -172,14 +173,17 @@ public abstract class Check<Config> {
             }
         }
 
-        Main.readTestRpmArgs(argList);
-        if (Main.getTestRpms().isEmpty()) {
-            throw new RuntimeException("No test rpms found");
-        }
-
         var messages = new ArrayList<String>();
-        for (Config configInstance : configInstances) {
-            messages.addAll(check(configInstance, Main.getTestRpms()));
+
+        {
+            var fileIt = new ArgFileIterator(argList);
+            if (!fileIt.hasNext()) {
+                throw new RuntimeException("No test rpms found");
+            }
+
+            for (Config configInstance : configInstances) {
+                messages.addAll(check(configInstance, fileIt));
+            }
         }
 
         for (var message : messages) {

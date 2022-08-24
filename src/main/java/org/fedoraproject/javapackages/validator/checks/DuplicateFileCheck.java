@@ -5,9 +5,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
+import org.apache.commons.compress.utils.Iterators;
 import org.apache.commons.lang3.tuple.Pair;
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Check;
@@ -25,7 +27,10 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
     }
 
     @Override
-    public Collection<String> check(DuplicateFileConfig config, Collection<RpmPathInfo> testRpms) throws IOException {
+    public Collection<String> check(DuplicateFileConfig config, Iterator<RpmPathInfo> rpmIt) throws IOException {
+        var testRpms = new ArrayList<RpmPathInfo>();
+        Iterators.addAll(testRpms, rpmIt);
+
         var result = new ArrayList<String>(0);
 
         // The union of file paths present in all RPM files mapped to the RPM file names they are present in

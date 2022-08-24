@@ -3,6 +3,7 @@ package org.fedoraproject.javapackages.validator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.Predicate;
 
 public abstract class ElementwiseCheck<Config> extends Check<Config> {
@@ -20,10 +21,11 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
     abstract protected Collection<String> check(Config config, RpmPathInfo rpm) throws IOException;
 
     @Override
-    public final Collection<String> check(Config config, Collection<RpmPathInfo> testRpms) throws IOException {
+    public final Collection<String> check(Config config, Iterator<RpmPathInfo> rpmIt) throws IOException {
         var result = new ArrayList<String>(0);
 
-        for (RpmPathInfo rpm : testRpms) {
+        while (rpmIt.hasNext()) {
+            RpmPathInfo rpm = rpmIt.next();
             if (filter.test(rpm)) {
                 result.addAll(check(config, rpm));
             }

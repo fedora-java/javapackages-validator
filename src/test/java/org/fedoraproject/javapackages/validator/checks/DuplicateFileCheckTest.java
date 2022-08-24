@@ -16,7 +16,7 @@ public class DuplicateFileCheckTest {
 
     @Test
     void testIllegalDuplicateFile() throws IOException {
-        var result = new DuplicateFileCheck().check(null, TestCommon.collectionFrom(Stream.of(
+        var result = new DuplicateFileCheck().check(null, TestCommon.iteratorFrom(Stream.of(
                 DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM)));
         assertEquals(1, result.size());
     }
@@ -24,7 +24,7 @@ public class DuplicateFileCheckTest {
     @Test
     void testAllowedDuplicateFile() throws IOException {
         var result = new DuplicateFileCheck().check((filename, providerRpms) -> true,
-                TestCommon.collectionFrom(Stream.of(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM)));
+                TestCommon.iteratorFrom(Stream.of(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM)));
         assertEquals(0, result.size());
     }
 }

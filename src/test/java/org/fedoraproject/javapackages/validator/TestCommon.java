@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
+import java.util.Iterator;
 import java.util.stream.Stream;
 
 public class TestCommon {
@@ -12,13 +12,13 @@ public class TestCommon {
     public static final Path RPM_PATH_PREFIX = RPMBUILD_PATH_PREFIX.resolve(Paths.get("RPMS"));
     public static final Path SRPM_PATH_PREFIX = RPMBUILD_PATH_PREFIX.resolve(Paths.get("SRPMS"));
 
-    public static Collection<RpmPathInfo> collectionFrom(Stream<Path> paths) {
+    public static Iterator<RpmPathInfo> iteratorFrom(Stream<Path> paths) {
         return paths.map(path -> {
             try {
                 return new RpmPathInfo(path);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
-        }).toList();
+        }).iterator();
     }
 }

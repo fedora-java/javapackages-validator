@@ -18,25 +18,25 @@ public class JavaExclusiveArchCheckTest {
 
     @Test
     public void testAllowedExclusiveArchArchful() throws IOException {
-        var result = new JavaExclusiveArchCheck().check(null, TestCommon.collectionFrom(Stream.of(EA_ARCHFUL)));
+        var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_ARCHFUL)));
         assertEquals(0, result.size());
     }
 
     @Test
     public void testAllowedExclusiveArchNoarch() throws IOException {
-        var result = new JavaExclusiveArchCheck().check(null, TestCommon.collectionFrom(Stream.of(EA_NOARCH)));
+        var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_NOARCH)));
         assertEquals(0, result.size());
     }
 
     @Test
     public void testExclusiveArchMissingNoarch() throws IOException {
-        var result = new JavaExclusiveArchCheck().check(null, TestCommon.collectionFrom(Stream.of(EA_ARCHFUL_MISSING)));
+        var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_ARCHFUL_MISSING)));
         assertEquals(1, result.size());
     }
 
     @Test
     public void testIllegalExclusiveArchAdditionalNoarch() throws IOException {
-        var result = new JavaExclusiveArchCheck().check(null, TestCommon.collectionFrom(Stream.of(EA_ARCHFUL_NOARCH)));
+        var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_ARCHFUL_NOARCH)));
         assertEquals(1, result.size());
     }
 }

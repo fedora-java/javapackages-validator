@@ -18,14 +18,14 @@ public class SymlinkCheckTest {
     @Test
     void testDanglingSymlink() throws IOException {
         var result = new SymlinkCheck().check(new SymlinkConfig.EnvrootImpl(Paths.get("/")),
-                TestCommon.collectionFrom(Stream.of(DANGLING_SYMLINK_RPM)));
+                TestCommon.iteratorFrom(Stream.of(DANGLING_SYMLINK_RPM)));
         assertEquals(1, result.size());
     }
 
     @Test
     void testValidSymlink() throws IOException {
         var result = new SymlinkCheck().check(new SymlinkConfig.EnvrootImpl(Paths.get("/")),
-                TestCommon.collectionFrom(Stream.of(VALID_SYMLINK_RPM)));
+                TestCommon.iteratorFrom(Stream.of(VALID_SYMLINK_RPM)));
         assertEquals(0, result.size());
     }
 }
