@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
+import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
+
 public abstract class ElementwiseCheck<Config> extends Check<Config> {
     private Predicate<RpmPathInfo> filter = rpm -> true;
 
@@ -28,6 +30,10 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
             RpmPathInfo rpm = rpmIt.next();
             if (filter.test(rpm)) {
                 result.addAll(check(config, rpm));
+            } else {
+                getLogger().debug("{0}: filtered out {1}",
+                        textDecorate(getClass().getSimpleName(), Decoration.bright_yellow),
+                        textDecorate(rpm.getPath(), DECORATION_RPM));
             }
         }
 
