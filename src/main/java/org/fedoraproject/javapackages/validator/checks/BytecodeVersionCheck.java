@@ -18,8 +18,6 @@ package org.fedoraproject.javapackages.validator.checks;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.TreeSet;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
@@ -29,6 +27,7 @@ import org.fedoraproject.javadeptools.rpm.RpmArchiveInputStream;
 import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.Decorated;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
+import org.fedoraproject.javapackages.validator.CheckResult;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 import org.fedoraproject.javapackages.validator.config.BytecodeVersionConfig;
@@ -39,8 +38,8 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
     }
 
     @Override
-    public Collection<String> check(BytecodeVersionConfig config, RpmPathInfo rpm) throws IOException {
-        var result = new ArrayList<String>(0);
+    public CheckResult check(BytecodeVersionConfig config, RpmPathInfo rpm) throws IOException {
+        var result = new CheckResult();
 
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {
             for (CpioArchiveEntry rpmEntry; ((rpmEntry = is.getNextEntry()) != null);) {
@@ -75,11 +74,11 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
                                 var version = versionBuffer.getShort();
 
                                 if (!config.allowedVersion(rpm, jarName, className, version)) {
-                                    result.add(failMessage("{0}: {1}: {2}: illegal class bytecode version {3}",
+                                    result.add("{0}: {1}: {2}: illegal class bytecode version {3}",
                                             Decorated.rpm(rpm.getPath()),
                                             Decorated.outer(jarName),
                                             Decorated.custom(className, Decoration.bright_yellow),
-                                            Decorated.actual(version)));
+                                            Decorated.actual(version));
                                     foundVersions = null;
                                 } else if (foundVersions != null) {
                                     foundVersions.add(version);

@@ -1,8 +1,6 @@
 package org.fedoraproject.javapackages.validator;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.fedoraproject.javadeptools.rpm.RpmInfo;
@@ -13,8 +11,8 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
     }
 
     @Override
-    protected Collection<String> check(Config config, RpmPathInfo rpm) throws IOException {
-        var result = new ArrayList<String>(0);
+    protected CheckResult check(Config config, RpmPathInfo rpm) throws IOException {
+        var result = new CheckResult();
 
         String attributeName = getConfigClass().getSimpleName();
         // Remove "Config" suffix
@@ -30,10 +28,10 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
 
                 if (!Boolean.class.cast(filter.invoke(config, rpm, attributeValue))) {
                     ok = false;
-                    result.add(failMessage("{0}: Attribute {1} with invalid value: {2}",
+                    result.add("{0}: Attribute {1} with invalid value: {2}",
                             Decorated.rpm(rpm.getPath()),
                             Decorated.outer(attributeName),
-                            Decorated.actual(attributeValue)));
+                            Decorated.actual(attributeValue));
                 }
 
                 if (ok) {

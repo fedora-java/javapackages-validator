@@ -50,7 +50,7 @@ public class Decorated {
     public static Decorated custom(Object obj, Decoration...decorations) {
         return new Decorated(obj,decorations);
     }
-
+    
     public String toString() {
         return Main.getDecorator().decorate(object, decorations);
     }

@@ -1,6 +1,7 @@
 package org.fedoraproject.javapackages.validator.checks;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertFailOne;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertPass;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,27 +21,27 @@ public class JavadocNoarchCheckTest {
     void testIllegalArchfulJavadoc() throws IOException {
         var result = new JavadocNoarchCheck().check(null,
                 TestCommon.iteratorFrom(Stream.of(ARCH_ARCH_RPM)));
-        assertEquals(1, result.size());
+        assertFailOne(result);
     }
 
     @Test
     void testAllowedNoarchJavadocArchfulPackage() throws IOException {
         var result = new JavadocNoarchCheck().check(null,
                 TestCommon.iteratorFrom(Stream.of(ARCH_NOARCH_RPM)));
-        assertEquals(0, result.size());
+        assertPass(result);
     }
 
     @Test
     void testAllowedNoarchJavadocNoarchPackage() throws IOException {
         var result = new JavadocNoarchCheck().check(null,
                 TestCommon.iteratorFrom(Stream.of(NOARCH_NOARCH_RPM)));
-        assertEquals(0, result.size());
+        assertPass(result);
     }
 
     @Test
     void testIgnoreNonJavadoc() throws IOException {
         var result = new JavadocNoarchCheck().check(null,
                 TestCommon.iteratorFrom(Stream.of(NON_JAVADOC_RPM)));
-        assertEquals(0, result.size());
+        assertPass(result);
     }
 }

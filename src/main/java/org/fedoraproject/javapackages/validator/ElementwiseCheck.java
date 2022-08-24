@@ -1,8 +1,6 @@
 package org.fedoraproject.javapackages.validator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
@@ -20,16 +18,16 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
         return this;
     }
 
-    abstract protected Collection<String> check(Config config, RpmPathInfo rpm) throws IOException;
+    abstract protected CheckResult check(Config config, RpmPathInfo rpm) throws IOException;
 
     @Override
-    public final Collection<String> check(Config config, Iterator<RpmPathInfo> rpmIt) throws IOException {
-        var result = new ArrayList<String>(0);
+    public final CheckResult check(Config config, Iterator<RpmPathInfo> rpmIt) throws IOException {
+        var result = new CheckResult();
 
         while (rpmIt.hasNext()) {
             RpmPathInfo rpm = rpmIt.next();
             if (filter.test(rpm)) {
-                result.addAll(check(config, rpm));
+                result.combineWith(check(config, rpm));
             } else {
                 Decoration[] decorations = {Decoration.bright_yellow};
                 getLogger().debug("{0}: filtered out {1}",

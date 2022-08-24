@@ -1,6 +1,7 @@
 package org.fedoraproject.javapackages.validator.checks;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertFailOne;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertPass;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,24 +20,24 @@ public class JavaExclusiveArchCheckTest {
     @Test
     public void testAllowedExclusiveArchArchful() throws IOException {
         var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_ARCHFUL)));
-        assertEquals(0, result.size());
+        assertPass(result);
     }
 
     @Test
     public void testAllowedExclusiveArchNoarch() throws IOException {
         var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_NOARCH)));
-        assertEquals(0, result.size());
+        assertPass(result);
     }
 
     @Test
     public void testExclusiveArchMissingNoarch() throws IOException {
         var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_ARCHFUL_MISSING)));
-        assertEquals(1, result.size());
+        assertFailOne(result);
     }
 
     @Test
     public void testIllegalExclusiveArchAdditionalNoarch() throws IOException {
         var result = new JavaExclusiveArchCheck().check(null, TestCommon.iteratorFrom(Stream.of(EA_ARCHFUL_NOARCH)));
-        assertEquals(1, result.size());
+        assertFailOne(result);
     }
 }

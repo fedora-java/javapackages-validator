@@ -1,6 +1,7 @@
 package org.fedoraproject.javapackages.validator.checks;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertFailOne;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertPass;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -19,13 +20,13 @@ public class SymlinkCheckTest {
     void testDanglingSymlink() throws IOException {
         var result = new SymlinkCheck().check(new SymlinkConfig.EnvrootImpl(Paths.get("/")),
                 TestCommon.iteratorFrom(Stream.of(DANGLING_SYMLINK_RPM)));
-        assertEquals(1, result.size());
+        assertFailOne(result);
     }
 
     @Test
     void testValidSymlink() throws IOException {
         var result = new SymlinkCheck().check(new SymlinkConfig.EnvrootImpl(Paths.get("/")),
                 TestCommon.iteratorFrom(Stream.of(VALID_SYMLINK_RPM)));
-        assertEquals(0, result.size());
+        assertPass(result);
     }
 }

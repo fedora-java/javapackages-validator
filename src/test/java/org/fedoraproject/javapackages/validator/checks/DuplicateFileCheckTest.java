@@ -1,6 +1,7 @@
 package org.fedoraproject.javapackages.validator.checks;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertFailOne;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertPass;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,13 +19,13 @@ public class DuplicateFileCheckTest {
     void testIllegalDuplicateFile() throws IOException {
         var result = new DuplicateFileCheck().check(null, TestCommon.iteratorFrom(Stream.of(
                 DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM)));
-        assertEquals(1, result.size());
+        assertFailOne(result);
     }
 
     @Test
     void testAllowedDuplicateFile() throws IOException {
         var result = new DuplicateFileCheck().check((filename, providerRpms) -> true,
                 TestCommon.iteratorFrom(Stream.of(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM)));
-        assertEquals(0, result.size());
+        assertPass(result);
     }
 }

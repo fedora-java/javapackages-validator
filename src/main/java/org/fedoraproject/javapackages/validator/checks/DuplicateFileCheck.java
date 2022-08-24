@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeMap;
 
@@ -15,6 +14,7 @@ import org.fedoraproject.javadeptools.rpm.RpmInfo;
 import org.fedoraproject.javapackages.validator.Check;
 import org.fedoraproject.javapackages.validator.Common;
 import org.fedoraproject.javapackages.validator.Decorated;
+import org.fedoraproject.javapackages.validator.CheckResult;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.config.DuplicateFileConfig;
 
@@ -27,11 +27,11 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
     }
 
     @Override
-    public Collection<String> check(DuplicateFileConfig config, Iterator<RpmPathInfo> rpmIt) throws IOException {
+    public CheckResult check(DuplicateFileConfig config, Iterator<RpmPathInfo> rpmIt) throws IOException {
         var testRpms = new ArrayList<RpmPathInfo>();
         Iterators.addAll(testRpms, rpmIt);
 
-        var result = new ArrayList<String>(0);
+        var result = new CheckResult();
 
         // The union of file paths present in all RPM files mapped to the RPM file names they are present in
         var files = new TreeMap<String, ArrayList<Pair<CpioArchiveEntry, Path>>>();
@@ -77,8 +77,8 @@ public class DuplicateFileCheck extends Check<DuplicateFileConfig> {
                     getLogger().pass("Allowed duplicate file {0} provided by multiple RPMs: {1}",
                             decoratedFile, decoratedProviders);
                 } else {
-                    result.add(failMessage("File {0} provided by multiple RPMs: {1}",
-                            decoratedFile, decoratedProviders));
+                    result.add("File {0} provided by multiple RPMs: {1}",
+                            decoratedFile, decoratedProviders);
                 }
             }
         }

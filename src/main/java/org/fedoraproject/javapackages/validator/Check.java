@@ -6,7 +6,6 @@ import java.net.URISyntaxException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,15 +45,6 @@ public abstract class Check<Config> {
 
     protected Logger getLogger() {
         return logger;
-    }
-
-    protected static String failMessage(String pattern, Decorated... arguments) {
-        String result = "";
-        result += "[";
-        result += Decorated.custom("FAIL", Decoration.red, Decoration.bold);
-        result += "] ";
-        result += MessageFormat.format(pattern, arguments);
-        return result;
     }
 
     public Class<Config> getConfigClass() {
@@ -132,7 +122,7 @@ public abstract class Check<Config> {
         return configurations.getOrDefault(configClass, Collections.emptyList()).stream().map(configClass::cast).toList();
     }
 
-    abstract public Collection<String> check(Config config, Iterator<RpmPathInfo> rpmIt) throws IOException;
+    abstract public CheckResult check(Config config, Iterator<RpmPathInfo> rpmIt) throws IOException;
 
     public int executeCheck(String... args) throws IOException {
         List<String> argList = new ArrayList<>();
@@ -171,7 +161,7 @@ public abstract class Check<Config> {
             }
         }
 
-        var messages = new ArrayList<String>();
+        var result = new CheckResult();
 
         {
             var fileIt = new ArgFileIterator(argList);
@@ -180,19 +170,19 @@ public abstract class Check<Config> {
             }
 
             for (Config configInstance : configInstances) {
-                messages.addAll(check(configInstance, fileIt));
+                result.combineWith(check(configInstance, fileIt));
             }
         }
 
-        for (var message : messages) {
-            System.out.println(message);
+        for (var message : result.getMessages()) {
+            System.out.println("[" + Decorated.custom("FAIL", Decoration.red, Decoration.bold) + "] " + message);
         }
 
-        if (messages.isEmpty()) {
+        if (result.isPass()) {
             logger.info("Summary: all checks {0}", Decorated.custom("passed", Decoration.green, Decoration.bold));
             return 0;
         } else {
-            logger.info("Summary: {0} checks {1}", Decorated.plain(messages.size()), Decorated.custom("failed", Decoration.red, Decoration.bold));
+            logger.info("Summary: {0} checks {1}", Decorated.plain(result.getFailureCount()), Decorated.custom("failed", Decoration.red, Decoration.bold));
             return 1;
         }
     }

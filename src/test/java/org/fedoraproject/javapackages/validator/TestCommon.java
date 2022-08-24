@@ -1,5 +1,9 @@
 package org.fedoraproject.javapackages.validator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -20,5 +24,14 @@ public class TestCommon {
                 throw new UncheckedIOException(ex);
             }
         }).iterator();
+    }
+
+    public static void assertPass(CheckResult result) {
+        assertTrue(result.isPass(), "expected passed result, but it actually failed");
+    }
+
+    public static void assertFailOne(CheckResult result) {
+        assertFalse(result.isPass(), "expected failed result, but it actually passed");
+        assertEquals(1, result.getFailureCount());
     }
 }
