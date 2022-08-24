@@ -31,15 +31,15 @@ public class RpmAttributeCheck<Config> extends ElementwiseCheck<Config> {
                 if (!Boolean.class.cast(filter.invoke(config, rpm, attributeValue))) {
                     ok = false;
                     result.add(failMessage("{0}: Attribute {1} with invalid value: {2}",
-                            textDecorate(rpm.getPath(), DECORATION_RPM),
-                            textDecorate(attributeName, DECORATION_OUTER),
-                            textDecorate(attributeValue, DECORATION_ACTUAL)));
+                            Decorated.rpm(rpm.getPath()),
+                            Decorated.outer(attributeName),
+                            Decorated.actual(attributeValue)));
                 }
 
                 if (ok) {
                     getLogger().pass("{0}: Attribute [{1}]: ok",
-                            textDecorate(rpm.getPath(), DECORATION_RPM),
-                            textDecorate(attributeName, DECORATION_OUTER));
+                            Decorated.rpm(rpm.getPath()),
+                            Decorated.outer(attributeName));
                 }
             }
         } catch (ReflectiveOperationException ex) {

@@ -10,15 +10,19 @@ import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 
 public class Logger {
     public enum LogEvent {
-        debug("DEBUG"),
-        info("INFO"),
-        pass("PASS"),
+        debug("DEBUG", Decoration.bright_magenta, Decoration.bold),
+        info("INFO", Decoration.cyan, Decoration.bold),
+        pass("PASS", Decoration.green, Decoration.bold),
         ;
 
-        public final String text;
+        private final Decorated decoratedText;
 
-        private LogEvent(String text) {
-            this.text = text;
+        private LogEvent(String text, Decoration...decorations) {
+            this.decoratedText = Decorated.custom(text, decorations);
+        }
+
+        public Decorated getDecoratedText() {
+            return decoratedText;
         }
     }
 
@@ -34,29 +38,23 @@ public class Logger {
         streams.put(logEvent, stream);
     }
 
-    private void log(LogEvent logEvent, String pattern, Object... arguments) {
+    private void log(LogEvent logEvent, String pattern, Decorated... arguments) {
         var stream = streams.get(logEvent);
         stream.print('[');
-        var decorations = switch (logEvent) {
-            case debug -> new Decoration[] {Decoration.bright_magenta, Decoration.bold};
-            case info -> new Decoration[] {Decoration.cyan, Decoration.bold};
-            case pass -> new Decoration[] {Decoration.green, Decoration.bold};
-            default -> new Decoration[0];
-        };
-        stream.print(Main.getDecorator().decorate(logEvent.text, decorations));
+        stream.print(logEvent.getDecoratedText());
         stream.print("] ");
         stream.println(MessageFormat.format(pattern, arguments));
     }
 
-    public void debug(String pattern, Object... arguments) {
+    public void debug(String pattern, Decorated... arguments) {
         log(LogEvent.debug, pattern, arguments);
     }
 
-    public void info(String pattern, Object... arguments) {
+    public void info(String pattern, Decorated... arguments) {
         log(LogEvent.info, pattern, arguments);
     }
 
-    public void pass(String pattern, Object... arguments) {
+    public void pass(String pattern, Decorated... arguments) {
         log(LogEvent.pass, pattern, arguments);
     }
 }

@@ -44,27 +44,14 @@ public abstract class Check<Config> {
     private Class<Config> configClass;
     private Logger logger = new Logger();
 
-    protected static final Decoration DECORATION_RPM = Decoration.bright_red;
-    protected static final Decoration DECORATION_EXPECTED = Decoration.bright_cyan;
-    protected static final Decoration DECORATION_ACTUAL = Decoration.bright_magenta;
-
-    /**
-     * Decoration used for describing objects which hold inspected values
-     */
-    protected static final Decoration DECORATION_OUTER = Decoration.bright_blue;
-
     protected Logger getLogger() {
         return logger;
     }
 
-    protected static String textDecorate(Object object, Decoration... decorations) {
-        return Main.getDecorator().decorate(object, decorations);
-    }
-
-    protected static String failMessage(String pattern, Object... arguments) {
+    protected static String failMessage(String pattern, Decorated... arguments) {
         String result = "";
         result += "[";
-        result += textDecorate("FAIL", Decoration.red, Decoration.bold);
+        result += Decorated.custom("FAIL", Decoration.red, Decoration.bold);
         result += "] ";
         result += MessageFormat.format(pattern, arguments);
         return result;
@@ -99,7 +86,7 @@ public abstract class Check<Config> {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         var fileManager = new InMemoryFileManager(compiler.getStandardFileManager(null, null, null));
 
-        logger.debug("Compiling source configuration files: {0}", compilationUnits);
+        logger.debug("Compiling source configuration files: {0}", Decorated.list(compilationUnits));
 
         try {
             if (!compiler.getTask(null, fileManager, null, compilerOptions, null, compilationUnits).call()) {
@@ -122,8 +109,8 @@ public abstract class Check<Config> {
 
             Map<String, ? extends JavaFileObject> configClasses = compileFiles(config_uris, Arrays.asList());
 
-            logger.debug("Compiled configuration class files: [{0}]", configClasses.keySet().stream()
-                    .collect(Collectors.joining(", ")));
+            logger.debug("Compiled configuration class files: [{0}]", Decorated.plain(configClasses.keySet().stream()
+                    .collect(Collectors.joining(", "))));
 
             try {
                 ClassLoader cl = new InMemoryClassLoader(configClasses);
@@ -138,8 +125,8 @@ public abstract class Check<Config> {
                 throw new RuntimeException(ex);
             }
 
-            logger.debug("Configurations: [{0}]", configurations.keySet().stream()
-                    .map(Class::getSimpleName).collect(Collectors.joining(", ")));
+            logger.debug("Configurations: [{0}]", Decorated.plain(configurations.keySet().stream()
+                    .map(Class::getSimpleName).collect(Collectors.joining(", "))));
         }
 
         return configurations.getOrDefault(configClass, Collections.emptyList()).stream().map(configClass::cast).toList();
@@ -168,8 +155,8 @@ public abstract class Check<Config> {
             }
         }
 
-        logger.debug("Config compile source URIs: {0}", config_uris);
-        logger.debug("Arguments: {0}", argList);
+        logger.debug("Config compile source URIs: {0}", Decorated.list(config_uris));
+        logger.debug("Arguments: {0}", Decorated.list(argList));
 
         Collection<Config> configInstances;
 
@@ -178,7 +165,8 @@ public abstract class Check<Config> {
         } else {
             configInstances = getConfigInstances();
             if (configInstances.isEmpty()) {
-                getLogger().info("{0}: Configuration class not found, ignoring the test", getClass().getSimpleName());
+                getLogger().info("{0}: Configuration class not found, ignoring the test",
+                        Decorated.plain(getClass().getSimpleName()));
                 return 0;
             }
         }
@@ -201,10 +189,10 @@ public abstract class Check<Config> {
         }
 
         if (messages.isEmpty()) {
-            logger.info("Summary: all checks {0}", textDecorate("passed", Decoration.green, Decoration.bold));
+            logger.info("Summary: all checks {0}", Decorated.custom("passed", Decoration.green, Decoration.bold));
             return 0;
         } else {
-            logger.info("Summary: {0} checks {1}", messages.size(), textDecorate("failed", Decoration.red, Decoration.bold));
+            logger.info("Summary: {0} checks {1}", Decorated.plain(messages.size()), Decorated.custom("failed", Decoration.red, Decoration.bold));
             return 1;
         }
     }

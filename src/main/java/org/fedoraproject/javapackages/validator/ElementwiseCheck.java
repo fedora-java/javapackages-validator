@@ -31,9 +31,10 @@ public abstract class ElementwiseCheck<Config> extends Check<Config> {
             if (filter.test(rpm)) {
                 result.addAll(check(config, rpm));
             } else {
+                Decoration[] decorations = {Decoration.bright_yellow};
                 getLogger().debug("{0}: filtered out {1}",
-                        textDecorate(getClass().getSimpleName(), Decoration.bright_yellow),
-                        textDecorate(rpm.getPath(), DECORATION_RPM));
+                        Decorated.custom(getClass().getSimpleName(), decorations),
+                        Decorated.rpm(rpm.getPath()));
             }
         }
 

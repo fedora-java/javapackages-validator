@@ -27,6 +27,7 @@ import org.apache.commons.compress.archivers.jar.JarArchiveEntry;
 import org.apache.commons.compress.archivers.jar.JarArchiveInputStream;
 import org.fedoraproject.javadeptools.rpm.RpmArchiveInputStream;
 import org.fedoraproject.javapackages.validator.Common;
+import org.fedoraproject.javapackages.validator.Decorated;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
@@ -75,10 +76,10 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
 
                                 if (!config.allowedVersion(rpm, jarName, className, version)) {
                                     result.add(failMessage("{0}: {1}: {2}: illegal class bytecode version {3}",
-                                            textDecorate(rpm.getPath(), DECORATION_RPM),
-                                            textDecorate(jarName, DECORATION_OUTER),
-                                            textDecorate(className, Decoration.bright_yellow),
-                                            textDecorate(version, DECORATION_ACTUAL)));
+                                            Decorated.rpm(rpm.getPath()),
+                                            Decorated.outer(jarName),
+                                            Decorated.custom(className, Decoration.bright_yellow),
+                                            Decorated.actual(version)));
                                     foundVersions = null;
                                 } else if (foundVersions != null) {
                                     foundVersions.add(version);
@@ -88,9 +89,9 @@ public class BytecodeVersionCheck extends ElementwiseCheck<BytecodeVersionConfig
 
                         if (foundVersions != null) {
                             getLogger().pass("{0}: {1}: found bytecode versions: {2}",
-                                    textDecorate(rpm.getPath(), DECORATION_RPM),
-                                    textDecorate(jarName, DECORATION_OUTER),
-                                    textDecorate(foundVersions, DECORATION_ACTUAL));
+                                    Decorated.rpm(rpm.getPath()),
+                                    Decorated.outer(jarName),
+                                    Decorated.actual(foundVersions));
                         }
                     }
                 }

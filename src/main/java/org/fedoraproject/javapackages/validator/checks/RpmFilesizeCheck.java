@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
+import org.fedoraproject.javapackages.validator.Decorated;
 import org.fedoraproject.javapackages.validator.ElementwiseCheck;
 import org.fedoraproject.javapackages.validator.RpmPathInfo;
 import org.fedoraproject.javapackages.validator.config.RpmFilesizeConfig;
@@ -21,16 +22,16 @@ public class RpmFilesizeCheck extends ElementwiseCheck<RpmFilesizeConfig> {
         var result = new ArrayList<String>(0);
 
         long filesize = Files.size(rpm.getPath());
-        String formattedFilesize = NumberFormat.getInstance(Locale.ENGLISH).format(filesize);
+        Decorated formattedFilesize = Decorated.actual(NumberFormat.getInstance(Locale.ENGLISH).format(filesize));
 
         if (!config.allowedFilesize(rpm, filesize)) {
             result.add(failMessage("{0}: file size is: {1} bytes",
-                    textDecorate(rpm.getPath(), DECORATION_RPM),
-                    textDecorate(formattedFilesize, DECORATION_ACTUAL)));
+                    Decorated.rpm(rpm.getPath()),
+                    Decorated.actual(formattedFilesize)));
         } else {
             getLogger().pass("{0}: file size is: {1} bytes",
-                    textDecorate(rpm.getPath(), DECORATION_RPM),
-                    textDecorate(formattedFilesize, DECORATION_ACTUAL));
+                    Decorated.rpm(rpm.getPath()),
+                    Decorated.actual(formattedFilesize));
         }
 
         return result;
