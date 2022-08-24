@@ -3,6 +3,7 @@ package org.fedoraproject.javapackages.validator;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -72,9 +73,10 @@ public abstract class Check<Config> {
         var compilationUnits = new ArrayList<JavaFileObject>();
         for (URI sourceURI : sourceURIs) {
             if (sourceURI.getScheme().equalsIgnoreCase("file")) {
-                Files.find(Paths.get(sourceURI), Integer.MAX_VALUE,
-                        (path, attributes) -> !attributes.isDirectory() && path.toString().endsWith(".java"))
-                        .map((path) -> new URIJavaFileObject(path.toUri(), Kind.SOURCE)).forEach(compilationUnits::add);
+                try (var stream = Files.find(Paths.get(sourceURI), Integer.MAX_VALUE, (path, attributes) ->
+                        !attributes.isDirectory() && path.toString().endsWith(".java"), FileVisitOption.FOLLOW_LINKS)) {
+                    stream.map((path) -> new URIJavaFileObject(path.toUri(), Kind.SOURCE)).forEach(compilationUnits::add);
+                }
             } else {
                 compilationUnits.add(new URIJavaFileObject(sourceURI, Kind.SOURCE));
             }
@@ -157,14 +159,13 @@ public abstract class Check<Config> {
             }
         }
 
-        logger.debug("Compile source URIs: {0}", config_uris);
+        logger.debug("Config compile source URIs: {0}", config_uris);
         logger.debug("Arguments: {0}", argList);
 
         Collection<Config> configInstances;
 
         if (NoConfig.class.equals(configClass)) {
-            Config none = null;
-            configInstances = Arrays.asList(none);
+            configInstances = Arrays.asList((Config) null);
         } else {
             configInstances = getConfigInstances();
             if (configInstances.isEmpty()) {

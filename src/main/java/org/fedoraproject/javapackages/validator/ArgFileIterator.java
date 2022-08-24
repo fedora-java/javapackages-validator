@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 
 public class ArgFileIterator implements Iterator<RpmPathInfo> {
@@ -18,7 +19,7 @@ public class ArgFileIterator implements Iterator<RpmPathInfo> {
         pathIterator = advance();
 
         if (pathIterator == null) {
-            pathIterator = Arrays.<Path>asList().iterator();
+            pathIterator = Collections.<Path>emptyList().iterator();
         }
     }
 
