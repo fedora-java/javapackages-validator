@@ -9,10 +9,11 @@ import java.util.EnumMap;
 import org.fedoraproject.javapackages.validator.TextDecorator.Decoration;
 
 public class Logger {
-    public enum LogEvent {
+    public static enum LogEvent {
         debug("DEBUG", Decoration.bright_magenta, Decoration.bold),
         info("INFO", Decoration.cyan, Decoration.bold),
         pass("PASS", Decoration.green, Decoration.bold),
+        fail("FAIL", Decoration.red, Decoration.bold),
         ;
 
         private final Decorated decoratedText;
@@ -29,9 +30,11 @@ public class Logger {
     private EnumMap<LogEvent, PrintStream> streams = new EnumMap<>(LogEvent.class);
 
     public Logger() {
+        var nullStream = new PrintStream(OutputStream.nullOutputStream(), false, StandardCharsets.UTF_8);
         setStream(LogEvent.debug, Main.getDebugOutputStream());
         setStream(LogEvent.info, System.err);
-        setStream(LogEvent.pass, new PrintStream(OutputStream.nullOutputStream(), false, StandardCharsets.UTF_8));
+        setStream(LogEvent.pass, nullStream);
+        setStream(LogEvent.fail, nullStream);
     }
 
     public void setStream(LogEvent logEvent, PrintStream stream) {
@@ -56,5 +59,9 @@ public class Logger {
 
     public void pass(String pattern, Decorated... arguments) {
         log(LogEvent.pass, pattern, arguments);
+    }
+
+    public void fail(String pattern, Decorated... arguments) {
+        log(LogEvent.fail, pattern, arguments);
     }
 }

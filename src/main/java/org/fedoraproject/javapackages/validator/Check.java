@@ -174,9 +174,7 @@ public abstract class Check<Config> {
             }
         }
 
-        for (var message : result.getMessages()) {
-            System.out.println("[" + Decorated.custom("FAIL", Decoration.red, Decoration.bold) + "] " + message);
-        }
+        result.printMessages(logger);
 
         if (result.isPass()) {
             logger.info("Summary: all checks {0}", Decorated.custom("passed", Decoration.green, Decoration.bold));

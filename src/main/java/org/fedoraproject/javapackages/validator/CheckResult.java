@@ -1,19 +1,15 @@
 package org.fedoraproject.javapackages.validator;
 
-import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-public class CheckResult {
-    private final List<String> messages = new ArrayList<>();
+import org.apache.commons.lang3.tuple.Pair;
 
-    public List<String> getMessages() {
-        return Collections.unmodifiableList(messages);
-    }
+public class CheckResult {
+    private final List<Pair<String, Decorated[]>> messages = new ArrayList<>();
 
     public void add(String pattern, Decorated... arguments) {
-        messages.add(MessageFormat.format(pattern, arguments));
+        messages.add(Pair.of(pattern, arguments));
     }
 
     public void combineWith(CheckResult other) {
@@ -26,5 +22,11 @@ public class CheckResult {
 
     public int getFailureCount() {
         return messages.size();
+    }
+
+    public void printMessages(Logger logger) {
+        for (var message : messages) {
+            logger.fail(message.getKey(), message.getValue());
+        }
     }
 }

@@ -78,6 +78,7 @@ public class Main {
 
         Check<?> check = Check.class.cast(Class.forName("org.fedoraproject.javapackages.validator.checks." + argList.get(0)).getConstructor().newInstance());
         check.getLogger().setStream(LogEvent.pass, System.out);
+        check.getLogger().setStream(LogEvent.fail, System.out);
         System.exit(check.executeCheck(Arrays.copyOfRange(argList.toArray(String[]::new), 1, argList.size())));
     }
 }
