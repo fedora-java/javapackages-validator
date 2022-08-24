@@ -23,8 +23,8 @@ RUN mvn -B clean install
 
 ################################################################################
 
-FROM registry.access.redhat.com/ubi9-minimal
-RUN microdnf -y install java-17-openjdk-headless rpm-libs
+FROM docker.io/library/alpine:3.16.2
+RUN apk add rpm openjdk17-jre-headless
 
 COPY --from=builder "/usr/local/src/javapackages-validator/target/dependency/" "/opt/javapackages-validator/dependency/"
 COPY --from=builder "/usr/local/src/javapackages-validator/target/validator.jar" "/opt/javapackages-validator/validator.jar"
