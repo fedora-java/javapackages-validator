@@ -19,6 +19,9 @@ public class Decorated {
     private final Decoration[] decorations;
 
     private Decorated(Object object, Decoration... decorations) {
+        if (object instanceof Decorated) {
+            throw new IllegalArgumentException("Object is already decorated");
+        }
         this.object = object;
         this.decorations = decorations;
     }
