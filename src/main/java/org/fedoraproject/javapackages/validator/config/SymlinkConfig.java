@@ -1,6 +1,7 @@
 package org.fedoraproject.javapackages.validator.config;
 
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -32,7 +33,7 @@ public interface SymlinkConfig {
         public String targetLocation(Path target) {
             Path result = envroot.resolve(Paths.get("/").relativize(target));
 
-            if (Files.exists(result)) {
+            if (Files.exists(result, LinkOption.NOFOLLOW_LINKS)) {
                 return result.toString();
             }
 
