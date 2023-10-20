@@ -19,7 +19,7 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v3
       - name: Build local image
-        run: ./ci_test.sh build_local_image
+        run: ./ci_test.sh build-local-image
       - name: Set up test environment
         run: ./ci_test.sh prepare
       - name: Execute tests
