@@ -4,7 +4,7 @@ import java.util.Objects;
 
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 
-public interface TextDecorator {
+interface TextDecorator {
     public static final TextDecorator NO_DECORATOR = (decorated) -> Objects.toString(decorated.getObject());
 
     /**

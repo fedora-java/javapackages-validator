@@ -17,13 +17,13 @@ public class SymlinkValidatorTest {
     void testDanglingSymlink() throws Exception {
         var validator = new SymlinkValidator();
         validator.validate(TestCommon.fromPaths(DANGLING_SYMLINK_RPM));
-        assertFailOne(validator);
+        assertFailOne(validator.build());
     }
 
     @Test
     void testValidSymlink() throws Exception {
         var validator = new SymlinkValidator();
         validator.validate(TestCommon.fromPaths(VALID_SYMLINK_RPM));
-        assertPass(validator);
+        assertPass(validator.build());
     }
 }

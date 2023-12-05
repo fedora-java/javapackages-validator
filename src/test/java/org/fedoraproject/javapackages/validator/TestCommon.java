@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.fedoraproject.javapackages.validator.spi.LogEvent;
+import org.fedoraproject.javapackages.validator.spi.Result;
 import org.fedoraproject.javapackages.validator.spi.TestResult;
-import org.fedoraproject.javapackages.validator.util.DefaultValidator;
 
 import io.kojan.javadeptools.rpm.RpmPackage;
 
@@ -32,22 +32,22 @@ public class TestCommon {
         return result;
     }
 
-    public static void assertSkip(DefaultValidator validator) {
-        assertEquals(TestResult.skip, validator.getResult(), "expected result: SKIP");
+    public static void assertSkip(Result result) {
+        assertEquals(TestResult.skip, result.getResult(), "expected result: SKIP");
     }
 
-    public static void assertPass(DefaultValidator validator) {
-        assertEquals(TestResult.pass, validator.getResult(), "expected result: PASS");
+    public static void assertPass(Result result) {
+        assertEquals(TestResult.pass, result.getResult(), "expected result: PASS");
     }
 
-    public static void assertInfo(DefaultValidator validator) {
-        assertEquals(TestResult.info, validator.getResult(), "expected result: INFO");
+    public static void assertInfo(Result result) {
+        assertEquals(TestResult.info, result.getResult(), "expected result: INFO");
     }
 
-    public static void assertFailOne(DefaultValidator validator) {
-        assertEquals(TestResult.fail, validator.getResult(), "expected result: FAIL");
+    public static void assertFailOne(Result result) {
+        assertEquals(TestResult.fail, result.getResult(), "expected result: FAIL");
         int count = 0;
-        for (var entry : validator) {
+        for (var entry : result) {
             if (LogEvent.fail.equals(entry.kind())) {
                 ++count;
             }

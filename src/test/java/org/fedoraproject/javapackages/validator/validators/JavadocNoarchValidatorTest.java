@@ -20,27 +20,27 @@ public class JavadocNoarchValidatorTest {
     void testIllegalArchfulJavadoc() throws Exception {
         var validator = new JavadocNoarchValidator();
         validator.validate(TestCommon.fromPaths(ARCH_ARCH_RPM));
-        assertFailOne(validator);
+        assertFailOne(validator.build());
     }
 
     @Test
     void testAllowedNoarchJavadocArchfulPackage() throws Exception {
         var validator = new JavadocNoarchValidator();
         validator.validate(TestCommon.fromPaths(ARCH_NOARCH_RPM));
-        assertPass(validator);
+        assertPass(validator.build());
     }
 
     @Test
     void testAllowedNoarchJavadocNoarchPackage() throws Exception {
         var validator = new JavadocNoarchValidator();
         validator.validate(TestCommon.fromPaths(NOARCH_NOARCH_RPM));
-        assertPass(validator);
+        assertPass(validator.build());
     }
 
     @Test
     void testIgnoreNonJavadoc() throws Exception {
         var validator = new JavadocNoarchValidator();
         validator.validate(TestCommon.fromPaths(NON_JAVADOC_RPM));
-        assertSkip(validator);
+        assertSkip(validator.build());
     }
 }

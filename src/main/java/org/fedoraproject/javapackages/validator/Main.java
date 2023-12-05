@@ -42,10 +42,10 @@ import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.spi.Decoration;
 import org.fedoraproject.javapackages.validator.spi.LogEntry;
 import org.fedoraproject.javapackages.validator.spi.LogEvent;
+import org.fedoraproject.javapackages.validator.spi.ResultBuilder;
+import org.fedoraproject.javapackages.validator.spi.TestResult;
 import org.fedoraproject.javapackages.validator.spi.Validator;
 import org.fedoraproject.javapackages.validator.spi.ValidatorFactory;
-import org.fedoraproject.javapackages.validator.util.DefaultResult;
-import org.fedoraproject.javapackages.validator.util.DefaultValidator;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.kojan.javadeptools.rpm.RpmPackage;
@@ -56,7 +56,7 @@ public class Main {
 
     protected Parameters parameters;
     protected Logger logger;
-    protected Map<String, DefaultResult> reports = new TreeMap<>();
+    protected Map<String, ResultBuilder> reports = new TreeMap<>();
 
     public static TextDecorator getDecorator() {
         return DECORATOR;
@@ -248,7 +248,7 @@ public class Main {
         Map<String, Optional<List<String>>> validatorArgs = new LinkedHashMap<>();
     }
 
-    @SuppressFBWarnings({"DM_EXIT"})
+    @SuppressFBWarnings({"DM_EXIT", "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"})
     void parseArguments(String[] args) throws Exception {
         parameters = new Parameters();
 
@@ -403,8 +403,8 @@ public class Main {
                 } else {
                     var previousValidator = validatorTests.put(testName, validator);
                     if (previousValidator != null) {
-                        var result = new DefaultResult();
-                        result.error();
+                        var result = new ResultBuilder();
+                        result.mergeResult(TestResult.error);
                         result.addLog(duplicate.apply(previousValidator));
                         result.addLog(duplicate.apply(validatorTests.remove(testName)));
                         reports.put(testName, result);
@@ -489,10 +489,9 @@ public class Main {
                 var endTime = LocalDateTime.now();
                 return new NamedResult(result, validator.getTestName(), startTime, endTime);
             } catch (Exception ex) {
-                var result = new DefaultResult();
-                var logEntry = DefaultValidator.logException(ex);
-                result.error(logEntry.pattern(), logEntry.objects());
-                return new NamedResult(result, validator.getTestName());
+                var result = new ResultBuilder();
+                result.error(ex);
+                return new NamedResult(result.build(), validator.getTestName());
             } finally {
                 Thread.currentThread().setContextClassLoader(oldClassLoader);
             }

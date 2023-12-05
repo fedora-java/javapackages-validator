@@ -19,27 +19,27 @@ public class JavaExclusiveArchValidatorTest {
     public void testAllowedExclusiveArchArchful() throws Exception {
         var validator = new JavaExclusiveArchValidator();
         validator.validate(TestCommon.fromPaths(EA_ARCHFUL));
-        assertPass(validator);
+        assertPass(validator.build());
     }
 
     @Test
     public void testAllowedExclusiveArchNoarch() throws Exception {
         var validator = new JavaExclusiveArchValidator();
         validator.validate(TestCommon.fromPaths(EA_NOARCH));
-        assertPass(validator);
+        assertPass(validator.build());
     }
 
     @Test
     public void testExclusiveArchMissingNoarch() throws Exception {
         var validator = new JavaExclusiveArchValidator();
         validator.validate(TestCommon.fromPaths(EA_ARCHFUL_MISSING));
-        assertFailOne(validator);
+        assertFailOne(validator.build());
     }
 
     @Test
     public void testIllegalExclusiveArchAdditionalNoarch() throws Exception {
         var validator = new JavaExclusiveArchValidator();
         validator.validate(TestCommon.fromPaths(EA_ARCHFUL_NOARCH));
-        assertFailOne(validator);
+        assertFailOne(validator.build());
     }
 }

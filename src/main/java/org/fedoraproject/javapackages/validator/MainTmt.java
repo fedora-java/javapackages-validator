@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections4.IterableUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.spi.LogEntry;
+import org.fedoraproject.javapackages.validator.spi.ResultBuilder;
 import org.fedoraproject.javapackages.validator.spi.Validator;
-import org.fedoraproject.javapackages.validator.util.DefaultResult;
 import org.yaml.snakeyaml.Yaml;
 
 public class MainTmt extends Main {
@@ -106,7 +106,7 @@ public class MainTmt extends Main {
                     try {
                         args = ((List<?>) entry.getValue()).stream().map(o -> String.class.cast(o)).toList();
                     } catch (ClassCastException ex) {
-                        var result = this.reports.computeIfAbsent(validator.getTestName(), k -> new DefaultResult());
+                        var result = this.reports.computeIfAbsent(validator.getTestName(), k -> new ResultBuilder());
                         result.error("{0}", Decorated.plain("Wrong format of validator arguments " +
                                 "in configuration Yaml file, must be a list of strings"));
                         continue;
@@ -132,7 +132,7 @@ public class MainTmt extends Main {
                                     Decorated.actual(exclusionPattern),
                                     Decorated.struct(entry.getKey()));
                             logger.debug(message.pattern(), message.objects());
-                            var result = this.reports.computeIfAbsent(entry.getKey(), k -> new DefaultResult());
+                            var result = this.reports.computeIfAbsent(entry.getKey(), k -> new ResultBuilder());
                             result.skip(message.pattern(), message.objects());
                             break;
                         }
@@ -167,7 +167,7 @@ public class MainTmt extends Main {
         Files.createDirectories(TMT_TEST_DATA.resolve("results"));
 
         var testResults = IterableUtils.chainedIterable(results, this.reports.entrySet().stream()
-                .map(e -> new NamedResult(e.getValue(), e.getKey())).toList());
+                .map(e -> new NamedResult(e.getValue().build(), e.getKey())).toList());
 
         for (var namedResult : testResults) {
             var resultFile = "results/";

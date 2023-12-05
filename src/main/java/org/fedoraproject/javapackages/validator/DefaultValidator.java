@@ -1,38 +1,35 @@
-package org.fedoraproject.javapackages.validator.util;
+package org.fedoraproject.javapackages.validator;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.fedoraproject.javapackages.validator.spi.Result;
+import org.fedoraproject.javapackages.validator.spi.ResultBuilder;
 import org.fedoraproject.javapackages.validator.spi.Validator;
 
 import io.kojan.javadeptools.rpm.RpmPackage;
 
-public abstract class DefaultValidator extends DefaultResult implements Validator {
+public abstract class DefaultValidator extends ResultBuilder implements Validator {
     private List<String> args = null;
 
     @Override
     public Result validate(Iterable<RpmPackage> rpms, List<String> args) {
         if (args != null) {
-            this.args = new ArrayList<>(args);
+            this.args = Collections.unmodifiableList(new ArrayList<>(args));
         }
         try {
             validate(rpms);
         } catch (Exception ex) {
-            error();
-            addLog(logException(ex));
+            error(ex);
         }
 
-        return this;
+        return build();
     }
 
     protected List<String> getArgs() {
-        if (args != null) {
-            return Collections.unmodifiableList(args);
-        }
-        return null;
+        return args;
     }
 
-    public abstract void validate(Iterable<RpmPackage> rpms) throws Exception;
+    protected abstract void validate(Iterable<RpmPackage> rpms) throws Exception;
 }

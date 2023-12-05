@@ -36,7 +36,7 @@ public class RpmFilesizeValidatorTest {
     public void testAllowedFileSize() throws Exception {
         EasyMock.expect(validator.allowedFilesize(rpm.getInfo(), 6488L)).andReturn(true);
         runTest();
-        assertPass(validator);
+        assertPass(validator.build());
     }
 
     @Test
@@ -44,6 +44,6 @@ public class RpmFilesizeValidatorTest {
     public void testDisallowedFileSize() throws Exception {
         EasyMock.expect(validator.allowedFilesize(rpm.getInfo(), 6488L)).andReturn(false);
         runTest();
-        assertFailOne(validator);
+        assertFailOne(validator.build());
     }
 }

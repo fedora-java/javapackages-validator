@@ -31,7 +31,7 @@ public class DuplicateFileValidatorTest {
             }
         };
         validator.validate(TestCommon.fromPaths(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM));
-        assertFailOne(validator);
+        assertFailOne(validator.build());
     }
 
     @Test
@@ -47,6 +47,6 @@ public class DuplicateFileValidatorTest {
             }
         };
         validator.validate(TestCommon.fromPaths(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM));
-        assertPass(validator);
+        assertPass(validator.build());
     }
 }

@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import org.fedoraproject.javapackages.validator.spi.Decorated;
+import org.fedoraproject.javapackages.validator.spi.TestResult;
 import org.fedoraproject.javapackages.validator.util.BytecodeVersionJarValidator;
 
 import io.kojan.javadeptools.rpm.RpmPackage;
@@ -85,7 +86,7 @@ public class BytecodeVersionValidator extends BytecodeVersionJarValidator {
             }
 
             if (!failed) {
-                pass();
+                mergeResult(TestResult.pass);
                 debug("{0}: {1}: {2}: bytecode version: {3}",
                         Decorated.rpm(rpm),
                         Decorated.custom(jarPath, DECORATION_JAR),

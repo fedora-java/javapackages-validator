@@ -26,9 +26,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
       <version>1.0.0</version>
     </dependency>
     <dependency>
-      <groupId>org.fedoraproject.javapackages-validator</groupId>
-      <artifactId>validator-spi</artifactId>
-      <version>2.0.0-SNAPSHOT</version>
+      <groupId>io.github.fedora-java</groupId>
+      <artifactId>javapackages-validator-spi</artifactId>
+      <version>2.1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
