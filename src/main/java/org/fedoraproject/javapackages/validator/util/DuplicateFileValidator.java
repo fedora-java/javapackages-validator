@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
-import org.apache.commons.lang3.tuple.Pair;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 
 import io.kojan.javadeptools.rpm.RpmInfo;
@@ -19,13 +19,13 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
     @Override
     public void validate(Iterable<RpmPackage> rpms) throws Exception {
         // The union of file paths present in all RPM files mapped to the RPM file names they are present in
-        var files = new TreeMap<String, ArrayList<Pair<CpioArchiveEntry, Path>>>();
+        var files = new TreeMap<String, ArrayList<Map.Entry<CpioArchiveEntry, Path>>>();
 
         for (var rpm : rpms) {
             if (!rpm.getInfo().isSourcePackage()) {
-                for (var pair : Common.rpmFilesAndSymlinks(rpm).entrySet()) {
-                    files.computeIfAbsent(Common.getEntryPath(pair.getKey()).toString(), key -> new ArrayList<>())
-                        .add(Pair.of(pair.getKey(), rpm.getPath()));
+                for (var entry : Common.rpmFilesAndSymlinks(rpm).entrySet()) {
+                    files.computeIfAbsent(Common.getEntryPath(entry.getKey()).toString(), key -> new ArrayList<>())
+                        .add(Map.entry(entry.getKey(), rpm.getPath()));
                 }
             }
         }
@@ -33,8 +33,8 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
         for (var entry : files.entrySet()) {
             if (entry.getValue().size() > 1) {
                 var providers = new ArrayList<RpmInfo>(entry.getValue().size());
-                for (var providerPair : entry.getValue()) {
-                    providers.add(new RpmPackage(providerPair.getValue()).getInfo());
+                for (var providerEntry : entry.getValue()) {
+                    providers.add(new RpmPackage(providerEntry.getValue()).getInfo());
                 }
                 var okDifferentArchs = new Boolean[] {true};
                 // If all providers are of different architecture (with the
@@ -48,7 +48,7 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
                 });
 
                 // If the file entry is a directory in all providers, then it is ok
-                boolean okDirectory = entry.getValue().stream().map(Pair::getKey).allMatch(CpioArchiveEntry::isDirectory);
+                boolean okDirectory = entry.getValue().stream().map(Map.Entry::getKey).allMatch(CpioArchiveEntry::isDirectory);
 
                 Decorated decoratedFile = Decorated.actual(entry.getKey());
                 Decorated decoratedProviders = Decorated.actual(entry.getValue().stream().map(p -> p.getValue().getFileName()).toList());

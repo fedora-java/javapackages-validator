@@ -12,7 +12,6 @@ import java.util.jar.JarInputStream;
 import java.util.regex.Pattern;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
-import org.apache.commons.lang3.tuple.Pair;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.util.Common;
 import org.fedoraproject.javapackages.validator.util.JarValidator;
@@ -31,7 +30,7 @@ public class JpmsProvidesValidator extends JarValidator {
 
     @Override
     public void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception {
-        var moduleNames = new ArrayList<Pair<String, String>>();
+        var moduleNames = new ArrayList<Map.Entry<String, String>>();
         var rpmEntryString = Common.getEntryPath(rpmEntry).toString();
 
         try (var is = new JarInputStream(new ByteArrayInputStream(content))) {
@@ -40,7 +39,7 @@ public class JpmsProvidesValidator extends JarValidator {
                         || (entry.getName().startsWith("META-INF/versions/")
                             && VERSIONS_PATTERN.matcher(entry.getName()).matches())) {
                     var md = ModuleDescriptor.read(ByteBuffer.wrap(is.readNBytes((int) entry.getSize())));
-                    moduleNames.add(Pair.of(entry.getName(), md.name()));
+                    moduleNames.add(Map.entry(entry.getName(), md.name()));
                 }
             }
 
@@ -48,7 +47,7 @@ public class JpmsProvidesValidator extends JarValidator {
                 var mf = is.getManifest();
                 var moduleName = mf.getMainAttributes().getValue("Automatic-Module-Name");
                 if (moduleName != null) {
-                    moduleNames.add(Pair.of("META-INF/MANIFEST.MF:Automatic-Module-Name", moduleName));
+                    moduleNames.add(Map.entry("META-INF/MANIFEST.MF:Automatic-Module-Name", moduleName));
                 }
             }
         }

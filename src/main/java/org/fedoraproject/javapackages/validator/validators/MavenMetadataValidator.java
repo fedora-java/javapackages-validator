@@ -3,13 +3,13 @@ package org.fedoraproject.javapackages.validator.validators;
 import java.io.ByteArrayInputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
-import org.apache.commons.lang3.tuple.Pair;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.util.Common;
 import org.fedoraproject.javapackages.validator.util.ElementwiseValidator;
@@ -41,7 +41,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
     @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION", justification = "Incorrect claim that Exception is never thrown")
     @Override
     public void validate(RpmPackage rpm) throws Exception {
-        var metadataXmls = new ArrayList<Pair<CpioArchiveEntry, byte[]>>();
+        var metadataXmls = new ArrayList<Map.Entry<CpioArchiveEntry, byte[]>>();
         var foundFiles = new TreeSet<String>();
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {
             for (CpioArchiveEntry rpmEntry; (rpmEntry = is.getNextEntry()) != null;) {
@@ -51,7 +51,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
                     if (is.read(content) != content.length) {
                         throw Common.INCOMPLETE_READ;
                     }
-                    metadataXmls.add(Pair.of(rpmEntry, content));
+                    metadataXmls.add(Map.entry(rpmEntry, content));
                 }
             }
         }
@@ -61,10 +61,10 @@ public class MavenMetadataValidator extends ElementwiseValidator {
             return;
         }
 
-        for (var pair : metadataXmls) {
+        for (var entry : metadataXmls) {
             PackageMetadata packageMetadata = null;
 
-            try (var is = new ByteArrayInputStream(pair.getValue())) {
+            try (var is = new ByteArrayInputStream(entry.getValue())) {
                 packageMetadata = new MetadataStaxReader().read(is, true);
             } catch (XMLStreamException ex) {
                 fail("{0}: metadata validation failed: {1}", Decorated.rpm(rpm), Decorated.plain(ex.getMessage()));
@@ -73,7 +73,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
 
             for (var artifact : packageMetadata.getArtifacts()) {
                 var artifactPath = Paths.get(artifact.getPath());
-                var metadataXml = Common.getEntryPath(pair.getKey());
+                var metadataXml = Common.getEntryPath(entry.getKey());
                 if (foundFiles.contains(artifactPath.toString())) {
                     pass("{0}: {1}: artifact {2} is present in the RPM",
                             Decorated.rpm(rpm),
