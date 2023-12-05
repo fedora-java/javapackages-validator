@@ -133,7 +133,7 @@ public class MainTmt extends Main {
                                     Decorated.struct(entry.getKey()));
                             logger.debug(message.pattern(), message.objects());
                             var result = this.reports.computeIfAbsent(entry.getKey(), k -> new DefaultResult());
-                            result.info(message.pattern(), message.objects());
+                            result.skip(message.pattern(), message.objects());
                             break;
                         }
                     }
