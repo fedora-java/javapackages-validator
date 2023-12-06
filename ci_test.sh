@@ -5,7 +5,7 @@ jp_validator_image='javapackages-validator:2'
 test_artifacts_dir='/tmp/test_artifacts'
 jpv_tests_dir='/tmp/javapackages.git'
 jpv_tests_url='https://src.fedoraproject.org/tests/javapackages.git'
-jpv_tests_ref='f40'
+jpv_tests_ref='main'
 
 build_local_image() {
     podman build -f Dockerfile.main -t "${jp_validator_image}"
