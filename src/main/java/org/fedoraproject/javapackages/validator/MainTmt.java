@@ -69,7 +69,7 @@ public class MainTmt extends Main {
     }
 
     @Override
-    Map<String, Validator> select(Map<String, Validator> validators) throws Exception {
+    protected Map<String, Validator> select(Map<String, Validator> validators) throws Exception {
         var validatorTests = super.select(validators);
 
         var optConfigFile = Optional.<Path>of(TMT_TREE.resolve("plans").resolve("javapackages-validator.yaml"));
@@ -154,7 +154,7 @@ public class MainTmt extends Main {
     }
 
     @Override
-    void report(List<NamedResult> results) throws Exception {
+    protected int report(List<NamedResult> results) throws Exception {
         try (var os = Files.newOutputStream(TMT_TEST_DATA.resolve("filter.js"));
                 var is = MainTmt.class.getResourceAsStream("/tmt_html/filter.js")) {
             is.transferTo(os);
@@ -236,6 +236,8 @@ public class MainTmt extends Main {
                 os.write(resultYaml.toString().getBytes(StandardCharsets.UTF_8));
             }
         }
+
+        return 0;
     }
 
     @Override

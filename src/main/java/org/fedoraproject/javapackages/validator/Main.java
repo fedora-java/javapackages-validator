@@ -58,16 +58,16 @@ public class Main {
     protected Logger logger;
     protected Map<String, ResultBuilder> reports = new TreeMap<>();
 
-    public static TextDecorator getDecorator() {
+    protected static TextDecorator getDecorator() {
         return DECORATOR;
     }
 
     @SuppressFBWarnings({"MS_EXPOSE_REP"})
-    public static PrintStream getDebugOutputStream() {
+    protected static PrintStream getDebugOutputStream() {
         return debugOutputStream;
     }
 
-    static record Flag(String... options) {
+    private static record Flag(String... options) {
         static final Flag SOURCE_PATH = new Flag("-sp", "--source-path");
         static final Flag OUTPUT_DIRECTORY = new Flag("-d");
         static final Flag CLASS_PATH = new Flag("-cp", "--class-path");
@@ -93,7 +93,7 @@ public class Main {
         };
     }
 
-    static void printHelp() {
+    private static void printHelp() {
         System.out.println("Usage: Main [optional flags] <validator factory name | test name>... [test arguments] <-f | -u RPM files or directories to test>...");
         System.out.println("    " + Flag.HELP + " - Print help message");
         System.out.println();
@@ -137,7 +137,7 @@ public class Main {
         };
     }
 
-    public static void compileFiles(Path sourcePath, Path outputDirectory, List<Path> classPaths,
+    private static void compileFiles(Path sourcePath, Path outputDirectory, List<Path> classPaths,
             Iterable<String> compilerOptions, Logger logger) throws IOException {
         var sourceMtime = getRecursiveFileTime(sourcePath, (p, a) -> true).get();
         for (var classPath : classPaths) {
@@ -198,7 +198,7 @@ public class Main {
         }
     }
 
-    static int tryReadArgs(Map<String, Optional<List<String>>> result, String[] args, int pos) {
+    private static int tryReadArgs(Map<String, Optional<List<String>>> result, String[] args, int pos) {
         var origPos = pos;
         var vArgs = Optional.<List<String>>empty();
 
@@ -248,17 +248,17 @@ public class Main {
         Map<String, Optional<List<String>>> validatorArgs = new LinkedHashMap<>();
     }
 
-    @SuppressFBWarnings({"DM_EXIT", "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"})
-    void parseArguments(String[] args) throws Exception {
+    @SuppressFBWarnings({"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"})
+    private int parseArguments(String[] args) throws Exception {
         parameters = new Parameters();
 
         if (args.length == 0) {
             System.out.println("error: no arguments provided");
             printHelp();
-            System.exit(1);
+            return 1;
         } else if (Flag.HELP.equals(args[0])) {
             printHelp();
-            System.exit(0);
+            return 0;
         }
 
         Flag lastFlag = null;
@@ -321,6 +321,8 @@ public class Main {
         logger.debug("Class path: {0}", Decorated.plain(parameters.classPaths));
         logger.debug("Path arguments: {0}", Decorated.plain(parameters.argPaths));
         // logger.debug("URL arguments: {0}", Decorated.list(parameters.argUrls));
+
+        return -1;
     }
 
     private Map<String, Validator> discover() throws Exception {
@@ -425,7 +427,7 @@ public class Main {
         return validatorTests;
     }
 
-    Map<String, Validator> select(Map<String, Validator> validators) throws Exception {
+    protected Map<String, Validator> select(Map<String, Validator> validators) throws Exception {
         logger.debug("Main arguments: {0}", Decorated.plain(parameters.validatorArgs.entrySet().stream().map(e -> {
             var result = new StringBuilder();
             result.append(System.lineSeparator());
@@ -463,7 +465,7 @@ public class Main {
     }
 
     @SuppressFBWarnings({"DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"})
-    List<NamedResult> execute(Collection<Validator> validators) throws Exception {
+    protected List<NamedResult> execute(Collection<Validator> validators) throws Exception {
         var rpms = new ArrayList<RpmPackage>();
         /*
         parameters.argUrls.parallelStream().forEach(path -> {
@@ -515,8 +517,7 @@ public class Main {
         return "[" + decorate(entry.kind().getDecorated()) + "] " + decoratedObjects(entry, Main.getDecorator());
     }
 
-    @SuppressFBWarnings({"DM_EXIT"})
-    void report(List<NamedResult> results) throws Exception {
+    protected int report(List<NamedResult> results) throws Exception {
         int passMessages = 0;
         for (var result : results) {
             for (var logEntry : result) {
@@ -576,21 +577,26 @@ public class Main {
             exitCode = 2;
         }
 
-        System.exit(exitCode);
+        return exitCode;
     }
 
-    void run(String[] args) throws Exception {
-        parseArguments(args);
+    public int run(String[] args) throws Exception {
+        int exitcode;
+        exitcode = parseArguments(args);
+        if (exitcode >= 0) {
+            return exitcode;
+        }
         var validators = select(discover());
 
         logger.debug("Selected validators:{0}", Decorated.plain(validators.keySet().stream().map(
                 testName -> System.lineSeparator() + decorate(Decorated.struct(testName))
         ).collect(Collectors.joining())));
 
-        report(execute(validators.values()));
+        exitcode = report(execute(validators.values()));
+        return exitcode;
     }
 
     public static void main(String[] args) throws Exception {
-        new Main().run(args);
+        System.exit(new Main().run(args));
     }
 }
