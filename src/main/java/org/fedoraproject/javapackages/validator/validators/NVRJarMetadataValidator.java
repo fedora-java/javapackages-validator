@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 import java.util.jar.JarInputStream;
 
@@ -46,7 +45,7 @@ public class NVRJarMetadataValidator extends DefaultValidator {
         }
         @Override
         public String valueOf(RpmPackage rpm) {
-            return String.valueOf(Objects.requireNonNullElse(rpm.getInfo().getEpoch(), ""));
+            return rpm.getInfo().getEpoch().map(String::valueOf).orElse("");
         }
     }
 
@@ -94,13 +93,13 @@ public class NVRJarMetadataValidator extends DefaultValidator {
                                 Decorated.custom(Common.getEntryPath(rpmEntry), JarValidator.DECORATION_JAR),
                                 Decorated.struct(entry.name()));
                     } else if (srpmValue.equals(attrValue)) {
-                        pass("{0}: {1}: Jar manifest attribute {2} with value {3} exactly matches the RPM attribute",
+                        pass("{0}: {1}: Jar manifest attribute {2} with value \"{3}\" matches the RPM attribute",
                                 Decorated.rpm(rpm),
                                 Decorated.custom(Common.getEntryPath(rpmEntry), JarValidator.DECORATION_JAR),
                                 Decorated.struct(entry.name()),
                                 Decorated.actual(attrValue));
                     } else {
-                        fail("{0}: {1}: Jar manifest attribute {2} with value {3} does not match the RPM attribute value {4}",
+                        fail("{0}: {1}: Jar manifest attribute {2} with value \"{3}\" does not match the RPM attribute value \"{4}\"",
                                 Decorated.rpm(rpm),
                                 Decorated.custom(Common.getEntryPath(rpmEntry), JarValidator.DECORATION_JAR),
                                 Decorated.struct(entry.name()),
