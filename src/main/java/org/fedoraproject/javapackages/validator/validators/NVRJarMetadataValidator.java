@@ -120,27 +120,16 @@ public class NVRJarMetadataValidator extends DefaultValidator {
     @Override
     public void validate(Iterable<RpmPackage> rpms) throws Exception {
         for (var rpm : rpms) {
-            var release = rpm.getInfo().getRelease();
-            int i = 0;
-            while (release.charAt(i) != '.') {
-                ++i;
-            }
-
-            // We only care about EL packages
-            if (release.substring(i + 1).startsWith("el")) {
-                if (rpm.getInfo().isSourcePackage()) {
-                    var filename = rpm.getPath().getFileName();
-                    if (filename == null) {
-                        error("{0}: Could not obtain the path from URL: {1}",
-                                Decorated.rpm(rpm), Decorated.actual(rpm.getPath()));
-                        return;
-                    }
-                    this.rpms.computeIfAbsent(filename.toString(), name -> new RpmEntry()).sourceRpm = rpm;
-                } else {
-                    this.rpms.computeIfAbsent(rpm.getInfo().getSourceRPM(), name -> new RpmEntry()).binaryRpms.add(rpm);
+            if (rpm.getInfo().isSourcePackage()) {
+                var filename = rpm.getPath().getFileName();
+                if (filename == null) {
+                    error("{0}: Could not obtain the path from URL: {1}",
+                            Decorated.rpm(rpm), Decorated.actual(rpm.getPath()));
+                    return;
                 }
+                this.rpms.computeIfAbsent(filename.toString(), name -> new RpmEntry()).sourceRpm = rpm;
             } else {
-                skip("Ignoring {0}", Decorated.rpm(rpm));
+                this.rpms.computeIfAbsent(rpm.getInfo().getSourceRPM(), name -> new RpmEntry()).binaryRpms.add(rpm);
             }
         }
 

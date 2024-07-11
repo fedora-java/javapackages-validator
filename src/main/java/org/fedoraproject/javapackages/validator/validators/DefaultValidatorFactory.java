@@ -15,7 +15,7 @@ public class DefaultValidatorFactory implements ValidatorFactory {
                 new JavaExclusiveArchValidator(),
                 // new JpmsProvidesValidator(),
                 new MavenMetadataValidator(),
-                new NVRJarMetadataValidator(),
+                // new NVRJarMetadataValidator(),
         });
     }
 }
