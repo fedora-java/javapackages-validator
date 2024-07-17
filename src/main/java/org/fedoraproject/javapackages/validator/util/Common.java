@@ -23,19 +23,7 @@ public class Common {
     }
 
     public static String getPackageName(RpmInfo rpm) {
-        if (rpm.isSourcePackage()) {
-            return rpm.getName();
-        } else {
-            String result = rpm.getSourceRPM();
-            result = result.substring(0, result.lastIndexOf('-'));
-            result = result.substring(0, result.lastIndexOf('-'));
-
-            if (result.isEmpty()) {
-                throw new RuntimeException("Could not read package name for source RPM: " + rpm.getSourceRPM());
-            }
-
-            return result;
-        }
+        return rpm.isSourcePackage() ? rpm.getName() : rpm.getSourceName();
     }
 
     /**
