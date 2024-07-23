@@ -147,4 +147,19 @@ class MainTmtTest {
         assertEquals("bar", theArgs.get(1));
     }
 
+    @Test
+    void testCompilation() throws Exception {
+        writeResource(tmtTree, "Foo.java", "package dummy; class Foo {} enum BAR {}");
+        args.add("-sp");
+        args.add(tmtTree.toString());
+        args.add("-d");
+        args.add(tmtTestData.toString());
+        runMain(0);
+        assertTrue(readResult("results.yaml").contains("result: skip"), "result is skip");
+        expectResults( //
+                "dummy/Foo.class", //
+                "dummy/BAR.class", //
+                "results.yaml");
+    }
+
 }
