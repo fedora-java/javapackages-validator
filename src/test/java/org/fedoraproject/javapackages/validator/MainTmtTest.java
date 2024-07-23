@@ -3,6 +3,7 @@ package org.fedoraproject.javapackages.validator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.fedoraproject.javapackages.validator.spi.LogEntry;
-import org.fedoraproject.javapackages.validator.spi.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -40,8 +40,35 @@ class MainTmtTest {
         TestFactory.validators.clear();
     }
 
-    int runMain() throws Exception {
-        return main.run(args.toArray(new String[args.size()]));
+    void copyResource(String loc) throws Exception {
+        Path path = Paths.get("src/test/resources").resolve(loc);
+        Path dest = artifactsDir.resolve(path.getFileName());
+        Files.copy(path, dest);
+    }
+
+    void addValidator(String name, AnonymousValidator validator) {
+        if (TestFactory.validators.isEmpty()) {
+            args.add(TestFactory.class.getCanonicalName());
+        }
+        TestFactory.validators.add(new TestValidator(name, validator));
+    }
+
+    void runMain(int expRc) throws Exception {
+        int rc=main.run(args.toArray(new String[args.size()]));
+        assertEquals(expRc, rc,"check expected return code");
+    }
+
+    void expectResults(String... locations) {
+        for (String loc : locations) {
+            Path path = tmtTestData.resolve(loc);
+            assertTrue(Files.isRegularFile(path), "Result " + path + "is present");
+        }
+    }
+
+    String readResult(String loc) throws Exception {
+        expectResults(loc);
+        Path path = tmtTestData.resolve(loc);
+        return Files.readString(path, StandardCharsets.UTF_8);
     }
 
     @Test
@@ -50,34 +77,33 @@ class MainTmtTest {
         // Corrupted empty file triggers the crash
         Files.createFile(artifactsDir.resolve("empty.rpm"));
 
-        int rc = runMain();
+        runMain(2);
+        expectResults("results.yaml", "crash.log");
 
-        assertEquals(2, rc, "Correct exit code");
-        assertTrue(Files.isRegularFile(tmtTestData.resolve("results.yaml")), "results.yaml is present");
-        assertTrue(Files.isRegularFile(tmtTestData.resolve("crash.log")), "crash.log is present");
-
-        assertTrue(Files.readString(tmtTestData.resolve("results.yaml")).contains("result: error"), "result is error");
-        assertTrue(Files.readString(tmtTestData.resolve("crash.log"))
-                .contains("java.io.IOException: Unable to open RPM file"), "crash.log contains stack trace");
+        assertTrue(readResult("results.yaml").contains("result: error"), "result is error");
+        assertTrue(readResult("crash.log").contains("java.io.IOException: Unable to open RPM file"),
+                "crash.log contains stack trace");
     }
 
     @Test
     @Disabled("https://github.com/fedora-java/javapackages-validator/issues/82")
     void testHtmlNewLine() throws Exception {
-        Files.copy(Paths.get("src/test/resources/arg_file_iterator/dangling-symlink-1-1.noarch.rpm"),
-                artifactsDir.resolve("artifact.rpm"));
-        Validator v = new TestValidator("/html-new-line", (rpms, rb) -> {
+        copyResource("arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
+
+        addValidator("/html-new-line", (rpms, rb) -> {
             rb.addLog(LogEntry.warn("first_line\nsecond_line"));
         });
-        TestFactory.validators.add(v);
-        args.add(TestFactory.class.getCanonicalName());
 
-        runMain();
+        runMain(0);
+        expectResults( //
+                "results/html-new-line.html", //
+                "results/html-new-line.log", //
+                "results.yaml");
 
-        assertTrue(Files.isRegularFile(tmtTestData.resolve("results/html-new-line.html")),
-                "html-new-line.html is present");
-        assertTrue(Files.readString(tmtTestData.resolve("results/html-new-line.html"))
-                .contains("first_line<br>second_line"), "new line is represented as <br>");
+        assertTrue(readResult("results/html-new-line.html") //
+                .contains("first_line<br>second_line"), //
+                "new line is represented as <br>");
+        assertTrue(readResult("results.yaml").contains("result: warn"), "result is warn");
     }
 
 }
