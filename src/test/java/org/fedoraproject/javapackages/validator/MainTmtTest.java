@@ -162,4 +162,18 @@ class MainTmtTest {
                 "results.yaml");
     }
 
+    @Test
+    void testNameSlash() throws Exception {
+        copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
+        addValidator("/", (rpms, v) -> {
+            v.pass("passed");
+        });
+        runMain(0);
+        assertTrue(readResult("results.yaml").contains("result: pass"), "result is pass");
+        assertTrue(readResult("results.yaml").contains("results/.log"), "log path looks correct");
+        expectResults( //
+                "results/.log", //
+                "results/.html", //
+                "results.yaml");
+    }
 }
