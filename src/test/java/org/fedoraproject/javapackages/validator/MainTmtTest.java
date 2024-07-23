@@ -10,7 +10,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fedoraproject.javapackages.validator.spi.LogEntry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -40,10 +39,21 @@ class MainTmtTest {
         TestFactory.validators.clear();
     }
 
-    void copyResource(String loc) throws Exception {
-        Path path = Paths.get("src/test/resources").resolve(loc);
-        Path dest = artifactsDir.resolve(path.getFileName());
-        Files.copy(path, dest);
+    void copyResources(Path destDir, String... locations) throws Exception {
+        for (String loc : locations) {
+            Path path = Paths.get("src/test/resources").resolve(loc);
+            Path dest = destDir.resolve(path.getFileName());
+            Files.copy(path, dest);
+        }
+    }
+
+    void writeResource(Path destDir, String name, String... lines) throws Exception {
+        try (var bw = Files.newBufferedWriter(destDir.resolve(name), StandardCharsets.UTF_8)) {
+            for (String line : lines) {
+                bw.write(line);
+                bw.write('\n');
+            }
+        }
     }
 
     void addValidator(String name, AnonymousValidator validator) {
@@ -54,8 +64,8 @@ class MainTmtTest {
     }
 
     void runMain(int expRc) throws Exception {
-        int rc=main.run(args.toArray(new String[args.size()]));
-        assertEquals(expRc, rc,"check expected return code");
+        int rc = main.run(args.toArray(new String[args.size()]));
+        assertEquals(expRc, rc, "check expected return code");
     }
 
     void expectResults(String... locations) {
@@ -88,10 +98,10 @@ class MainTmtTest {
     @Test
     @Disabled("https://github.com/fedora-java/javapackages-validator/issues/82")
     void testHtmlNewLine() throws Exception {
-        copyResource("arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
+        copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
 
-        addValidator("/html-new-line", (rpms, rb) -> {
-            rb.addLog(LogEntry.warn("first_line\nsecond_line"));
+        addValidator("/html-new-line", (rpms, v) -> {
+            v.warn("first_line\nsecond_line");
         });
 
         runMain(0);
@@ -104,6 +114,37 @@ class MainTmtTest {
                 .contains("first_line<br>second_line"), //
                 "new line is represented as <br>");
         assertTrue(readResult("results.yaml").contains("result: warn"), "result is warn");
+    }
+
+    @Test
+    @Disabled("https://github.com/fedora-java/javapackages-validator/issues/84")
+    void testCustomConfig() throws Exception {
+        copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
+        writeResource(tmtTree, "javapackages-validator.yaml", //
+                "/myvalidator:", //
+                "  - foo", //
+                "  - bar", //
+                "exclude-tests-matching:", //
+                "  - /ot.er" //
+        );
+
+        List<String> theArgs = new ArrayList<>();
+        addValidator("/myvalidator", (rpms, v) -> {
+            if (v.getArgs() != null) {
+                theArgs.addAll(v.getArgs());
+            }
+            v.pass("passed");
+        });
+        addValidator("/other", (rpms, v) -> {
+            v.fail("other validator should be excluded");
+        });
+
+        runMain(0);
+        assertTrue(readResult("results.yaml").contains("result: pass"), "result is pass");
+
+        assertEquals(2, theArgs.size());
+        assertEquals("foo", theArgs.get(0));
+        assertEquals("bar", theArgs.get(1));
     }
 
 }

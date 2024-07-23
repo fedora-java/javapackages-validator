@@ -3,7 +3,6 @@ package org.fedoraproject.javapackages.validator;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fedoraproject.javapackages.validator.spi.ResultBuilder;
 import org.fedoraproject.javapackages.validator.spi.Validator;
 import org.fedoraproject.javapackages.validator.spi.ValidatorFactory;
 
@@ -21,7 +20,7 @@ public class TestFactory implements ValidatorFactory {
 }
 
 interface AnonymousValidator {
-    void validate(Iterable<RpmPackage> rpms, ResultBuilder rb) throws Exception;
+    void validate(Iterable<RpmPackage> rpms, DefaultValidator rb) throws Exception;
 }
 
 class TestValidator extends DefaultValidator {
