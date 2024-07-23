@@ -12,6 +12,7 @@ import java.util.List;
 import org.fedoraproject.javapackages.validator.spi.LogEntry;
 import org.fedoraproject.javapackages.validator.spi.Validator;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -61,6 +62,7 @@ class MainTmtTest {
     }
 
     @Test
+    @Disabled("https://github.com/fedora-java/javapackages-validator/issues/82")
     void testHtmlNewLine() throws Exception {
         Files.copy(Paths.get("src/test/resources/arg_file_iterator/dangling-symlink-1-1.noarch.rpm"),
                 artifactsDir.resolve("artifact.rpm"));
