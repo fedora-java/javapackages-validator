@@ -294,6 +294,30 @@ public class MainTmt extends Main {
         return TMT_TEST_DATA.resolve(path);
     }
 
+    private void writeCrashLog(Throwable t) throws IOException {
+        try (var os = Files.newOutputStream(TMT_TEST_DATA.resolve("results.yaml"));
+                PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8)) {
+            ps.println("- name: /");
+            ps.println("  result: error");
+            ps.println("  log:");
+            ps.println("   - crash.log");
+        }
+        try (var os = Files.newOutputStream(TMT_TEST_DATA.resolve("crash.log"));
+                PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8)) {
+            t.printStackTrace(ps);
+        }
+    }
+
+    @Override
+    public int run(String[] args) throws Exception {
+        try {
+            return super.run(args);
+        } catch (Throwable t) {
+            writeCrashLog(t);
+            return 2;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         create().run(args);
     }
