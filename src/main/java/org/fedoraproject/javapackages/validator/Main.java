@@ -316,7 +316,7 @@ public class Main {
         var expandedClassPaths = new ArrayList<Path>();
         for (var classPath : parameters.classPaths) {
             var cpParent = classPath.getParent();
-            if (classPath.endsWith("*") && cpParent != null) {
+            if (classPath.endsWith("*") && cpParent != null && Files.isDirectory(cpParent)) {
                 try (var list = Files.list(cpParent).filter(p -> Files.isRegularFile(p) && p.toString().endsWith(".jar"))) {
                     list.forEach(expandedClassPaths::add);
                 }
