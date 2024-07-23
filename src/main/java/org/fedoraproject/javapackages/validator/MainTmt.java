@@ -44,9 +44,15 @@ public class MainTmt extends Main {
     }
 
     public static Main create() {
+        var tmtTestData = Paths.get(getenv("TMT_TEST_DATA"));
+        var tmtTree = Paths.get(getenv("TMT_TREE"));
+        return create(tmtTestData, tmtTree);
+    }
+
+    public static Main create(Path tmtTestData, Path tmtTree) {
         var result = new MainTmt();
-        result.TMT_TEST_DATA = Paths.get(getenv("TMT_TEST_DATA"));
-        result.TMT_TREE = Paths.get(getenv("TMT_TREE"));
+        result.TMT_TEST_DATA = tmtTestData;
+        result.TMT_TREE = tmtTree;
         return result;
     }
 
