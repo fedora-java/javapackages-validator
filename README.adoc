@@ -114,10 +114,6 @@ Project is built with Maven. Simply run:
 $ mvn install
 ----
 
-The project currently requires a https://github.com/mkoncek/java-deptools-native[custom fork] of the _java-deptools-native_ project.
-
-In order to build this project you need to build and install this forked project also with Maven.
-
 == Custom validators
 A custom validator must inherit from the `org.fedoraproject.javapackages.validator.Validator` class and have its name listed in the service file on the class path of the program.
 Custom validators can override functions:
