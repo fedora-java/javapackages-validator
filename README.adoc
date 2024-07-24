@@ -151,8 +151,7 @@ Validation was run successfully and all the checks that were executed passed.
 The validator found a potential issue which does not affect validation results, but might be worth checking and fixing.
 
 `warn`::
-The validator only produced warning information.
-Currently mostly unused.
+The validator found an issue that might be a false-positive and therefore requires further human review.
 
 `fail`::
 At least one check failed.
