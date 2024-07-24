@@ -62,7 +62,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
         }
 
         var jarsWithoutMd = foundFiles.stream()
-                .filter(f -> f.startsWith("/usr/share/java/"))
+                .filter(f -> f.startsWith("/usr/share/java/") || f.startsWith("/usr/lib/java/"))
                 .filter(f -> f.endsWith(".jar"))
                 .collect(Collectors.toSet());
         var pomsWithoutMd = foundFiles.stream()
