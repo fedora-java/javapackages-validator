@@ -27,7 +27,7 @@ public class Common {
     }
 
     /**
-     * @param rpm The rpm file to inspect.
+     * @param rpm The RPM package to inspect
      * @return A map of file paths mapped to either the target of the symlink
      * or null, if the file path is not a symlink.
      * @throws IOException

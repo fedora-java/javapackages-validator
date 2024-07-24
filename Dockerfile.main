@@ -5,10 +5,10 @@ WORKDIR "/usr/local/src/javapackages-validator"
 
 # First fetch dependencies without having sources
 COPY "pom.xml" "/usr/local/src/javapackages-validator/"
-RUN mvn -B clean install
+RUN mvn -B clean install javadoc:javadoc
 
 COPY "src/" "/usr/local/src/javapackages-validator/src/"
-RUN mvn -B clean install
+RUN mvn -B clean install javadoc:javadoc
 
 ################################################################################
 
