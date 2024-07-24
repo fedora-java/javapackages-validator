@@ -23,10 +23,18 @@ import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
 /**
- * Validator which checks that maven metadata XML file references files
- * present on the file system relative to the environment root.
+ * Validator which checks that Maven metadata XML stored in
+ * {@code /usr/share/maven-metadata/}.
+ * <p>
+ * It checks whether:
+ * <ul>
+ * <li>the metadata files can be parsed with XMvn,
+ * <li>all artifacts mentioned in the metadata are actually included as files in
+ * the package,
+ * <li>there are no JARs and POMs without Maven metadata.
+ * </ul>
  *
- * Ignores source rpms.
+ * Ignores source RPMs.
  */
 @SuppressFBWarnings({"DMI_HARDCODED_ABSOLUTE_FILENAME"})
 public class MavenMetadataValidator extends ElementwiseValidator {
