@@ -133,23 +133,29 @@ This is used to obtain the tmt test name. See also the `TmtTest` annotation clas
 [#_result_states]
 === Result states
 Each validator has a single result state.
-The starting state is `info`.
+The starting state is `skip`.
 The state is overriden by calling corresponding methods of the `Validator` class.
 The state listed lower in the following hierarchy overrides the previous states but not vice-versa.
 Note that `debug` is not a result state, it only serves for the validator to provide verbose info.
 
 .Result states
 [horizontal]
-`info`::
-Validator provided some informational message.
-For example the values of some attributes of the RPM.
-This can also mean that the property being tested was not present in the RPM.
+`skip`::
+A check was expectedly skipped because the validator determined so.
+This can also mean that the property being tested was not present in the RPM under test.
 
 `pass`::
-RPM passed the validator checks.
+Validation was run successfully and all the checks that were executed passed.
+
+`info`::
+The validator found a potential issue which does not affect validation results, but might be worth checking and fixing.
+
+`warn`::
+The validator only produced warning information.
+Currently mostly unused.
 
 `fail`::
-RPM failed at at least one check.
+At least one check failed.
 
 `error`::
 An error occured, for example invalid input or an unexpected state.
