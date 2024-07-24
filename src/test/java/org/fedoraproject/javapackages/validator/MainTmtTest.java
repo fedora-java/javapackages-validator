@@ -163,6 +163,22 @@ class MainTmtTest {
     }
 
     @Test
+    @Disabled("https://github.com/fedora-java/javapackages-validator/issues/94")
+    void testCompilationFailure() throws Exception {
+        writeResource(tmtTree, "Boom.java", "package pkg; import java.util.foo.bar; class Boom{}");
+        args.add("-sp");
+        args.add(tmtTree.toString());
+        args.add("-d");
+        args.add(tmtTestData.toString());
+        runMain(2);
+        expectResults( //
+                "crash.log", //
+                "results.yaml");
+        assertTrue(readResult("crash.log").contains("package java.util.foo does not exist"),
+                "crash log contains the actual reason for compilation failure");
+    }
+
+    @Test
     void testNameSlash() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
         addValidator("/", (rpms, v) -> {
