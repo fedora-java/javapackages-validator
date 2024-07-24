@@ -23,7 +23,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
     <dependency>
       <groupId>io.kojan</groupId>
       <artifactId>java-deptools-native</artifactId>
-      <version>1.1.0</version>
+      <version>1.2.0</version>
     </dependency>
     <dependency>
       <groupId>io.github.fedora-java</groupId>
@@ -88,10 +88,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
         <configuration>
-          <release>21</release>
-          <compilerArgs>
-            <arg>--enable-preview</arg>
-          </compilerArgs>
+          <release>22</release>
         </configuration>
       </plugin>
       <plugin>
@@ -102,6 +99,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
+              <useUniqueVersions>false</useUniqueVersions>
               <classpathPrefix>dependency/</classpathPrefix>
               <mainClass>org.fedoraproject.javapackages.validator.Main</mainClass>
             </manifest>
@@ -130,7 +128,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.3.1</version>
         <configuration>
-          <argLine>--enable-preview --enable-native-access ALL-UNNAMED</argLine>
+          <argLine>--enable-native-access ALL-UNNAMED</argLine>
         </configuration>
       </plugin>
       <plugin>

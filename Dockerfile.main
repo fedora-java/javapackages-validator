@@ -1,4 +1,4 @@
-FROM docker.io/library/eclipse-temurin:21-jdk-ubi9-minimal AS builder
+FROM docker.io/library/eclipse-temurin:22-jdk-ubi9-minimal AS builder
 RUN microdnf -y install git-core maven rpm-libs
 
 WORKDIR "/usr/local/src/javapackages-validator"
@@ -8,15 +8,15 @@ COPY "pom.xml" "/usr/local/src/javapackages-validator/"
 RUN mvn -B clean install javadoc:javadoc
 
 COPY "src/" "/usr/local/src/javapackages-validator/src/"
-RUN mvn -B clean install javadoc:javadoc
+RUN mvn -B -U clean install javadoc:javadoc
 
 ################################################################################
 
-FROM docker.io/library/eclipse-temurin:21-jdk-ubi9-minimal
+FROM docker.io/library/eclipse-temurin:22-jdk-ubi9-minimal
 RUN microdnf -y update
 RUN microdnf -y install rpm-libs
 
 COPY --from=builder "/usr/local/src/javapackages-validator/target/dependency/" "/opt/javapackages-validator/dependency/"
 COPY --from=builder "/usr/local/src/javapackages-validator/target/validator.jar" "/opt/javapackages-validator/validator.jar"
 
-ENTRYPOINT ["/opt/java/openjdk/bin/java", "--enable-preview", "--enable-native-access", "ALL-UNNAMED", "-cp", "/opt/javapackages-validator/validator.jar"]
+ENTRYPOINT ["/opt/java/openjdk/bin/java", "--enable-native-access", "ALL-UNNAMED", "-cp", "/opt/javapackages-validator/validator.jar"]

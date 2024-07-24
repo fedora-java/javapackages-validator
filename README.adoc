@@ -6,7 +6,7 @@ _Javapackages-validator_ is a tool used to test RPM files.
 It executes checks implemented as Java classes over the set of provided RPM files.
 
 == Building
-The project is built with Maven. JDK of version 21 is required. Simply run:
+The project is built with Maven. JDK of version 22 is required. Simply run:
 [source, shell]
 ----
 $ mvn install
@@ -14,7 +14,7 @@ $ mvn install
 
 == Usage
 The tool is executed from command line using `java` command with the proper class path.
-JVM of version 21 is required.
+JVM of version 22 is required.
 
 [subs = quotes]
 ----
@@ -22,8 +22,8 @@ Main [_optional flags_] <_main arguments_>... [-f _RPM files or directories to t
 ----
 
 [NOTE]
-Due to the usage of the Foreign Memory Accesss feature, JVM arguments must include: +
-`--enable-preview --enable-native-access ALL-UNNAMED`.
+Due to the usage of the [Foreign Memory Accesss](https://openjdk.org/jeps/454) feature, JVM arguments must include: +
+`--enable-native-access ALL-UNNAMED`.
 
 Optional flags::
 [horizontal]
@@ -85,7 +85,7 @@ Recompilation is caused by any of these conditions:
 Recompilation causes the class path directory to be cleaned before the newly compiled classes are placed there.
 
 === Service file
-The file `META-INF/services/org.fedoraproject.javapackages.validator.spi.ValidatorFactory` is a standard https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html#deploying-service-providers-on-the-class-path-heading[Java service file].
+The file `META-INF/services/org.fedoraproject.javapackages.validator.spi.ValidatorFactory` is a standard https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/ServiceLoader.html#deploying-service-providers-on-the-class-path-heading[Java service file].
 It contains a line-separated list of validator factory class names which are available to be executed.
 This file will be copied from the source path to the class path and is expected to be present on the class path if source path is not specified.
 
@@ -119,7 +119,7 @@ The key is a tmt test name. The value of the field must be a list of strings. It
 
 `exclude-tests-matching`::
 The value of this field is a list of strings.
-The strings must be valid https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/regex/Pattern.html[Java regular expressions].
+The strings must be valid https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/regex/Pattern.html[Java regular expressions].
 If any of these patterns matches the test name of a validator, it will be skipped.
 
 .Example of `javapackages-validator.yaml` configuration file

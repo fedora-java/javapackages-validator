@@ -342,9 +342,8 @@ public class Main {
 
         if (parameters.outputDir != null) {
             var compilerArgs = new ArrayList<String>();
-            compilerArgs.add("--enable-preview");
             compilerArgs.add("--release");
-            compilerArgs.add("21");
+            compilerArgs.add("22");
             compilerArgs.add("-d");
             compilerArgs.add(parameters.outputDir.toString());
 
