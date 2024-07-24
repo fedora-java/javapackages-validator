@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -58,8 +59,12 @@ public class MavenMetadataValidator extends ElementwiseValidator {
 
         if (metadataXmls.isEmpty()) {
             skip("{0}: maven metadata XML file not found", Decorated.rpm(rpm));
-            return;
         }
+
+        var jarsWithoutMd = foundFiles.stream()
+                .filter(f -> f.startsWith("/usr/share/java/"))
+                .filter(f -> f.endsWith(".jar"))
+                .collect(Collectors.toSet());
 
         for (var entry : metadataXmls) {
             PackageMetadata packageMetadata = null;
@@ -74,6 +79,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
             for (var artifact : packageMetadata.getArtifacts()) {
                 var artifactPath = Paths.get(artifact.getPath());
                 var metadataXml = Common.getEntryPath(entry.getKey());
+                jarsWithoutMd.remove(artifactPath.toString());
                 if (foundFiles.contains(artifactPath.toString())) {
                     pass("{0}: {1}: artifact {2} is present in the RPM",
                             Decorated.rpm(rpm),
@@ -86,6 +92,12 @@ public class MavenMetadataValidator extends ElementwiseValidator {
                             Decorated.expected(artifactPath));
                 }
             }
+        }
+
+        for (var jar : jarsWithoutMd) {
+            info("{0}: JAR file without corresponding Maven metadata: {1}",
+                    Decorated.rpm(rpm),
+                    Decorated.actual(jar));
         }
     }
 }
