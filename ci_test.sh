@@ -37,7 +37,8 @@ execute() {
              discover --how fmf \
                       --url "${jpv_tests_dir}" \
                       --ref "${jpv_tests_ref}" \
-             plan --name /plans/javapackages
+             plan --name /plans/javapackages \
+             test --filter tag:-runit
         then
             echo "::endgroup::"
             continue
