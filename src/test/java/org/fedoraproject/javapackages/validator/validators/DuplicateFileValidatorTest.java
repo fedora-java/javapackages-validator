@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import org.fedoraproject.javapackages.validator.TestCommon;
 import org.fedoraproject.javapackages.validator.util.DuplicateFileValidator.DefaultDuplicateFileValidator;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.kojan.javadeptools.rpm.RpmInfo;
@@ -17,6 +18,7 @@ import io.kojan.javadeptools.rpm.RpmInfo;
 public class DuplicateFileValidatorTest {
     private static final Path DUPLICATE_FILE1_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file1-1-1.noarch.rpm"));
     private static final Path DUPLICATE_FILE2_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file2-1-1.noarch.rpm"));
+    private static final Path DUPLICATE_FILE3_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file3-1-1.noarch.rpm"));
 
     @Test
     void testIllegalDuplicateFile() throws Exception {
@@ -48,5 +50,22 @@ public class DuplicateFileValidatorTest {
         };
         validator.validate(TestCommon.fromPaths(DUPLICATE_FILE1_RPM, DUPLICATE_FILE2_RPM));
         assertPass(validator.build());
+    }
+
+    @Test
+    @Disabled("https://github.com/fedora-java/javapackages-validator/issues/86")
+    void testDuplicateGhost() throws Exception {
+        var validator = new DefaultDuplicateFileValidator() {
+            @Override
+            public String getTestName() {
+                return null;
+            }
+            @Override
+            public boolean allowedDuplicateFile(Path path, Collection<? extends RpmInfo> providerRpms) throws IOException {
+                return false;
+            }
+        };
+        validator.validate(TestCommon.fromPaths(DUPLICATE_FILE1_RPM, DUPLICATE_FILE3_RPM));
+        assertFailOne(validator.build());
     }
 }
