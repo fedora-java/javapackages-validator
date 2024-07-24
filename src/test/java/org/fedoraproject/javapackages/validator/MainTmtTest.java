@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -94,11 +95,12 @@ class MainTmtTest {
     }
 
     @Test
-    void testHtmlNewLine() throws Exception {
+    @Disabled("https://github.com/fedora-java/javapackages-validator/issues/101")
+    void testHtmlEscaping() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
 
         addValidator("/html-new-line", (rpms, v) -> {
-            v.warn("first_line\nsecond_line");
+            v.warn("first_line\nsecond_line\n{0}", Decorated.plain("&third_line"));
         });
 
         runMain(0);
@@ -110,6 +112,9 @@ class MainTmtTest {
         assertTrue(readResult("results/html-new-line.html") //
                 .contains("first_line<br>second_line"), //
                 "new line is represented as <br>");
+        assertTrue(readResult("results/html-new-line.html") //
+                .contains("<text class=\"black\">&amp;third_line</text>"), //
+                "HTML is correctly decorated and escaped");
         assertTrue(readResult("results.yaml").contains("result: warn"), "result is warn");
     }
 
