@@ -72,23 +72,23 @@ This file will be copied from the source path to the class path and is expected 
 
 The validator main argument passed to javapackages-validator must exactly match one of the names listed in either the service file or the service file on the built-in class path.
 
-=== TMT
-The tool contains another main class `MainTmt` which is intended to be invoked from within Tmt tests.
-When the validator is run from the Tmt entry point, it requires the environment variables `TMT_TEST_DATA` and `TMT_TREE` to be defined.
+=== tmt
+The tool contains another main class `MainTmt` which is intended to be invoked from within tmt tests.
+When the validator is run from the tmt entry point, it requires the environment variables `TMT_TEST_DATA` and `TMT_TREE` to be defined.
 
 Test execution from this entry point is configured using a configuration file named `javapackages-validator.yaml`.
 This file can be located either in the root, i.e. the value of the `TMT_TREE` variable or in the `plans` directory of the project.
 
 Every validator has an associated _test name_.
 This is the result of the virtual `getTestName` function.
-This name must be in the format of TMT tests, i.e. starting with `/`.
+This name must be in the format of tmt tests, i.e. starting with `/`.
 Test names are used to create report files.
 
 ==== Configuration
 The following fields are allowed in the YAML configuration file.
 
 _Fields starting with_ `/`::
-The key is a Tmt test name. The value of the field must be a list of strings. It will be passed as the arguments to the according validator.
+The key is a tmt test name. The value of the field must be a list of strings. It will be passed as the arguments to the according validator.
 
 `exclude-tests-matching`::
 The value of this field is a list of strings.
@@ -128,7 +128,7 @@ The validator is supposed to call functions `debug`, `info`, `pass`, `fail`, `er
 For details, see the section <<_result_states>>.
 
 `String getTestName()`::
-This is used to obtain the TMT test name. See also the `TmtTest` annotation class.
+This is used to obtain the tmt test name. See also the `TmtTest` annotation class.
 
 [#_result_states]
 === Result states
