@@ -57,7 +57,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
         }
 
         if (metadataXmls.isEmpty()) {
-            info("{0}: maven metadata XML file not found", Decorated.rpm(rpm));
+            skip("{0}: maven metadata XML file not found", Decorated.rpm(rpm));
             return;
         }
 
