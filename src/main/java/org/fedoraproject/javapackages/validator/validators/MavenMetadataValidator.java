@@ -104,10 +104,10 @@ public class MavenMetadataValidator extends ElementwiseValidator {
                     Decorated.rpm(rpm),
                     Decorated.actual(jar));
         }
-        for (var jar : pomsWithoutMd) {
-            fail("{0}: POM file without corresponding Maven metadata: {1}",
+        for (var pom : pomsWithoutMd) {
+            info("{0}: POM file without corresponding Maven metadata: {1}",
                     Decorated.rpm(rpm),
-                    Decorated.actual(jar));
+                    Decorated.actual(pom));
         }
     }
 }
