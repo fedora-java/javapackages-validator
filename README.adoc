@@ -67,7 +67,7 @@ Recompilation is caused by any of these conditions:
 Recompilation causes the class path directory to be cleaned before the newly compiled classes are placed there.
 
 === Service file
-The file `META-INF/services/org.fedoraproject.javapackages.validator.Validator` contains a line-separated list of validator class names which are available to be executed.
+The file `META-INF/services/org.fedoraproject.javapackages.validator.spi.ValidatorFactory` contains a line-separated list of validator factory class names which are available to be executed.
 This file will be copied from the source path to the class path and is expected to be present on the class path if source path is not specified.
 
 The validator main argument passed to javapackages-validator must exactly match one of the names listed in either the service file or the service file on the built-in class path.
