@@ -65,6 +65,10 @@ public class MavenMetadataValidator extends ElementwiseValidator {
                 .filter(f -> f.startsWith("/usr/share/java/"))
                 .filter(f -> f.endsWith(".jar"))
                 .collect(Collectors.toSet());
+        var pomsWithoutMd = foundFiles.stream()
+                .filter(f -> f.startsWith("/usr/share/maven-poms/"))
+                .filter(f -> f.endsWith(".pom"))
+                .collect(Collectors.toSet());
 
         for (var entry : metadataXmls) {
             PackageMetadata packageMetadata = null;
@@ -80,6 +84,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
                 var artifactPath = Paths.get(artifact.getPath());
                 var metadataXml = Common.getEntryPath(entry.getKey());
                 jarsWithoutMd.remove(artifactPath.toString());
+                pomsWithoutMd.remove(artifactPath.toString());
                 if (foundFiles.contains(artifactPath.toString())) {
                     pass("{0}: {1}: artifact {2} is present in the RPM",
                             Decorated.rpm(rpm),
@@ -96,6 +101,11 @@ public class MavenMetadataValidator extends ElementwiseValidator {
 
         for (var jar : jarsWithoutMd) {
             info("{0}: JAR file without corresponding Maven metadata: {1}",
+                    Decorated.rpm(rpm),
+                    Decorated.actual(jar));
+        }
+        for (var jar : pomsWithoutMd) {
+            fail("{0}: POM file without corresponding Maven metadata: {1}",
                     Decorated.rpm(rpm),
                     Decorated.actual(jar));
         }
