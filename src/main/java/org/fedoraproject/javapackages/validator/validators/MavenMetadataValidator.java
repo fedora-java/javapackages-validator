@@ -54,6 +54,9 @@ public class MavenMetadataValidator extends ElementwiseValidator {
         var foundFiles = new TreeSet<String>();
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {
             for (CpioArchiveEntry rpmEntry; (rpmEntry = is.getNextEntry()) != null;) {
+                if (!rpmEntry.isRegularFile()) {
+                    continue;
+                }
                 foundFiles.add(Common.getEntryPath(rpmEntry).toString());
                 if (rpmEntry.getName().startsWith("./usr/share/maven-metadata/") && rpmEntry.getName().endsWith(".xml")) {
                     byte[] content = new byte[(int) rpmEntry.getSize()];
