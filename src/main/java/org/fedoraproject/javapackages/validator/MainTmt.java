@@ -313,6 +313,7 @@ public class MainTmt extends Main {
         try {
             return super.run(args);
         } catch (Throwable t) {
+            t.printStackTrace();
             writeCrashLog(t);
             return 2;
         }
