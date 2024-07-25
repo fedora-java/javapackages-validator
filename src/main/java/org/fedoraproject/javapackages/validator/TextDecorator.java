@@ -14,4 +14,8 @@ interface TextDecorator {
      * @return Decorated string.
      */
     String decorate(Decorated decorated);
+
+    default String escape(String text) {
+        return text;
+    }
 }

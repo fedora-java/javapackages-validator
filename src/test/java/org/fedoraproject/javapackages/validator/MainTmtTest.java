@@ -95,7 +95,6 @@ class MainTmtTest {
     }
 
     @Test
-    @Disabled("https://github.com/fedora-java/javapackages-validator/issues/101")
     void testHtmlEscaping() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
 

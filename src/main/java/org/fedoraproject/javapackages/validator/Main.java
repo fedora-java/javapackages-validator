@@ -519,8 +519,8 @@ public class Main {
     }
 
     protected static final String decoratedObjects(LogEntry entry, TextDecorator decorator) {
-        return MessageFormat.format(entry.pattern(), Stream.of(entry.objects())
-                .map(a -> decorator.decorate(a)).toArray());
+        return MessageFormat.format(decorator.escape(entry.pattern()),
+                Stream.of(entry.objects()).map(a -> decorator.decorate(a)).toArray());
     }
 
     protected static final String decorated(LogEntry entry) {

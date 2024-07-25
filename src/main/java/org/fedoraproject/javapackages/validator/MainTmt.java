@@ -22,7 +22,6 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.IterableUtils;
-import org.apache.commons.text.StringEscapeUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.spi.LogEntry;
 import org.fedoraproject.javapackages.validator.spi.LogEvent;
@@ -104,9 +103,7 @@ public class MainTmt extends Main {
         public void printRow(LogEntry entry) {
             println("  <tr class=\"" + entry.kind() + "\">");
             println("    <td>" + HtmlDecorator.INSTANCE.decorate(entry.kind().getDecorated()) + "</td>");
-            var text = Main.decoratedObjects(entry, HtmlDecorator.INSTANCE);
-            text = StringEscapeUtils.escapeHtml4(text).replace(System.lineSeparator(), "<br>");
-            println("    <td>" + text + "</td>");
+            println("    <td>" + Main.decoratedObjects(entry, HtmlDecorator.INSTANCE) + "</td>");
             println("  </tr>");
         }
 
