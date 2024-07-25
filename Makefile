@@ -51,6 +51,7 @@ java_cup \
 javacc \
 javacc-maven-plugin \
 javapackages-bootstrap \
+javaparser \
 jaxb \
 jaxb-api \
 jaxb-dtd-parser \
@@ -123,7 +124,9 @@ plexus-languages \
 plexus-pom \
 plexus-resources \
 plexus-sec-dispatcher \
+plexus-testing \
 plexus-utils \
+plexus-xml \
 qdox \
 regexp \
 relaxng-datatype-java \
@@ -134,7 +137,6 @@ testng \
 univocity-parsers \
 velocity \
 xalan-j2 \
-xbean \
 xerces-j2 \
 xml-commons-apis \
 xml-commons-resolver \
