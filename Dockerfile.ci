@@ -1,14 +1,15 @@
 FROM quay.io/fedora/fedora-minimal:rawhide AS builder
 RUN microdnf -y update
-RUN microdnf -y install findutils git-core koji make
+RUN microdnf -y install findutils koji make
 
 # Force rebuild
 RUN echo 4
 
-COPY "prepare_ci.sh" "/usr/local/src/"
-COPY "Makefile" "/usr/local/src/"
-RUN make -j12 -C "/usr/local/src"
+COPY prepare_ci.sh Makefile /src
+RUN mkdir /rpms
+WORKDIR /rpms
+RUN make -f /src/Makefile -j12 -Otarget
 
 FROM docker.io/library/alpine:3
-COPY --from=builder "/usr/local/src/rpms" "/usr/local/src/rpms"
-ENTRYPOINT ["cp", "-r", "/usr/local/src/rpms", "-t"]
+COPY --from=builder /rpms /rpms
+ENTRYPOINT ["cp", "-r", "/rpms", "-t"]

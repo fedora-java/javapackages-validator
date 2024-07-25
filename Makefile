@@ -1,7 +1,7 @@
 MAKEFLAGS += -r
-TARGET ?= rpms
+SRC_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
-components:= $(addprefix $(TARGET)/,\
+components:= \
 ant \
 antlr \
 aopalliance \
@@ -144,13 +144,10 @@ xmlunit \
 xmvn \
 xmvn-generator \
 xz-java \
-)
 
 .PHONY: all
 
 all: $(components)
-$(TARGET):
-	@mkdir $@
-$(components): | $(TARGET)
+$(components): |
 	@echo $@
-	@cd $(@D) && "$${OLDPWD}/prepare_ci.sh" $(@F) || rm -rf $(@F)
+	@$(SRC_DIR)/prepare_ci.sh $(@F) || rm -rf $(@F)
