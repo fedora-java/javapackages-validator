@@ -10,6 +10,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
+import org.apache.commons.io.IOUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.spi.TestResult;
 
@@ -33,24 +34,16 @@ public abstract class BytecodeVersionJarValidator extends JarValidator {
                 var classPath = Paths.get(jarEntry.getName());
 
                 if (classPath.toString().endsWith(".class")) {
-                    if (jarStream.skip(4) != 4) {
-                        throw Common.INCOMPLETE_READ;
-                    }
+                    IOUtils.skip(jarStream, 4);
 
                     // ByteBuffer's initial byte order is big-endian
                     // which is the same as is used in java .class files
                     var versionBuffer = ByteBuffer.allocate(2);
 
-                    if (jarStream.read(versionBuffer.array()) != versionBuffer.capacity()) {
-                        throw Common.INCOMPLETE_READ;
-                    }
-
+                    IOUtils.read(jarStream, versionBuffer.array());
                     var minorVersion = versionBuffer.getShort();
                     versionBuffer.clear();
-                    if (jarStream.read(versionBuffer.array()) != versionBuffer.capacity()) {
-                        throw Common.INCOMPLETE_READ;
-                    }
-
+                    IOUtils.read(jarStream, versionBuffer.array());
                     var majorVersion = versionBuffer.getShort();
 
                     classVersions.put(classPath, new Version(majorVersion, minorVersion));

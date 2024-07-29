@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
+import org.apache.commons.io.IOUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.util.Common;
 import org.fedoraproject.javapackages.validator.util.ElementwiseValidator;
@@ -60,9 +61,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
                 foundFiles.add(Common.getEntryPath(rpmEntry).toString());
                 if (rpmEntry.getName().startsWith("./usr/share/maven-metadata/") && rpmEntry.getName().endsWith(".xml")) {
                     byte[] content = new byte[(int) rpmEntry.getSize()];
-                    if (is.read(content) != content.length) {
-                        throw Common.INCOMPLETE_READ;
-                    }
+                    IOUtils.read(is, content);
                     metadataXmls.add(Map.entry(rpmEntry, content));
                 }
             }

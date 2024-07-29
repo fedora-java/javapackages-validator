@@ -8,6 +8,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
+import org.apache.commons.io.IOUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
@@ -15,8 +16,6 @@ import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
 public class Common {
-    public static final IOException INCOMPLETE_READ = new IOException("Incomplete read in RPM stream");
-
     @SuppressFBWarnings({"DMI_HARDCODED_ABSOLUTE_FILENAME"})
     public static Path getEntryPath(CpioArchiveEntry entry) {
         return Paths.get("/").resolve(Paths.get("/").relativize(Paths.get("/").resolve(Paths.get(entry.getName()))));
@@ -41,11 +40,7 @@ public class Common {
 
                 if (rpmEntry.isSymbolicLink()) {
                     var content = new byte[(int) rpmEntry.getSize()];
-
-                    if (is.read(content) != content.length) {
-                        throw Common.INCOMPLETE_READ;
-                    }
-
+                    IOUtils.read(is, content);
                     target = Paths.get(new String(content, StandardCharsets.UTF_8));
                 }
 

@@ -3,6 +3,7 @@ package org.fedoraproject.javapackages.validator.util;
 import java.util.function.Consumer;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
+import org.apache.commons.io.IOUtils;
 
 import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
 import io.kojan.javadeptools.rpm.RpmPackage;
@@ -14,11 +15,7 @@ public interface RpmJarConsumer extends Consumer<RpmPackage> {
             for (CpioArchiveEntry rpmEntry; ((rpmEntry = is.getNextEntry()) != null);) {
                 if (!rpmEntry.isSymbolicLink() && rpmEntry.getName().endsWith(".jar")) {
                     var content = new byte[(int) rpmEntry.getSize()];
-
-                    if (is.read(content) != content.length) {
-                        throw Common.INCOMPLETE_READ;
-                    }
-
+                    IOUtils.read(is, content);
                     acceptJarEntry(rpm, rpmEntry, content);
                 }
             }
