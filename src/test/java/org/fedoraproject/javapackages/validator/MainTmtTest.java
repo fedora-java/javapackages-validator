@@ -12,7 +12,6 @@ import java.util.List;
 
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
