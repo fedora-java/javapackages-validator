@@ -10,7 +10,6 @@ import java.util.Collection;
 
 import org.fedoraproject.javapackages.validator.TestCommon;
 import org.fedoraproject.javapackages.validator.util.DuplicateFileValidator.DefaultDuplicateFileValidator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.kojan.javadeptools.rpm.RpmInfo;
@@ -53,7 +52,6 @@ public class DuplicateFileValidatorTest {
     }
 
     @Test
-    @Disabled("https://github.com/fedora-java/javapackages-validator/issues/86")
     void testDuplicateGhost() throws Exception {
         var validator = new DefaultDuplicateFileValidator() {
             @Override
