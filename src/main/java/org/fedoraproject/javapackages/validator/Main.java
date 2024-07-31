@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -154,15 +153,20 @@ public class Main {
         if (deps.isBlank()) {
             return;
         }
-        var repos = new ArrayList<>(Collections.singletonList(
-                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build()));
+        var repos = new LinkedHashMap<String, String>();
+        repos.put("central", "https://repo.maven.apache.org/maven2");
         var reposProp = props.getProperty("repositories", "");
         if (!reposProp.isBlank()) {
             var reposSplit = reposProp.split(" +");
             for (var i = 0; i < reposSplit.length; i++) {
-                repos.add(new RemoteRepository.Builder("repo" + i, "default", reposSplit[i]).build());
+                repos.put("repo" + i, reposSplit[i]);
             }
         }
+        repos.forEach((name, url) -> logger.debug("Using remote repository {0} at {1}", Decorated.struct(name),
+                Decorated.outer(url)));
+        var remoteRepos = repos.entrySet().stream()
+                .map(repo -> new RemoteRepository.Builder(repo.getKey(), "default", repo.getValue()).build())
+                .collect(Collectors.toList());
         var aether = new RepositorySystemSupplier().get();
         try (var session = new SessionBuilderSupplier(aether).get()
                 .withLocalRepositoryBaseDirectories(parameters.outputDir.resolve("local-repo"))
@@ -174,7 +178,7 @@ public class Main {
                 }).build()) {
             aether.resolveArtifacts(session,
                     Arrays.stream(deps.split(" +")).map(DefaultArtifact::new)
-                            .map(art -> new ArtifactRequest(art, repos, "")).collect(Collectors.toList()))
+                            .map(art -> new ArtifactRequest(art, remoteRepos, "")).collect(Collectors.toList()))
                     .stream().map(res -> res.getArtifact().getPath()).forEach(parameters.classPaths::add);
         } catch (ArtifactResolutionException e) {
             throw new RuntimeException(e);
