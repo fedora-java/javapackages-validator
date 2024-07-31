@@ -177,6 +177,22 @@ class MainTmtTest {
     }
 
     @Test
+    void testCompilerProperties() throws Exception {
+        writeResource(tmtTree, "Foo.java", "package dummy; class Foo {} enum BAR {}");
+        writeResource(tmtTree, "javapackages-validator.properties", "compiler.release=4242");
+        args.add("-sp");
+        args.add(tmtTree.toString());
+        args.add("-d");
+        args.add(tmtTestData.toString());
+        runMain(2);
+        expectResults( //
+                "crash.log", //
+                "results.yaml");
+        assertTrue(readResult("crash.log").contains("release version 4242 not supported"),
+                "crash log indicates that --release was passed to javac");
+    }
+
+    @Test
     void testNameSlash() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
         addValidator("/", (rpms, v) -> {

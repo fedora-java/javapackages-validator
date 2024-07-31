@@ -72,6 +72,14 @@ The tool recursively finds all `.java` files present in the _source path_ direct
 Class path may already exist and contain `.class` files, this is useful to implement <<_recompilation, caching>>.
 The entries on this class path are used to add additional validator classes to the tool.
 
+==== Compiler configuration
+The directory pointed to by the `--source-path` can contain file `javapackages-validator.properties`, which is loaded as a standard https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Properties.html[Java properties file] and is used to configure compilation.
+It can contain the following fields:
+
+`compiler.release`::
+The value of this field is passed to Java compiler as `--release` argument.
+Defaults to `22` if not set.
+
 [#_recompilation]
 ==== Recompilation
 If the directory pointed to by the `--class-path` parameter exists, then the tool searches for files inside and inspects their modification time.

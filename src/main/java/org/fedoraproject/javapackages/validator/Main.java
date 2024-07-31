@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
@@ -37,7 +38,6 @@ import java.util.stream.Stream;
 
 import javax.tools.ToolProvider;
 
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.compress.utils.Iterators;
 import org.apache.commons.io.FileUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
@@ -140,7 +140,16 @@ public class Main {
     }
 
     private static void compileFiles(Path sourcePath, Path outputDirectory, List<Path> classPaths,
-            Iterable<String> compilerOptions, Logger logger) throws IOException {
+            List<String> compilerOptions, Logger logger) throws IOException {
+
+        var props = new Properties();
+        var propsPath = sourcePath.resolve("javapackages-validator.properties");
+        if (Files.isRegularFile(propsPath)) {
+            try (var reader = Files.newBufferedReader(propsPath)) {
+                props.load(reader);
+            }
+        }
+
         var sourceMtime = getRecursiveFileTime(sourcePath, (p, a) -> true).get();
 
         if (Files.isSymbolicLink(outputDirectory)) {
@@ -177,9 +186,12 @@ public class Main {
 
             logger.debug("Compiling source files: {0}", Decorated.plain(sourceFiles));
 
+            compilerOptions.add("--release");
+            compilerOptions.add(props.getProperty("compiler.release", "22"));
+
             if (!classPaths.isEmpty()) {
-                compilerOptions = IterableUtils.chainedIterable(compilerOptions, List.of("-cp",
-                        classPaths.stream().map(Path::toString).collect(Collectors.joining(":"))));
+                compilerOptions.add("-cp");
+                compilerOptions.add(classPaths.stream().map(Path::toString).collect(Collectors.joining(":")));
             }
 
             try {
@@ -342,8 +354,6 @@ public class Main {
 
         if (parameters.outputDir != null) {
             var compilerArgs = new ArrayList<String>();
-            compilerArgs.add("--release");
-            compilerArgs.add("22");
             compilerArgs.add("-d");
             compilerArgs.add(parameters.outputDir.toString());
 
