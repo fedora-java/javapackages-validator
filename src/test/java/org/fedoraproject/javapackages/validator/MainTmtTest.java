@@ -193,6 +193,23 @@ class MainTmtTest {
     }
 
     @Test
+    void testCompileDependencies() throws Exception {
+        writeResource(tmtTree, "Fact.java", "package my; import org.apache.oro.text.regex.Pattern; class Fact {}");
+
+        writeResource(tmtTree, "javapackages-validator.properties", "dependencies=oro:oro:2.0.8");
+        args.add("-sp");
+        args.add(tmtTree.toString());
+        args.add("-d");
+        args.add(tmtTestData.toString());
+        runMain(0);
+        assertTrue(readResult("results.yaml").contains("result: skip"), "result is skip");
+        expectResults( //
+                "my/Fact.class", //
+                "local-repo/oro/oro/2.0.8/oro-2.0.8.jar", //
+                "results.yaml");
+    }
+
+    @Test
     void testNameSlash() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
         addValidator("/", (rpms, v) -> {

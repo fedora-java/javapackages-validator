@@ -19,7 +19,9 @@ import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -40,6 +42,12 @@ import javax.tools.ToolProvider;
 
 import org.apache.commons.compress.utils.Iterators;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
+import org.eclipse.aether.supplier.RepositorySystemSupplier;
+import org.eclipse.aether.supplier.SessionBuilderSupplier;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.spi.Decoration;
 import org.fedoraproject.javapackages.validator.spi.LogEntry;
@@ -139,6 +147,25 @@ public class Main {
         };
     }
 
+    private static void resolveDependencies(Path outputDirectory, List<Path> classPaths, Properties props) {
+        var deps = props.getProperty("dependencies", "");
+        if (deps.isBlank()) {
+            return;
+        }
+        var repos = Collections.singletonList(
+                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build());
+        var aether = new RepositorySystemSupplier().get();
+        try (var session = new SessionBuilderSupplier(aether).get()
+                .withLocalRepositoryBaseDirectories(outputDirectory.resolve("local-repo")).build()) {
+            aether.resolveArtifacts(session,
+                    Arrays.stream(deps.split(" +")).map(DefaultArtifact::new)
+                            .map(art -> new ArtifactRequest(art, repos, "")).collect(Collectors.toList()))
+                    .stream().map(res -> res.getArtifact().getPath()).forEach(classPaths::add);
+        } catch (ArtifactResolutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static void compileFiles(Path sourcePath, Path outputDirectory, List<Path> classPaths,
             List<String> compilerOptions, Logger logger) throws IOException {
 
@@ -188,6 +215,8 @@ public class Main {
 
             compilerOptions.add("--release");
             compilerOptions.add(props.getProperty("compiler.release", "22"));
+
+            resolveDependencies(outputDirectory, classPaths, props);
 
             if (!classPaths.isEmpty()) {
                 compilerOptions.add("-cp");

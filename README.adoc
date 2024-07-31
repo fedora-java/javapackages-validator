@@ -80,6 +80,12 @@ It can contain the following fields:
 The value of this field is passed to Java compiler as `--release` argument.
 Defaults to `22` if not set.
 
+`dependencies`::
+Specifies extra dependencies to add to class path, in addition to `--class-path`.
+Defaults to no extra dependencies.
+The format of the field is a space-separated list of coordinates of Maven artifacts, where each coordinate is in format of `<groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>`.
+Only artifacts listed explicitly are added to class path -- transitive dependencies are not resolved.
+
 [#_recompilation]
 ==== Recompilation
 If the directory pointed to by the `--class-path` parameter exists, then the tool searches for files inside and inspects their modification time.
