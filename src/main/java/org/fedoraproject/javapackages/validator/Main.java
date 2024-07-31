@@ -213,6 +213,11 @@ public class Main {
 
         if (recompile) {
             FileUtils.cleanDirectory(outputDirectory.toFile());
+        }
+
+        resolveDependencies(props);
+
+        if (recompile) {
             var javac = ToolProvider.getSystemJavaCompiler();
             var fileManager = javac.getStandardFileManager(null, Locale.ROOT, StandardCharsets.UTF_8);
 
@@ -225,8 +230,6 @@ public class Main {
 
             compilerOptions.add("--release");
             compilerOptions.add(props.getProperty("compiler.release", "22"));
-
-            resolveDependencies(props);
 
             if (!parameters.classPaths.isEmpty()) {
                 compilerOptions.add("-cp");
