@@ -210,6 +210,38 @@ class MainTmtTest {
     }
 
     @Test
+    void testCompileMalformedDependency() throws Exception {
+        writeResource(tmtTree, "javapackages-validator.properties", "dependencies=foo");
+        args.add("-sp");
+        args.add(tmtTree.toString());
+        args.add("-d");
+        args.add(tmtTestData.toString());
+        runMain(2);
+        expectResults( //
+                "crash.log", //
+                "results.yaml");
+        assertTrue(readResult("crash.log").contains("Bad artifact coordinates foo"),
+                "crash log contains message about bad artifact coordinates");
+    }
+
+    @Test
+    void testCompileMissingDependency() throws Exception {
+        writeResource(tmtTree, "javapackages-validator.properties", "dependencies=foo:bar:1.2.3");
+        args.add("-sp");
+        args.add(tmtTree.toString());
+        args.add("-d");
+        args.add(tmtTestData.toString());
+        runMain(2);
+        expectResults( //
+                "crash.log", //
+                "results.yaml");
+        assertTrue(
+                readResult("crash.log")
+                        .contains("ArtifactNotFoundException: Could not find artifact foo:bar:jar:1.2.3 in central"),
+                "crash log contains ArtifactNotFoundException");
+    }
+
+    @Test
     void testNameSlash() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
         addValidator("/", (rpms, v) -> {
