@@ -226,7 +226,8 @@ class MainTmtTest {
 
     @Test
     void testCompileMissingDependency() throws Exception {
-        writeResource(tmtTree, "javapackages-validator.properties", "dependencies=foo:bar:1.2.3");
+        writeResource(tmtTree, "javapackages-validator.properties", "dependencies=foo:bar:1.2.3",
+                "repositories=/dummy/repo");
         args.add("-sp");
         args.add(tmtTree.toString());
         args.add("-d");
@@ -237,7 +238,7 @@ class MainTmtTest {
                 "results.yaml");
         assertTrue(
                 readResult("crash.log")
-                        .contains("ArtifactNotFoundException: Could not find artifact foo:bar:jar:1.2.3 in central"),
+                        .contains("ArtifactNotFoundException: Could not find artifact foo:bar:jar:1.2.3 in repo0"),
                 "crash log contains ArtifactNotFoundException");
     }
 

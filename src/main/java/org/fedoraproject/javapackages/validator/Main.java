@@ -152,8 +152,15 @@ public class Main {
         if (deps.isBlank()) {
             return;
         }
-        var repos = Collections.singletonList(
-                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build());
+        var repos = new ArrayList<>(Collections.singletonList(
+                new RemoteRepository.Builder("central", "default", "https://repo.maven.apache.org/maven2").build()));
+        var reposProp = props.getProperty("repositories", "");
+        if (!reposProp.isBlank()) {
+            var reposSplit = reposProp.split(" +");
+            for (var i = 0; i < reposSplit.length; i++) {
+                repos.add(new RemoteRepository.Builder("repo" + i, "default", reposSplit[i]).build());
+            }
+        }
         var aether = new RepositorySystemSupplier().get();
         try (var session = new SessionBuilderSupplier(aether).get()
                 .withLocalRepositoryBaseDirectories(outputDirectory.resolve("local-repo")).build()) {

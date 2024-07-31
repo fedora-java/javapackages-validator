@@ -86,6 +86,12 @@ Defaults to no extra dependencies.
 The format of the field is a space-separated list of coordinates of Maven artifacts, where each coordinate is in format of `<groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>`.
 Only artifacts listed explicitly are added to class path -- transitive dependencies are not resolved.
 
+`repositories`::
+Specifies extra Maven repositories to use for dependency resolution, in addition to Maven Central repository.
+Defaults to no extra repositories -- only Maven Central is used by default.
+The format of the field is a space-separated list of URLs of Maven repositories.
+Only URLs with protocol schemes `http` and `https` are supported.
+
 [#_recompilation]
 ==== Recompilation
 If the directory pointed to by the `--class-path` parameter exists, then the tool searches for files inside and inspects their modification time.
