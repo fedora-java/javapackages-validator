@@ -171,6 +171,7 @@ public class Main {
         } catch (ArtifactResolutionException e) {
             throw new RuntimeException(e);
         }
+        logger.debug("Class path after dependency resolution: {0}", Decorated.plain(parameters.classPaths));
     }
 
     private void compileFiles() throws IOException {
