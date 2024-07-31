@@ -34,7 +34,6 @@ execute() {
         discover --how fmf \
                  --url "${jpv_tests_dir}" \
                  --ref "${jpv_tests_ref}" \
-        test --filter tag:-runit \
         provision --how local \
         execute --how tmt \
                 --no-progress-bar \
