@@ -42,6 +42,8 @@ import javax.tools.ToolProvider;
 
 import org.apache.commons.compress.utils.Iterators;
 import org.apache.commons.io.FileUtils;
+import org.eclipse.aether.AbstractRepositoryListener;
+import org.eclipse.aether.RepositoryEvent;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
@@ -163,7 +165,13 @@ public class Main {
         }
         var aether = new RepositorySystemSupplier().get();
         try (var session = new SessionBuilderSupplier(aether).get()
-                .withLocalRepositoryBaseDirectories(parameters.outputDir.resolve("local-repo")).build()) {
+                .withLocalRepositoryBaseDirectories(parameters.outputDir.resolve("local-repo"))
+                .withRepositoryListener(new AbstractRepositoryListener() {
+                    public void artifactResolved(RepositoryEvent event) {
+                        logger.debug("Resolved dependency {0} from repository {1}",
+                                Decorated.actual(event.getArtifact()), Decorated.struct(event.getRepository().getId()));
+                    }
+                }).build()) {
             aether.resolveArtifacts(session,
                     Arrays.stream(deps.split(" +")).map(DefaultArtifact::new)
                             .map(art -> new ArtifactRequest(art, repos, "")).collect(Collectors.toList()))
