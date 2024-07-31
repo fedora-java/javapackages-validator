@@ -147,7 +147,7 @@ public class Main {
         };
     }
 
-    private static void resolveDependencies(Path outputDirectory, List<Path> classPaths, Properties props) {
+    private void resolveDependencies(Properties props) {
         var deps = props.getProperty("dependencies", "");
         if (deps.isBlank()) {
             return;
@@ -163,29 +163,32 @@ public class Main {
         }
         var aether = new RepositorySystemSupplier().get();
         try (var session = new SessionBuilderSupplier(aether).get()
-                .withLocalRepositoryBaseDirectories(outputDirectory.resolve("local-repo")).build()) {
+                .withLocalRepositoryBaseDirectories(parameters.outputDir.resolve("local-repo")).build()) {
             aether.resolveArtifacts(session,
                     Arrays.stream(deps.split(" +")).map(DefaultArtifact::new)
                             .map(art -> new ArtifactRequest(art, repos, "")).collect(Collectors.toList()))
-                    .stream().map(res -> res.getArtifact().getPath()).forEach(classPaths::add);
+                    .stream().map(res -> res.getArtifact().getPath()).forEach(parameters.classPaths::add);
         } catch (ArtifactResolutionException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static void compileFiles(Path sourcePath, Path outputDirectory, List<Path> classPaths,
-            List<String> compilerOptions, Logger logger) throws IOException {
+    private void compileFiles() throws IOException {
+        var compilerOptions = new ArrayList<String>();
+        compilerOptions.add("-d");
+        compilerOptions.add(parameters.outputDir.toString());
 
         var props = new Properties();
-        var propsPath = sourcePath.resolve("javapackages-validator.properties");
+        var propsPath = parameters.sourcePath.resolve("javapackages-validator.properties");
         if (Files.isRegularFile(propsPath)) {
             try (var reader = Files.newBufferedReader(propsPath)) {
                 props.load(reader);
             }
         }
 
-        var sourceMtime = getRecursiveFileTime(sourcePath, (p, a) -> true).get();
+        var sourceMtime = getRecursiveFileTime(parameters.sourcePath, (p, a) -> true).get();
 
+        var outputDirectory = parameters.outputDir;
         if (Files.isSymbolicLink(outputDirectory)) {
             outputDirectory = Files.readSymbolicLink(outputDirectory);
         } else {
@@ -213,7 +216,7 @@ public class Main {
             var javac = ToolProvider.getSystemJavaCompiler();
             var fileManager = javac.getStandardFileManager(null, Locale.ROOT, StandardCharsets.UTF_8);
 
-            var sourceFiles = Files.find(sourcePath, Integer.MAX_VALUE, (path, attributes) ->
+            var sourceFiles = Files.find(parameters.sourcePath, Integer.MAX_VALUE, (path, attributes) ->
                 !attributes.isDirectory() && path.toString().endsWith(".java"), FileVisitOption.FOLLOW_LINKS
             ).toList();
             var compilationUnits = fileManager.getJavaFileObjectsFromPaths(sourceFiles);
@@ -223,11 +226,11 @@ public class Main {
             compilerOptions.add("--release");
             compilerOptions.add(props.getProperty("compiler.release", "22"));
 
-            resolveDependencies(outputDirectory, classPaths, props);
+            resolveDependencies(props);
 
-            if (!classPaths.isEmpty()) {
+            if (!parameters.classPaths.isEmpty()) {
                 compilerOptions.add("-cp");
-                compilerOptions.add(classPaths.stream().map(Path::toString).collect(Collectors.joining(":")));
+                compilerOptions.add(parameters.classPaths.stream().map(Path::toString).collect(Collectors.joining(":")));
             }
 
             try {
@@ -389,11 +392,7 @@ public class Main {
         }
 
         if (parameters.outputDir != null) {
-            var compilerArgs = new ArrayList<String>();
-            compilerArgs.add("-d");
-            compilerArgs.add(parameters.outputDir.toString());
-
-            compileFiles(parameters.sourcePath, parameters.outputDir, parameters.classPaths, compilerArgs, logger);
+            compileFiles();
 
             var serviceContent = new ByteArrayOutputStream(0);
             for (var serviceFile : Files.find(parameters.sourcePath, Integer.MAX_VALUE,
