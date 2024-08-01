@@ -92,7 +92,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
   </dependencies>
   
   <build>
-    <finalName>${project.name}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -106,30 +105,29 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.4.2</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <useUniqueVersions>false</useUniqueVersions>
-              <classpathPrefix>dependency/</classpathPrefix>
-              <mainClass>org.fedoraproject.javapackages.validator.Main</mainClass>
-            </manifest>
-          </archive>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <version>3.7.1</version>
         <executions>
           <execution>
-            <id>copy-dependencies</id>
             <phase>package</phase>
             <goals>
-              <goal>copy-dependencies</goal>
+              <goal>single</goal>
             </goals>
             <configuration>
-              <includeScope>runtime</includeScope>
+              <finalName>${project.name}</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <attach>false</attach>
+              <archive>
+                <manifest>
+                  <mainClass>org.fedoraproject.javapackages.validator.Main</mainClass>
+                </manifest>
+              </archive>
+              <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
             </configuration>
           </execution>
         </executions>

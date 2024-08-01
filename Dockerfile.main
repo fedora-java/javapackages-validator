@@ -16,7 +16,6 @@ FROM docker.io/library/eclipse-temurin:22-jdk-ubi9-minimal
 RUN microdnf -y update
 RUN microdnf -y install rpm-libs
 
-COPY --from=builder "/usr/local/src/javapackages-validator/target/dependency/" "/opt/javapackages-validator/dependency/"
 COPY --from=builder "/usr/local/src/javapackages-validator/target/validator.jar" "/opt/javapackages-validator/validator.jar"
 
 ENTRYPOINT ["/opt/java/openjdk/bin/java", "--enable-native-access", "ALL-UNNAMED", "-cp", "/opt/javapackages-validator/validator.jar"]

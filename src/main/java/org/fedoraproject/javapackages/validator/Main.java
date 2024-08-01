@@ -371,10 +371,6 @@ public class Main {
 
         var validatorPath = Paths.get(MainTmt.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         parameters.classPaths.add(validatorPath);
-        var parent = validatorPath.getParent();
-        if (parent != null) {
-            parameters.classPaths.add(parent.resolve("dependency").resolve("*"));
-        }
 
         logger = new Logger();
 
