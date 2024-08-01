@@ -1,9 +1,8 @@
-#!/bin/bash
+#!/bin/sh
+set -eu
 
-set -e
+: ${JAVA_HOME:=/usr/lib/jvm/jre-22}
 
-java_bin='/usr/lib/jvm/jre-22-openjdk/bin'
+exec "${JAVA_HOME}"/bin/java --enable-native-access ALL-UNNAMED -jar 'target/validator.jar' "${@}"
 
-exec "${java_bin}"/java --enable-native-access ALL-UNNAMED -jar 'target/validator.jar' "${@}"
-
-# exec "${java_bin}"/java --enable-native-access ALL-UNNAMED -cp "target/classes$(find target/dependency -type f -printf ':%p')" org.fedoraproject.javapackages.validator.Main "${@}"
+# exec "${JAVA_HOME}"/bin/java --enable-native-access ALL-UNNAMED -cp "target/classes$(find target/dependency -type f -printf ':%p')" org.fedoraproject.javapackages.validator.Main "${@}"
