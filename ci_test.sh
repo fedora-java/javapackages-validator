@@ -20,9 +20,6 @@ prepare_test_env() {
 }
 
 execute() {
-    mkdir -p /tmp/jpv-classes
-    find /tmp/jpv-classes -exec touch -m -d '9999-01-01 00:00:00' {} +
-
     tmt -vvv \
         run --scratch \
             --id "jpv-ci" \
