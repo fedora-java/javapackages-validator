@@ -3,7 +3,6 @@ set -eux
 
 jp_validator_image='javapackages-validator:2'
 test_artifacts_dir='/tmp/test_artifacts'
-jpv_tests_dir='/tmp/javapackages.git'
 jpv_tests_url='https://src.fedoraproject.org/tests/javapackages.git'
 jpv_tests_ref='main'
 
@@ -18,7 +17,6 @@ download_ci_env() {
 
 prepare_test_env() {
     download_ci_env
-    git clone --mirror "${jpv_tests_url}" "${jpv_tests_dir}"
 }
 
 execute() {
@@ -32,7 +30,7 @@ execute() {
             -e JP_VALIDATOR_IMAGE="${jp_validator_image}" \
             -e JP_VALIDATOR_OUTPUT_DIR="/tmp/jpv-classes" \
         discover --how fmf \
-                 --url "${jpv_tests_dir}" \
+                 --url "${jpv_tests_url}" \
                  --ref "${jpv_tests_ref}" \
         provision --how local \
         execute --how tmt \
