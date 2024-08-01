@@ -2,7 +2,7 @@
 set -eux
 
 : ${JP_VALIDATOR_IMAGE:=javapackages-validator:2}
-: ${JP_VALIDATOR_OUTPUT_DIR:=/tmp/jpv-classes}
+: ${JP_VALIDATOR_OUTPUT_DIR:=}
 : ${TEST_ARTIFACTS:=/tmp/test-artifacts}
 : ${JPV_CI_IMAGE:=quay.io/fedora-java/javapackages-validator-ci:2}
 : ${JPV_CI_TESTS_URL:=https://src.fedoraproject.org/tests/javapackages.git}
