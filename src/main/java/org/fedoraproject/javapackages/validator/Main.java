@@ -384,20 +384,16 @@ public class Main {
         logger.debug("Path arguments: {0}", Decorated.plain(parameters.argPaths));
         // logger.debug("URL arguments: {0}", Decorated.list(parameters.argUrls));
 
-        var expandedClassPaths = new ArrayList<Path>();
-        for (var classPath : parameters.classPaths) {
+        for (var it = parameters.classPaths.listIterator(); it.hasNext();) {
+            var classPath = it.next();
             var cpParent = classPath.getParent();
             if (classPath.endsWith("*") && cpParent != null && Files.isDirectory(cpParent)) {
                 try (var list = Files.list(cpParent).filter(p -> Files.isRegularFile(p) && p.toString().endsWith(".jar"))) {
-                    list.forEach(expandedClassPaths::add);
+                    it.remove();
+                    list.forEach(it::add);
                 }
-            } else {
-                expandedClassPaths.add(classPath);
             }
         }
-        parameters.classPaths = expandedClassPaths;
-
-        logger.debug("Expanded class path: {0}", Decorated.plain(parameters.classPaths));
 
         return -1;
     }
