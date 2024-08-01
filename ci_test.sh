@@ -1,18 +1,20 @@
 #!/bin/sh
 set -eux
 
-jp_validator_image='javapackages-validator:2'
-test_artifacts_dir='/tmp/test_artifacts'
-jpv_tests_url='https://src.fedoraproject.org/tests/javapackages.git'
-jpv_tests_ref='main'
+: ${JP_VALIDATOR_IMAGE:=javapackages-validator:2}
+: ${JP_VALIDATOR_OUTPUT_DIR:=/tmp/jpv-classes}
+: ${TEST_ARTIFACTS:=/tmp/test-artifacts}
+: ${JPV_CI_IMAGE:=quay.io/fedora-java/javapackages-validator-ci:2}
+: ${JPV_CI_TESTS_URL:=https://src.fedoraproject.org/tests/javapackages.git}
+: ${JPV_CI_TESTS_REF:=main}
 
 build_local_image() {
-    podman build -f Dockerfile.main -t "${jp_validator_image}"
+    podman build -f Dockerfile.main -t "${JP_VALIDATOR_IMAGE}"
 }
 
 download_ci_env() {
-    mkdir -p "${test_artifacts_dir}"
-    podman run --privileged --mount type=bind,source="${test_artifacts_dir}",target='/mnt/rpms' --rm -it "quay.io/fedora-java/javapackages-validator-ci:2" '/mnt/rpms'
+    mkdir -p "${TEST_ARTIFACTS}"
+    podman run --privileged --mount type=bind,source="${TEST_ARTIFACTS}",target='/mnt/rpms' --rm -it "${JPV_CI_IMAGE}" '/mnt/rpms'
 }
 
 prepare_test_env() {
@@ -23,12 +25,12 @@ execute() {
     tmt -vvv \
         run --scratch \
             --id "jpv-ci" \
-            -e TEST_ARTIFACTS="${test_artifacts_dir}" \
-            -e JP_VALIDATOR_IMAGE="${jp_validator_image}" \
-            -e JP_VALIDATOR_OUTPUT_DIR="/tmp/jpv-classes" \
+            -e TEST_ARTIFACTS="${TEST_ARTIFACTS}" \
+            -e JP_VALIDATOR_IMAGE="${JP_VALIDATOR_IMAGE}" \
+            -e JP_VALIDATOR_OUTPUT_DIR="${JP_VALIDATOR_OUTPUT_DIR}" \
         discover --how fmf \
-                 --url "${jpv_tests_url}" \
-                 --ref "${jpv_tests_ref}" \
+                 --url "${JPV_CI_TESTS_URL}" \
+                 --ref "${JPV_CI_TESTS_REF}" \
         provision --how local \
         execute --how tmt \
                 --no-progress-bar \
