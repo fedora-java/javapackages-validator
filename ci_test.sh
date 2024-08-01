@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -eux
 
 jp_validator_image='javapackages-validator:2'
