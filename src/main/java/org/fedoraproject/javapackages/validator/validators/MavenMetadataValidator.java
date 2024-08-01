@@ -59,7 +59,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
                     continue;
                 }
                 foundFiles.add(Common.getEntryPath(rpmEntry).toString());
-                if (rpmEntry.getName().startsWith("./usr/share/maven-metadata/") && rpmEntry.getName().endsWith(".xml")) {
+                if (rpmEntry.getName().startsWith("/usr/share/maven-metadata/") && rpmEntry.getName().endsWith(".xml")) {
                     byte[] content = new byte[(int) rpmEntry.getSize()];
                     IOUtils.read(is, content);
                     metadataXmls.add(Map.entry(rpmEntry, content));
