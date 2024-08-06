@@ -56,13 +56,11 @@ class MainTmtTest {
     }
 
     void addValidator(String name, AnonymousValidator validator) {
-        if (TestFactory.validators.isEmpty()) {
-            args.add(TestFactory.class.getCanonicalName());
-        }
         TestFactory.validators.add(new TestValidator(name, validator));
     }
 
     void runMain(int expRc) throws Exception {
+        args.add(TestFactory.class.getCanonicalName());
         int rc = main.run(args.toArray(new String[args.size()]));
         assertEquals(expRc, rc, "check expected return code");
     }
@@ -92,7 +90,9 @@ class MainTmtTest {
     void testCrashLog() throws Exception {
         // Corrupted empty file triggers the crash
         Files.createFile(artifactsDir.resolve("empty.rpm"));
-
+        addValidator("/something", (rpms, v) -> {
+            // not expected to be ran, crash happens before the code gets here
+        });
         runMain(2);
         expectResults("results.yaml", "crash.log");
 
@@ -161,6 +161,9 @@ class MainTmtTest {
         args.add(tmtTree.toString());
         args.add("-d");
         args.add(tmtTestData.toString());
+        addValidator("/skipper", (rpms, v) -> {
+            v.skip("skeep");
+        });
         runMain(0);
         assertTrue(readResult("results.yaml").contains("result: skip"), "result is skip");
         expectResults( //
@@ -209,6 +212,9 @@ class MainTmtTest {
         args.add(tmtTree.toString());
         args.add("-d");
         args.add(tmtTestData.toString());
+        addValidator("/skipper", (rpms, v) -> {
+            v.skip("skeep");
+        });
         runMain(0);
         assertTrue(readResult("results.yaml").contains("result: skip"), "result is skip");
         expectResults( //
