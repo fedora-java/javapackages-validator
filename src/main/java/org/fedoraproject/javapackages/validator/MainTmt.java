@@ -286,6 +286,18 @@ public class MainTmt extends Main {
             }
         }
 
+        if (!testResults.iterator().hasNext()) {
+            var resultYaml = new StringBuilder();
+            resultYaml.append("- name: /");
+            resultYaml.append(System.lineSeparator());
+            resultYaml.append("  result: skip");
+            resultYaml.append(System.lineSeparator());
+            try (var os = Files.newOutputStream(TMT_TEST_DATA.resolve("results.yaml"), StandardOpenOption.CREATE,
+                    StandardOpenOption.APPEND)) {
+                os.write(resultYaml.toString().getBytes(StandardCharsets.UTF_8));
+            }
+        }
+
         return 0;
     }
 
