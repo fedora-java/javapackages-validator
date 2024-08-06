@@ -81,6 +81,14 @@ class MainTmtTest {
     }
 
     @Test
+    void testEmptyFactory() throws Exception {
+        args.add(TestFactory.class.getCanonicalName());
+        runMain(2);
+        expectResults("results.yaml");
+        assertTrue(readResult("results.yaml").contains("result: error"), "result is error");
+    }
+
+    @Test
     void testCrashLog() throws Exception {
         // Corrupted empty file triggers the crash
         Files.createFile(artifactsDir.resolve("empty.rpm"));

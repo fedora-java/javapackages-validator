@@ -191,6 +191,10 @@ public class MainTmt extends Main {
             validators.remove(exclusion);
         }
 
+        if (validators.isEmpty()) {
+            throw new RuntimeException("No validators selected to run");
+        }
+
         return validators;
     }
 
