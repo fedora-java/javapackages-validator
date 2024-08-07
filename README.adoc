@@ -22,7 +22,7 @@ Main [_optional flags_] <_main arguments_>... [-f _RPM files or directories to t
 ----
 
 [NOTE]
-Due to the usage of the [Foreign Memory Accesss](https://openjdk.org/jeps/454) feature, JVM arguments must include: +
+Due to the usage of the https://openjdk.org/jeps/454[Foreign Function & Memory API] feature, JVM arguments must include: +
 `--enable-native-access ALL-UNNAMED`.
 
 Optional flags::
