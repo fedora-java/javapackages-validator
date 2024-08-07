@@ -3,7 +3,7 @@ RUN microdnf -y update
 RUN microdnf -y install findutils koji make
 
 # Force rebuild
-RUN echo 4
+RUN echo 5
 
 COPY prepare_ci.sh Makefile /src
 RUN mkdir /rpms
