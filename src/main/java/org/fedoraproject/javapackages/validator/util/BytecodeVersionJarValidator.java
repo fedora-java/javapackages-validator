@@ -28,7 +28,7 @@ public abstract class BytecodeVersionJarValidator extends JarValidator {
         var classVersions = new TreeMap<Path, Version>();
 
         try (var jarStream = new JarInputStream(new ByteArrayInputStream(content))) {
-            for (JarEntry jarEntry; ((jarEntry = jarStream.getNextJarEntry()) != null);) {
+            for (JarEntry jarEntry; (jarEntry = jarStream.getNextJarEntry()) != null;) {
                 var classPath = Path.of(jarEntry.getName());
 
                 if (classPath.toString().endsWith(".class")) {

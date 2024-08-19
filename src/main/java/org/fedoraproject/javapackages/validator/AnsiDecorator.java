@@ -37,9 +37,7 @@ class AnsiDecorator implements TextDecorator {
             }
         }
 
-        colorCode.ifPresent(color -> {
-            modifiers.add(color.toString());
-        });
+        colorCode.ifPresent(color -> modifiers.add(color.toString()));
         result.append(modifiers.stream().collect(Collectors.joining(";")));
         result.append("m");
 

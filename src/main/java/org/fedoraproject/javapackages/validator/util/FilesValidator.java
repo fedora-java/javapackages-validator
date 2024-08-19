@@ -16,7 +16,7 @@ public abstract class FilesValidator extends ElementwiseValidator {
     public void validate(RpmPackage rpm) throws Exception {
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {
             boolean pass = true;
-            for (CpioArchiveEntry rpmEntry; ((rpmEntry = is.getNextEntry()) != null);) {
+            for (CpioArchiveEntry rpmEntry; (rpmEntry = is.getNextEntry()) != null;) {
                 Path entryName = Common.getEntryPath(rpmEntry);
 
                 if (!allowedFile(rpm.getInfo(), entryName)) {

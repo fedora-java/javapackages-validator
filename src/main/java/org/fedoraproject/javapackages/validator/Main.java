@@ -125,8 +125,8 @@ public class Main {
     }
 
     private static Optional<FileTime> getRecursiveFileTime(Path path, BiPredicate<Path, BasicFileAttributes> filter) {
-    	try (var stream = Files.find(path, Integer.MAX_VALUE, filter, FileVisitOption.FOLLOW_LINKS)) {
-    	    return stream.map((p) -> {
+        try (var stream = Files.find(path, Integer.MAX_VALUE, filter, FileVisitOption.FOLLOW_LINKS)) {
+            return stream.map(p -> {
     	        try {
     	            return Files.getLastModifiedTime(p);
 	            } catch (IOException ex) {

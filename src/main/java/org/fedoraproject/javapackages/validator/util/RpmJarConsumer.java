@@ -12,7 +12,7 @@ public interface RpmJarConsumer extends Consumer<RpmPackage> {
     @Override
     default void accept(RpmPackage rpm) {
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {
-            for (CpioArchiveEntry rpmEntry; ((rpmEntry = is.getNextEntry()) != null);) {
+            for (CpioArchiveEntry rpmEntry; (rpmEntry = is.getNextEntry()) != null;) {
                 if (!rpmEntry.isSymbolicLink() && rpmEntry.getName().endsWith(".jar")) {
                     var content = new byte[(int) rpmEntry.getSize()];
                     IOUtils.read(is, content);
