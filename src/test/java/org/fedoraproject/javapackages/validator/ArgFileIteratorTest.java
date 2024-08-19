@@ -76,7 +76,7 @@ public class ArgFileIteratorTest {
     void testDirDanglingSymlink() {
         var it = ArgFileIterator.create(toPaths(
                 "src/test/resources/arg_file_iterator/dir_dangling_symlink"));
-        var ex = assertThrows(Exception.class, () -> it.next());
+        var ex = assertThrows(Exception.class, it::next);
         assertFalse(ex instanceof NoSuchElementException);
     }
 }

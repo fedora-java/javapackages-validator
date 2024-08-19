@@ -22,7 +22,7 @@ class Logger {
     private void log(LogEvent logEvent, String pattern, Decorated... arguments) {
         streams.get(logEvent).append("[" + Main.decorate(logEvent.getDecorated()) + "] ")
         .println(MessageFormat.format(pattern, Stream.of(arguments)
-                .map(a -> Main.decorate(a)).toArray()));
+                .map(Main::decorate).toArray()));
     }
 
     public void debug(String pattern, Decorated... arguments) {

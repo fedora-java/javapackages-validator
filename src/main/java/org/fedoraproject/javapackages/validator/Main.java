@@ -513,7 +513,7 @@ public class Main {
 
         var notFoundValidators = new ArrayList<String>(0);
         for (var testNameArg : parameters.validatorArgs.keySet()) {
-            if (validators.keySet().stream().filter(testName -> testNameArg.equals(testName)).findFirst().isEmpty()) {
+            if (validators.keySet().stream().filter(testNameArg::equals).findFirst().isEmpty()) {
                 notFoundValidators.add(testNameArg);
             }
         }
