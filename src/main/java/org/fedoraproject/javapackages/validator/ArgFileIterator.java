@@ -72,12 +72,7 @@ class ArgFileIterator implements Iterator<RpmPackage> {
         }
 
         pathIterator = advance();
-
-        if (pathIterator != null) {
-            return true;
-        }
-
-        return false;
+        return pathIterator != null;
     }
 
     @Override
