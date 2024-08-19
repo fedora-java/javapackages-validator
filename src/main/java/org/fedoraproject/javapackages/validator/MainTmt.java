@@ -119,7 +119,7 @@ public class MainTmt extends Main {
 
         var optConfigFile = Optional.<Path>of(TMT_TREE.resolve("plans").resolve("javapackages-validator.yaml"));
         if (!Files.isRegularFile(optConfigFile.get())) {
-            optConfigFile = Optional.<Path>of(TMT_TREE.resolve("javapackages-validator.yaml"));
+            optConfigFile = Optional.of(TMT_TREE.resolve("javapackages-validator.yaml"));
             if (!Files.isRegularFile(optConfigFile.get())) {
                 optConfigFile = Optional.empty();
             }
