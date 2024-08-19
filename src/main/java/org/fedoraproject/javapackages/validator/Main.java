@@ -308,7 +308,7 @@ public class Main {
         Path outputDir = null;
         List<Path> classPaths = new ArrayList<>(0);
         List<Path> argPaths = new ArrayList<>(0);
-        Set<String> factories = new TreeSet<String>();
+        Set<String> factories = new TreeSet<>();
         Map<String, Optional<List<String>>> validatorArgs = new LinkedHashMap<>();
     }
 
