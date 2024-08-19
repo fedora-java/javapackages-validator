@@ -3,7 +3,6 @@ package org.fedoraproject.javapackages.validator.util;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -18,7 +17,7 @@ import io.kojan.javadeptools.rpm.RpmPackage;
 public class Common {
     @SuppressFBWarnings({"DMI_HARDCODED_ABSOLUTE_FILENAME"})
     public static Path getEntryPath(CpioArchiveEntry entry) {
-        return Paths.get("/").resolve(Paths.get("/").relativize(Paths.get("/").resolve(Paths.get(entry.getName()))));
+        return Path.of("/").resolve(Path.of("/").relativize(Path.of("/").resolve(Path.of(entry.getName()))));
     }
 
     public static String getPackageName(RpmInfo rpm) {
@@ -41,7 +40,7 @@ public class Common {
                 if (rpmEntry.isSymbolicLink()) {
                     var content = new byte[(int) rpmEntry.getSize()];
                     IOUtils.read(is, content);
-                    target = Paths.get(new String(content, StandardCharsets.UTF_8));
+                    target = Path.of(new String(content, StandardCharsets.UTF_8));
                 }
 
                 result.put(rpmEntry, target);

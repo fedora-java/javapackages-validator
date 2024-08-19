@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
@@ -291,7 +290,7 @@ public class Main {
     }
 
     private Path resolveRelativePathCommon(String path) {
-        var result = Paths.get(path);
+        var result = Path.of(path);
 
         if (!result.isAbsolute()) {
             result = resolveRelativePath(result);
@@ -365,11 +364,11 @@ public class Main {
             } else if (lastFlag == Flag.CLASS_PATH) {
                 parameters.classPaths.add(resolveRelativePathCommon(args[i]));
             } else if (lastFlag == Flag.FILE) {
-                parameters.argPaths.add(Paths.get(args[i]));
+                parameters.argPaths.add(Path.of(args[i]));
             }
         }
 
-        var validatorPath = Paths.get(MainTmt.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        var validatorPath = Path.of(MainTmt.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         parameters.classPaths.add(validatorPath);
 
         logger = new Logger();
@@ -404,7 +403,7 @@ public class Main {
 
             var serviceContent = new ByteArrayOutputStream(0);
             for (var serviceFile : Files.find(parameters.sourcePath, Integer.MAX_VALUE,
-                    (p, a) -> !a.isDirectory() && p.getFileName().equals(Paths.get(ValidatorFactory.class.getCanonicalName()))).toList()) {
+                    (p, a) -> !a.isDirectory() && p.getFileName().equals(Path.of(ValidatorFactory.class.getCanonicalName()))).toList()) {
                 try (var is = Files.newInputStream(serviceFile)) {
                     is.transferTo(serviceContent);
                 }

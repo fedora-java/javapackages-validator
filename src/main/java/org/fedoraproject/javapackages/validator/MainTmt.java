@@ -7,7 +7,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -44,8 +43,8 @@ public class MainTmt extends Main {
     }
 
     public static Main create() {
-        var tmtTestData = Paths.get(getenv("TMT_TEST_DATA"));
-        var tmtTree = Paths.get(getenv("TMT_TREE"));
+        var tmtTestData = Path.of(getenv("TMT_TEST_DATA"));
+        var tmtTree = Path.of(getenv("TMT_TREE"));
         return create(tmtTestData, tmtTree);
     }
 

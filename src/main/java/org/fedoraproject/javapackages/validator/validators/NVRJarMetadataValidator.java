@@ -1,7 +1,7 @@
 package org.fedoraproject.javapackages.validator.validators;
 
 import java.io.ByteArrayInputStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +80,7 @@ public class NVRJarMetadataValidator extends DefaultValidator {
 
         @Override
         public void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception {
-            var jarPath = Paths.get(rpmEntry.getName());
+            var jarPath = Path.of(rpmEntry.getName());
             var standardLocations = List.of("/usr/share/java", "/usr/lib/java");
             if (standardLocations.stream().anyMatch(jarPath::startsWith)) {
                 try (var is = new JarInputStream(new ByteArrayInputStream(content))) {

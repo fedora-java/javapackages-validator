@@ -3,7 +3,6 @@ package org.fedoraproject.javapackages.validator.util;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.jar.JarEntry;
@@ -25,12 +24,12 @@ public abstract class BytecodeVersionJarValidator extends JarValidator {
 
     @Override
     public void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception {
-        var jarPath = Paths.get(rpmEntry.getName().substring(1));
+        var jarPath = Path.of(rpmEntry.getName().substring(1));
         var classVersions = new TreeMap<Path, Version>();
 
         try (var jarStream = new JarInputStream(new ByteArrayInputStream(content))) {
             for (JarEntry jarEntry; ((jarEntry = jarStream.getNextJarEntry()) != null);) {
-                var classPath = Paths.get(jarEntry.getName());
+                var classPath = Path.of(jarEntry.getName());
 
                 if (classPath.toString().endsWith(".class")) {
                     var dataInput = new DataInputStream(jarStream);

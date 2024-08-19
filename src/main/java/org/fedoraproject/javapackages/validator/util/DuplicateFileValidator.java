@@ -1,7 +1,6 @@
 package org.fedoraproject.javapackages.validator.util;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -66,7 +65,7 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
                     return;
                 }
 
-                validate(Paths.get(entry.getKey()), Collections.unmodifiableCollection(providers));
+                validate(Path.of(entry.getKey()), Collections.unmodifiableCollection(providers));
             }
         }
     }

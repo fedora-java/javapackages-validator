@@ -5,7 +5,6 @@ import static org.fedoraproject.javapackages.validator.TestCommon.assertPass;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.fedoraproject.javapackages.validator.TestCommon;
@@ -15,9 +14,9 @@ import org.junit.jupiter.api.Test;
 import io.kojan.javadeptools.rpm.RpmInfo;
 
 public class DuplicateFileValidatorTest {
-    private static final Path DUPLICATE_FILE1_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file1-1-1.noarch.rpm"));
-    private static final Path DUPLICATE_FILE2_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file2-1-1.noarch.rpm"));
-    private static final Path DUPLICATE_FILE3_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Paths.get("noarch/duplicate-file3-1-1.noarch.rpm"));
+    private static final Path DUPLICATE_FILE1_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Path.of("noarch/duplicate-file1-1-1.noarch.rpm"));
+    private static final Path DUPLICATE_FILE2_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Path.of("noarch/duplicate-file2-1-1.noarch.rpm"));
+    private static final Path DUPLICATE_FILE3_RPM = TestCommon.RPM_PATH_PREFIX.resolve(Path.of("noarch/duplicate-file3-1-1.noarch.rpm"));
 
     @Test
     void testIllegalDuplicateFile() throws Exception {

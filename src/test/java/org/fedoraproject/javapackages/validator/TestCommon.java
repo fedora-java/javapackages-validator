@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.fedoraproject.javapackages.validator.spi.LogEvent;
@@ -16,9 +15,9 @@ import io.kojan.javadeptools.rpm.RpmPackage;
 
 
 public class TestCommon {
-    public static final Path RPMBUILD_PATH_PREFIX = Paths.get("src/test/resources/rpmbuild");
-    public static final Path RPM_PATH_PREFIX = RPMBUILD_PATH_PREFIX.resolve(Paths.get("RPMS"));
-    public static final Path SRPM_PATH_PREFIX = RPMBUILD_PATH_PREFIX.resolve(Paths.get("SRPMS"));
+    public static final Path RPMBUILD_PATH_PREFIX = Path.of("src/test/resources/rpmbuild");
+    public static final Path RPM_PATH_PREFIX = RPMBUILD_PATH_PREFIX.resolve(Path.of("RPMS"));
+    public static final Path SRPM_PATH_PREFIX = RPMBUILD_PATH_PREFIX.resolve(Path.of("SRPMS"));
 
     public static Iterable<RpmPackage> fromPaths(Path... paths) {
         var result = new ArrayList<RpmPackage>(paths.length);

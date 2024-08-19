@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +39,7 @@ class MainTmtTest {
 
     void copyResources(Path destDir, String... locations) throws Exception {
         for (String loc : locations) {
-            Path path = Paths.get("src/test/resources").resolve(loc);
+            Path path = Path.of("src/test/resources").resolve(loc);
             Path dest = destDir.resolve(path.getFileName());
             Files.copy(path, dest);
         }

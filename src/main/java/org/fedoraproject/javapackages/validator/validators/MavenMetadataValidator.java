@@ -1,7 +1,7 @@
 package org.fedoraproject.javapackages.validator.validators;
 
 import java.io.ByteArrayInputStream;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeSet;
@@ -91,7 +91,7 @@ public class MavenMetadataValidator extends ElementwiseValidator {
             }
 
             for (var artifact : packageMetadata.getArtifacts()) {
-                var artifactPath = Paths.get(artifact.getPath());
+                var artifactPath = Path.of(artifact.getPath());
                 var metadataXml = Common.getEntryPath(entry.getKey());
                 jarsWithoutMd.remove(artifactPath.toString());
                 pomsWithoutMd.remove(artifactPath.toString());
