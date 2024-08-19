@@ -18,7 +18,7 @@ public abstract class BytecodeVersionJarValidator extends JarValidator {
     public static record Version(short major, short minor) {
         @Override
         public String toString() {
-            return String.valueOf(major) + "." + String.valueOf(minor);
+            return major + "." + minor;
         }
     }
 
