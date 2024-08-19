@@ -127,7 +127,7 @@ public class MainTmt extends Main {
 
         if (optConfigFile.isPresent()) {
             var configPath = optConfigFile.get();
-            var configuration = Collections.<String, Object>emptyMap();;
+            var configuration = Collections.<String, Object>emptyMap();
             try (var is = Files.newInputStream(configPath)) {
                 try {
                     configuration = new Yaml().load(is);
