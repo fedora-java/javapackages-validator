@@ -27,7 +27,7 @@ public class BytecodeVersionValidator extends BytecodeVersionJarValidator {
             throw new IllegalArgumentException("Wrong number of arguments, expected 1");
         }
 
-        var arg = args.get(0);
+        var arg = args.getFirst();
         var pos = arg.indexOf(':');
 
         short min = Short.MIN_VALUE;
