@@ -9,13 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install packages
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install bash git-core podman python3-pip
       - name: Install tmt
-        run: |
-          sudo pip install tmt
+        run: pipx install tmt
       - name: Checkout sources
         uses: actions/checkout@v4
       - name: Build local image
