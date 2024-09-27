@@ -53,7 +53,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
     <dependency>
       <groupId>org.fedoraproject.xmvn</groupId>
       <artifactId>xmvn-api</artifactId>
-      <version>4.2.0</version>
+      <version>4.3.0</version>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>
