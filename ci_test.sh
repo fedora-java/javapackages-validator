@@ -25,6 +25,7 @@ prepare_test_env() {
 }
 
 execute() {
+    tmt --version
     tmt -vvv \
         run --scratch \
             --id "jpv-ci" \
