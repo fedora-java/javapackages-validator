@@ -27,6 +27,7 @@ prepare_test_env() {
 execute() {
     tmt --version
     tmt -vvv \
+        --feeling-safe \
         run --scratch \
             --id "jpv-ci" \
             -e TEST_ARTIFACTS="${TEST_ARTIFACTS}" \
