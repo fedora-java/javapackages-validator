@@ -1,30 +1,50 @@
+/* Solarized color pallette.
+   See https://ethanschoonover.com/solarized/ */
+:root {
+  --base03:  #002b36;
+  --base02:  #073642;
+  --base01:  #586e75;
+  --base00:  #657b83;
+  --base0:   #839496;
+  --base1:   #93a1a1;
+  --base2:   #eee8d5;
+  --base3:   #fdf6e3;
+  --yellow:  #b58900;
+  --orange:  #cb4b16;
+  --red:     #dc322f;
+  --magenta: #d33682;
+  --violet:  #6c71c4;
+  --blue:    #268bd2;
+  --cyan:    #2aa198;
+  --green:   #859900;
+}
+
 table, th, td {
-  border: 1px solid black;
+  border: 1px solid var(--base02);
   border-collapse: collapse;
   font-family: monospace;
-  background-color: whitesmoke;
+  color: var(--base01);
+  background-color: var(--base3);
   padding: 4px;
+}
+th {
+  background-color: var(--base2);
 }
 td:first-child {
   text-align:center;
+  background-color: var(--base2);
 }
 
 /* for HtmlDecorator */
-.black          { color: black; }
-.red            { color: darkred; }
-.green          { color: darkgreen; }
-.yellow         { color: gold; }
-.blue           { color: darkblue; }
-.magenta        { color: darkmagenta; }
-.cyan           { color: darkcyan; }
-.white          { color: ghostwhite; }
-.bright.black   { color: darkgrey; }
-.bright.red     { color: red; }
-.bright.green   { color: green; }
-.bright.yellow  { color: goldenrod; }
-.bright.blue    { color: blue; }
-.bright.magenta { color: magenta; }
-.bright.cyan    { color: #00e5ff; }
-.bright.white   { color: white; }
+.black          { color: var(--base01); }
+.red            { color: var(--red); }
+.green          { color: var(--green); }
+.yellow         { color: var(--yellow); }
+.blue           { color: var(--blue); }
+.magenta        { color: var(--magenta); }
+.cyan           { color: var(--cyan); }
+.white          { color: var(--base0); }
+.bright.red     { color: var(--orange); }
+.bright.magenta { color: var(--violet); }
 .bold           { font-weight: bold; }
 .underline      { text-decoration: underline; }
