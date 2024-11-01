@@ -55,7 +55,7 @@ public class MainTmt extends Main {
         return result;
     }
 
-    private static final class HtmlTablePrintStream extends PrintStream {
+    static final class HtmlTablePrintStream extends PrintStream {
         public HtmlTablePrintStream(OutputStream os, TestResult result) throws IOException {
             super(os, false, StandardCharsets.UTF_8);
             var maxValue = switch (result)
