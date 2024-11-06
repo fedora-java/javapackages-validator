@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-: ${JAVA_HOME:=/usr/lib/jvm/jre-22}
+: ${JAVA_HOME:=/usr/lib/jvm/jre-23}
 
 exec "${JAVA_HOME}"/bin/java --enable-native-access ALL-UNNAMED -jar 'target/validator.jar' "${@}"
 
