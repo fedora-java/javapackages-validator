@@ -38,9 +38,7 @@ public class Common {
                 Path target = null;
 
                 if (rpmEntry.isSymbolicLink()) {
-                    var content = new byte[(int) rpmEntry.getSize()];
-                    IOUtils.read(is, content);
-                    target = Path.of(new String(content, StandardCharsets.UTF_8));
+                    target = Path.of(IOUtils.toString(is, StandardCharsets.UTF_8));
                 }
 
                 result.put(rpmEntry, target);
