@@ -13,6 +13,7 @@ import java.util.jar.JarInputStream;
 import java.util.regex.Pattern;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
+import org.apache.commons.io.IOUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.util.Common;
 import org.fedoraproject.javapackages.validator.util.JarValidator;
@@ -40,7 +41,7 @@ public class JpmsProvidesValidator extends JarValidator {
                         || (entry.getName().startsWith("META-INF/versions/")
                             && VERSIONS_PATTERN.matcher(entry.getName()).matches())) {
                     try {
-                        var md = ModuleDescriptor.read(ByteBuffer.wrap(is.readNBytes((int) entry.getSize())));
+                        var md = ModuleDescriptor.read(ByteBuffer.wrap(IOUtils.toByteArray(is)));
                         moduleNames.add(Map.entry(entry.getName(), md.name()));
                     } catch (InvalidModuleDescriptorException e) {
                         fail("{0}: {1}: {2}: invalid module descriptor: {3}",
