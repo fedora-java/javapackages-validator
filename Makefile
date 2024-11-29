@@ -21,13 +21,11 @@ apache-resource-bundles \
 apiguardian \
 aqute-bnd \
 assertj-core \
-atinject \
 bcel \
 beust-jcommander \
 bsf \
 build-helper-maven-plugin \
 byte-buddy \
-cdi-api \
 cglib \
 disruptor \
 easymock \
@@ -42,7 +40,11 @@ httpcomponents-client \
 httpcomponents-core \
 httpcomponents-project \
 jakarta-activation \
+jakarta-activation1 \
 jakarta-annotations \
+jakarta-cdi2.0 \
+jakarta-inject \
+jakarta-inject1.0 \
 jakarta-mail \
 jakarta-oro \
 jakarta-servlet \
@@ -85,6 +87,7 @@ maven-enforcer \
 maven-file-management \
 maven-filtering \
 maven-jar-plugin \
+maven-mapping \
 maven-parent \
 maven-plugin-testing \
 maven-plugin-tools \
@@ -116,7 +119,6 @@ plexus-build-api0 \
 plexus-cipher \
 plexus-classworlds \
 plexus-compiler \
-plexus-components-pom \
 plexus-containers \
 plexus-interpolation \
 plexus-io \
@@ -131,7 +133,6 @@ qdox \
 regexp \
 relaxng-datatype-java \
 sisu \
-sisu-mojos \
 slf4j \
 testng \
 univocity-parsers \
