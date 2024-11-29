@@ -244,7 +244,7 @@ public class Main {
             compilerOptions.add("-proc:none");
 
             compilerOptions.add("--release");
-            compilerOptions.add(props.getProperty("compiler.release", "22"));
+            compilerOptions.add(props.getProperty("compiler.release", "23"));
 
             if (!parameters.classPaths.isEmpty()) {
                 compilerOptions.add("-cp");
