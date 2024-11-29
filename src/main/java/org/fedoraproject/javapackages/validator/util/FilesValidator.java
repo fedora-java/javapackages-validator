@@ -9,30 +9,24 @@ import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
-/**
- * Abstract class for validating files within an RPM package.
- * <p>
- * This validator processes the files inside an RPM package and checks whether
- * they meet the defined validation rules.
- */
+/// Abstract class for validating files within an RPM package.
+///
+/// This validator processes the files inside an RPM package and checks whether
+/// they meet the defined validation rules.
 public abstract class FilesValidator extends ElementwiseValidator {
 
-    /**
-     * Determines whether a file inside the RPM package is allowed.
-     *
-     * @param rpm  The RPM package metadata.
-     * @param path The file path inside the RPM package.
-     * @return {@code true} if the file is allowed, {@code false} otherwise.
-     * @throws Exception If an error occurs during validation.
-     */
+    /// Determines whether a file inside the RPM package is allowed.
+    ///
+    /// @param rpm  The RPM package metadata.
+    /// @param path The file path inside the RPM package.
+    /// @return `true` if the file is allowed, `false` otherwise.
+    /// @throws Exception If an error occurs during validation.
     public abstract boolean allowedFile(RpmInfo rpm, Path path) throws Exception;
 
-    /**
-     * Validates the files inside an RPM package.
-     *
-     * @param rpm The RPM package to validate.
-     * @throws Exception If an error occurs while processing the package.
-     */
+    /// Validates the files inside an RPM package.
+    ///
+    /// @param rpm The RPM package to validate.
+    /// @throws Exception If an error occurs while processing the package.
     @Override
     public void validate(RpmPackage rpm) throws Exception {
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {

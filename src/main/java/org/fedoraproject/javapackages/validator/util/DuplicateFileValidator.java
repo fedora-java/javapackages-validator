@@ -15,21 +15,17 @@ import org.fedoraproject.javapackages.validator.spi.Decorated;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
-/**
- * Abstract class for validating duplicate files across multiple RPM packages.
- * <p>
- * This validator checks for duplicate file paths present in multiple RPM
- * packages and determines whether they are allowed based on specific
- * conditions.
- */
+/// Abstract class for validating duplicate files across multiple RPM packages.
+///
+/// This validator checks for duplicate file paths present in multiple RPM
+/// packages and determines whether they are allowed based on specific
+/// conditions.
 public abstract class DuplicateFileValidator extends DefaultValidator {
 
-    /**
-     * Validates duplicate files in a collection of RPM packages.
-     *
-     * @param rpms The iterable collection of RPM packages to validate.
-     * @throws Exception If an error occurs while processing the packages.
-     */
+    /// Validates duplicate files in a collection of RPM packages.
+    ///
+    /// @param rpms The iterable collection of RPM packages to validate.
+    /// @throws Exception If an error occurs while processing the packages.
     @Override
     public void validate(Iterable<RpmPackage> rpms) throws Exception {
         var files = new TreeMap<String, ArrayList<Map.Entry<CpioArchiveEntry, Path>>>();
@@ -83,27 +79,21 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
         }
     }
 
-    /**
-     * Validates a specific duplicate file found in multiple RPM packages.
-     *
-     * @param path         The file path being validated.
-     * @param providerRpms The collection of RPM packages providing the file.
-     * @throws Exception If an error occurs during validation.
-     */
+    /// Validates a specific duplicate file found in multiple RPM packages.
+    ///
+    /// @param path         The file path being validated.
+    /// @param providerRpms The collection of RPM packages providing the file.
+    /// @throws Exception If an error occurs during validation.
     public abstract void validate(Path path, Collection<? extends RpmInfo> providerRpms) throws Exception;
 
-    /**
-     * Default implementation for handling duplicate file validation.
-     */
+    /// Default implementation for handling duplicate file validation.
     public static abstract class DefaultDuplicateFileValidator extends DuplicateFileValidator {
 
-        /**
-         * Validates whether a duplicate file is allowed in multiple RPM packages.
-         *
-         * @param path         The file path being validated.
-         * @param providerRpms The collection of RPM packages providing the file.
-         * @throws Exception If an error occurs during validation.
-         */
+        /// Validates whether a duplicate file is allowed in multiple RPM packages.
+        ///
+        /// @param path         The file path being validated.
+        /// @param providerRpms The collection of RPM packages providing the file.
+        /// @throws Exception If an error occurs during validation.
         @Override
         public void validate(Path path, Collection<? extends RpmInfo> providerRpms) throws Exception {
             Decorated decoratedFile = Decorated.actual(path);
@@ -118,15 +108,13 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
             }
         }
 
-        /**
-         * Determines whether a duplicate file is allowed in multiple RPM packages.
-         *
-         * @param path         The file path being checked.
-         * @param providerRpms The collection of RPM packages providing the file.
-         * @return {@code true} if the duplicate file is allowed, {@code false}
-         *         otherwise.
-         * @throws Exception If an error occurs during validation.
-         */
+        /// Determines whether a duplicate file is allowed in multiple RPM packages.
+        ///
+        /// @param path         The file path being checked.
+        /// @param providerRpms The collection of RPM packages providing the file.
+        /// @return `true` if the duplicate file is allowed, `false`
+        ///         otherwise.
+        /// @throws Exception If an error occurs during validation.
         public abstract boolean allowedDuplicateFile(Path path, Collection<? extends RpmInfo> providerRpms) throws Exception;
     }
 }

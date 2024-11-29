@@ -10,25 +10,21 @@ import org.fedoraproject.javapackages.validator.spi.Validator;
 
 import io.kojan.javadeptools.rpm.RpmPackage;
 
-/**
- * An abstract implementation of a {@code Validator} that extends
- * {@code ResultBuilder}. This class provides a base for validation logic with
- * argument handling and error management.
- */
+/// An abstract implementation of a `Validator` that extends
+/// `ResultBuilder`. This class provides a base for validation logic with
+/// argument handling and error management.
 public abstract class DefaultValidator extends ResultBuilder implements Validator {
 
-    /** Immutable list of arguments passed to the validator. */
+    /// Immutable list of arguments passed to the validator.
     private List<String> args = null;
 
-    /**
-     * Validates a collection of RPM packages using the provided arguments. Captures
-     * any exceptions and records them as errors.
-     *
-     * @param rpms the iterable collection of {@code RpmPackage} instances to
-     *             validate
-     * @param args the list of arguments for validation
-     * @return the validation {@code Result}
-     */
+    /// Validates a collection of RPM packages using the provided arguments. Captures
+    /// any exceptions and records them as errors.
+    ///
+    /// @param rpms the iterable collection of `RpmPackage` instances to
+    ///             validate
+    /// @param args the list of arguments for validation
+    /// @return the validation `Result`
     @Override
     public Result validate(Iterable<RpmPackage> rpms, List<String> args) {
         if (args != null) {
@@ -43,22 +39,18 @@ public abstract class DefaultValidator extends ResultBuilder implements Validato
         return build();
     }
 
-    /**
-     * Returns the list of arguments provided during validation.
-     *
-     * @return an immutable list of arguments, or {@code null} if none were provided
-     */
+    /// Returns the list of arguments provided during validation.
+    ///
+    /// @return an immutable list of arguments, or `null` if none were provided
     protected List<String> getArgs() {
         return args;
     }
 
-    /**
-     * Abstract method to be implemented by subclasses for performing validation on
-     * the given RPM packages.
-     *
-     * @param rpms the iterable collection of {@code RpmPackage} instances to
-     *             validate
-     * @throws Exception if an error occurs during validation
-     */
+    /// Abstract method to be implemented by subclasses for performing validation on
+    /// the given RPM packages.
+    ///
+    /// @param rpms the iterable collection of `RpmPackage` instances to
+    ///             validate
+    /// @throws Exception if an error occurs during validation
     protected abstract void validate(Iterable<RpmPackage> rpms) throws Exception;
 }

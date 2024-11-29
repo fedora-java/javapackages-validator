@@ -22,20 +22,17 @@ import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
-/**
- * Validator which checks that Maven metadata XML stored in
- * {@code /usr/share/maven-metadata/}.
- * <p>
- * It checks whether:
- * <ul>
- * <li>the metadata files can be parsed with XMvn,
- * <li>all artifacts mentioned in the metadata are actually included as files in
- * the package,
- * <li>there are no JARs and POMs without Maven metadata.
- * </ul>
- *
- * Ignores source RPMs.
- */
+/// Validator which checks that Maven metadata XML stored in
+/// `/usr/share/maven-metadata/`.
+///
+/// It checks whether:
+///
+/// - the metadata files can be parsed with XMvn,
+/// - all artifacts mentioned in the metadata are actually included as files in
+///   the package,
+/// - there are no JARs and POMs without Maven metadata.
+///
+/// Ignores source RPMs.
 public class MavenMetadataValidator extends ElementwiseValidator {
     @Override
     public String getTestName() {

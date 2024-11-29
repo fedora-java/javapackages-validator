@@ -6,28 +6,22 @@ import java.util.stream.Collectors;
 
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 
-/**
- * A {@code TextDecorator} implementation that formats text using ANSI escape
- * codes to apply colors and text styles for terminal output.
- */
+/// A `TextDecorator` implementation that formats text using ANSI escape
+/// codes to apply colors and text styles for terminal output.
 class AnsiDecorator implements TextDecorator {
 
-    /** Singleton instance of {@code AnsiDecorator}. */
+    /// Singleton instance of `AnsiDecorator`.
     public static final AnsiDecorator INSTANCE = new AnsiDecorator();
 
-    /**
-     * Private constructor to enforce singleton usage.
-     */
+    /// Private constructor to enforce singleton usage.
     private AnsiDecorator() {
         super();
     }
 
-    /**
-     * Decorates the given text by applying ANSI color and style codes.
-     *
-     * @param decorated the decorated text object containing formatting information
-     * @return a string formatted with ANSI escape codes for terminal output
-     */
+    /// Decorates the given text by applying ANSI color and style codes.
+    ///
+    /// @param decorated the decorated text object containing formatting information
+    /// @return a string formatted with ANSI escape codes for terminal output
     @Override
     public String decorate(Decorated decorated) {
         var result = new StringBuilder("\033[");

@@ -6,28 +6,22 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.spi.Decoration;
 
-/**
- * A {@code TextDecorator} implementation that formats text as HTML with
- * appropriate decorations and escaping.
- */
+/// A `TextDecorator` implementation that formats text as HTML with
+/// appropriate decorations and escaping.
 class HtmlDecorator implements TextDecorator {
 
-    /** Singleton instance of {@code HtmlDecorator}. */
+    /// Singleton instance of `HtmlDecorator`.
     public static final HtmlDecorator INSTANCE = new HtmlDecorator();
 
-    /**
-     * Private constructor to enforce singleton usage.
-     */
+    /// Private constructor to enforce singleton usage.
     private HtmlDecorator() {
         super();
     }
 
-    /**
-     * Decorates the given text as an HTML element with appropriate styling.
-     *
-     * @param decorated the decorated text object containing formatting information
-     * @return an HTML-formatted string representation of the decorated text
-     */
+    /// Decorates the given text as an HTML element with appropriate styling.
+    ///
+    /// @param decorated the decorated text object containing formatting information
+    /// @return an HTML-formatted string representation of the decorated text
     @Override
     public String decorate(Decorated decorated) {
         var result = new StringBuilder("<text class=\"");
@@ -44,13 +38,11 @@ class HtmlDecorator implements TextDecorator {
         return result.toString();
     }
 
-    /**
-     * Escapes special HTML characters in the given text and replaces line breaks
-     * with HTML line breaks.
-     *
-     * @param text the input text to escape
-     * @return the escaped HTML-safe text
-     */
+    /// Escapes special HTML characters in the given text and replaces line breaks
+    /// with HTML line breaks.
+    ///
+    /// @param text the input text to escape
+    /// @return the escaped HTML-safe text
     @Override
     public String escape(String text) {
         return StringEscapeUtils.escapeHtml4(text).replace(System.lineSeparator(), "<br>");
