@@ -65,6 +65,7 @@ public class BytecodeVersionValidator extends BytecodeVersionJarValidator {
     public void validate(RpmPackage rpm, Path jarPath, Map<Path, Version> classVersions) {
         var limits = readLimits();
         if (limits == null) {
+            warn("No limits were configured for " + getTestName() + ", the results will only be informative.");
             super.validate(rpm, jarPath, classVersions);
             return;
         }
