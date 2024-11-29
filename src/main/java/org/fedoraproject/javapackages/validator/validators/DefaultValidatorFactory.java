@@ -9,13 +9,16 @@ public class DefaultValidatorFactory implements ValidatorFactory {
     @Override
     public List<Validator> getValidators() {
         return List.of(new Validator[] {
+                new AttributeBuildRequiresValidator(),
                 new AttributeProvidesValidator(),
+                new AttributeRequiresValidator(),
                 new BytecodeVersionValidator(),
+                new JpmsProvidesValidator(),
                 new JavadocNoarchValidator(),
                 new JavaExclusiveArchValidator(),
-                // new JpmsProvidesValidator(),
                 new MavenMetadataValidator(),
-                // new NVRJarMetadataValidator(),
+                new NoBootstrapValidator(),
+                new NVRJarMetadataValidator(),
         });
     }
 }
