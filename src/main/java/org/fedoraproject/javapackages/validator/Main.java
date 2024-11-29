@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -546,10 +546,10 @@ public class Main {
             var oldClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(validator.getClass().getClassLoader());
-                var startTime = LocalDateTime.now();
+                var startTime = Instant.now();
                 var result = validator.validate(rpms, parameters.validatorArgs
                         .getOrDefault(validator.getTestName(), Optional.empty()).orElse(null));
-                var endTime = LocalDateTime.now();
+                var endTime = Instant.now();
                 return new NamedResult(result, validator.getTestName(), startTime, endTime);
             } catch (Exception ex) {
                 var result = new ResultBuilder();

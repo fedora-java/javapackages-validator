@@ -9,7 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -197,7 +198,7 @@ public class MainTmt extends Main {
         return validators;
     }
 
-    private static String getFormattedDuration(LocalDateTime startTime, LocalDateTime endTime) {
+    private static String getFormattedDuration(Instant startTime, Instant endTime) {
         var duration = Duration.between(startTime, endTime);
         // TODO Wait for resolution within TF
         // return String.format("%02d:%02d:%02d.%03d", duration.toHours(), duration.toMinutesPart(), duration.toSecondsPart(), duration.toMillisPart());
@@ -253,7 +254,7 @@ public class MainTmt extends Main {
             var startTime = namedResult.getStartTime();
             if (startTime != null) {
                 resultYaml.append("  start-time: '");
-                resultYaml.append(startTime.format(DateTimeFormatter.ISO_DATE_TIME));
+                resultYaml.append(startTime.atOffset(ZoneOffset.ofHours(1)).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                 resultYaml.append("'");
                 resultYaml.append(System.lineSeparator());
             }
@@ -261,7 +262,7 @@ public class MainTmt extends Main {
             var endTime = namedResult.getEndTime();
             if (endTime != null) {
                 resultYaml.append("  end-time: '");
-                resultYaml.append(endTime.format(DateTimeFormatter.ISO_DATE_TIME));
+                resultYaml.append(endTime.atOffset(ZoneOffset.ofHours(1)).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                 resultYaml.append("'");
                 resultYaml.append(System.lineSeparator());
             }
