@@ -53,4 +53,8 @@ public class TestCommon {
         }
         assertEquals(1, count);
     }
+
+    public static void assertError(Result result) {
+        assertEquals(TestResult.error, result.getResult(), "expected result: ERROR");
+    }
 }
