@@ -2,8 +2,8 @@ package org.fedoraproject.javapackages.validator.validators;
 
 import static org.fedoraproject.javapackages.validator.TestCommon.assertError;
 import static org.fedoraproject.javapackages.validator.TestCommon.assertFailOne;
-import static org.fedoraproject.javapackages.validator.TestCommon.assertInfo;
 import static org.fedoraproject.javapackages.validator.TestCommon.assertPass;
+import static org.fedoraproject.javapackages.validator.TestCommon.assertWarn;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.file.Path;
@@ -52,10 +52,11 @@ public class BytecodeVersionValidatorTest {
     }
 
     @Test
-    void testInfo() throws Exception {
+    void testInformative() throws Exception {
         validator.validate(RPMS, null);
-        assertInfo(validator.build());
+        assertWarn(validator.build());
         assertMsg("module-info.class: bytecode version: 65.0");
+        assertMsg("No limits were configured for /java/bytecode-version, the results will only be informative");
     }
 
     @Test
