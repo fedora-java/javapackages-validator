@@ -93,7 +93,7 @@ class MainTmtTest {
     void testCrashLog() throws Exception {
         // Corrupted empty file triggers the crash
         Files.createFile(artifactsDir.resolve("empty.rpm"));
-        addValidator("/something", (rpms, v) -> {
+        addValidator("/something", (_, _) -> {
             // not expected to be ran, crash happens before the code gets here
         });
         runMain(2);
@@ -108,7 +108,7 @@ class MainTmtTest {
     void testHtmlEscaping() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
 
-        addValidator("/html-new-line", (rpms, v) ->
+        addValidator("/html-new-line", (_, v) ->
             v.warn("first_line\nsecond_line\n{0}", Decorated.plain("&third_line")));
 
         runMain(0);
@@ -138,13 +138,13 @@ class MainTmtTest {
         );
 
         List<String> theArgs = new ArrayList<>();
-        addValidator("/myvalidator", (rpms, v) -> {
+        addValidator("/myvalidator", (_, v) -> {
             if (v.getArgs() != null) {
                 theArgs.addAll(v.getArgs());
             }
             v.pass("passed");
         });
-        addValidator("/other", (rpms, v) -> v.fail("other validator should be excluded"));
+        addValidator("/other", (_, v) -> v.fail("other validator should be excluded"));
 
         runMain(0);
         assertTrue(readResult("results.yaml").contains("result: pass"), "result is pass");
@@ -161,7 +161,7 @@ class MainTmtTest {
         args.add(tmtTree.toString());
         args.add("-d");
         args.add(tmtTestData.toString());
-        addValidator("/skipper", (rpms, v) -> v.skip("skeep"));
+        addValidator("/skipper", (_, v) -> v.skip("skeep"));
         runMain(0);
         assertTrue(readResult("results.yaml").contains("result: skip"), "result is skip");
         expectResults( //
@@ -210,7 +210,7 @@ class MainTmtTest {
         args.add(tmtTree.toString());
         args.add("-d");
         args.add(tmtTestData.toString());
-        addValidator("/skipper", (rpms, v) -> v.skip("skeep"));
+        addValidator("/skipper", (_, v) -> v.skip("skeep"));
         runMain(0);
         assertTrue(readResult("results.yaml").contains("result: skip"), "result is skip");
         expectResults( //
@@ -255,7 +255,7 @@ class MainTmtTest {
     @Test
     void testNameSlash() throws Exception {
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
-        addValidator("/", (rpms, v) -> v.pass("passed"));
+        addValidator("/", (_, v) -> v.pass("passed"));
         runMain(0);
         assertTrue(readResult("results.yaml").contains("result: pass"), "result is pass");
         assertTrue(readResult("results.yaml").contains("results/.log"), "log path looks correct");
@@ -268,11 +268,11 @@ class MainTmtTest {
     @Test
     void testParallel() throws Exception {
         boolean debug = System.getProperty("MainTmtTest.testParallel.debug", "false").equals("true");
-        Consumer<String> logger = debug ? System.err::println : str -> {};
+        Consumer<String> logger = debug ? System.err::println : _ -> {};
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
         CountDownLatch cdA = new CountDownLatch(1);
         CountDownLatch cdB = new CountDownLatch(1);
-        addValidator("/one", (rpms, v) -> {
+        addValidator("/one", (_, v) -> {
             logger.accept("Running one...");
             cdA.countDown();
             if (cdB.await(2, TimeUnit.SECONDS)) {
@@ -284,7 +284,7 @@ class MainTmtTest {
             }
             logger.accept("Done one...");
         });
-        addValidator("/two", (rpms, v) -> {
+        addValidator("/two", (_, v) -> {
             logger.accept("Running two...");
             cdB.countDown();
             if (cdA.await(2, TimeUnit.SECONDS)) {

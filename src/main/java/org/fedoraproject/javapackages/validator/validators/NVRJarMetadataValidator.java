@@ -137,9 +137,9 @@ public class NVRJarMetadataValidator extends DefaultValidator {
                             Decorated.rpm(rpm), Decorated.actual(rpm.getPath()));
                     return;
                 }
-                this.rpms.computeIfAbsent(filename.toString(), name -> new RpmEntry()).sourceRpm = rpm;
+                this.rpms.computeIfAbsent(filename.toString(), _ -> new RpmEntry()).sourceRpm = rpm;
             } else {
-                this.rpms.computeIfAbsent(rpm.getInfo().getSourceRPM(), name -> new RpmEntry()).binaryRpms.add(rpm);
+                this.rpms.computeIfAbsent(rpm.getInfo().getSourceRPM(), _ -> new RpmEntry()).binaryRpms.add(rpm);
             }
         }
 

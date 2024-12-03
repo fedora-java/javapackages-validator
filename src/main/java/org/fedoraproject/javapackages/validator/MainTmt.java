@@ -151,7 +151,7 @@ public class MainTmt extends Main {
                     try {
                         args = ((List<?>) entry.getValue()).stream().map(String.class::cast).toList();
                     } catch (ClassCastException ex) {
-                        var result = this.reports.computeIfAbsent(validator.getTestName(), k -> new ResultBuilder());
+                        var result = this.reports.computeIfAbsent(validator.getTestName(), _ -> new ResultBuilder());
                         result.error("{0}", Decorated.plain("Wrong format of validator arguments " +
                                 "in configuration Yaml file, must be a list of strings"));
                         continue;
@@ -177,7 +177,7 @@ public class MainTmt extends Main {
                                     Decorated.actual(exclusionPattern),
                                     Decorated.struct(entry.getKey()));
                             logger.debug(message.pattern(), message.objects());
-                            var result = this.reports.computeIfAbsent(entry.getKey(), k -> new ResultBuilder());
+                            var result = this.reports.computeIfAbsent(entry.getKey(), _ -> new ResultBuilder());
                             result.skip(message.pattern(), message.objects());
                             break;
                         }

@@ -12,7 +12,7 @@ public abstract class ElementwiseValidator extends DefaultValidator {
     private Predicate<RpmInfo> filter;
 
     protected ElementwiseValidator() {
-        this(rpm -> true);
+        this(_ -> true);
     }
 
     protected ElementwiseValidator(Predicate<RpmInfo> filter) {

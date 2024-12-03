@@ -24,7 +24,7 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
         for (var rpm : rpms) {
             if (!rpm.getInfo().isSourcePackage()) {
                 for (var entry : Common.rpmFilesAndSymlinks(rpm).entrySet()) {
-                    files.computeIfAbsent(Common.getEntryPath(entry.getKey()).toString(), key -> new ArrayList<>())
+                    files.computeIfAbsent(Common.getEntryPath(entry.getKey()).toString(), _ -> new ArrayList<>())
                         .add(Map.entry(entry.getKey(), rpm.getPath()));
                 }
             }

@@ -198,7 +198,7 @@ public class Main {
             }
         }
 
-        var sourceMtime = getRecursiveFileTime(parameters.sourcePath, (p, a) -> true).get();
+        var sourceMtime = getRecursiveFileTime(parameters.sourcePath, (_, _) -> true).get();
 
         var outputDirectory = parameters.outputDir;
         if (Files.isSymbolicLink(outputDirectory)) {
@@ -207,8 +207,8 @@ public class Main {
             Files.createDirectories(outputDirectory);
         }
 
-        var targetMtime = getRecursiveFileTime(outputDirectory, (p, a) -> !a.isDirectory());
-        var targetDMtime = getRecursiveFileTime(outputDirectory, (p, a) -> a.isDirectory()).get();
+        var targetMtime = getRecursiveFileTime(outputDirectory, (_, a) -> !a.isDirectory());
+        var targetDMtime = getRecursiveFileTime(outputDirectory, (_, a) -> a.isDirectory()).get();
 
         boolean recompile = false;
 
