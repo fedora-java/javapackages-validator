@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.junit.jupiter.api.BeforeEach;
@@ -266,32 +267,34 @@ class MainTmtTest {
 
     @Test
     void testParallel() throws Exception {
+        boolean debug = System.getProperty("MainTmtTest.testParallel.debug", "false").equals("true");
+        Consumer<String> logger = debug ? System.err::println : str -> {};
         copyResources(artifactsDir, "arg_file_iterator/dangling-symlink-1-1.noarch.rpm");
         CountDownLatch cdA = new CountDownLatch(1);
         CountDownLatch cdB = new CountDownLatch(1);
         addValidator("/one", (rpms, v) -> {
-            System.err.println("Running one...");
+            logger.accept("Running one...");
             cdA.countDown();
             if (cdB.await(2, TimeUnit.SECONDS)) {
-                System.err.println("PASS");
+                logger.accept("PASS");
                 v.pass("passed");
             } else {
-                System.err.println("FAIL");
+                logger.accept("FAIL");
                 v.fail("failed");
             }
-            System.err.println("Done one...");
+            logger.accept("Done one...");
         });
         addValidator("/two", (rpms, v) -> {
-            System.err.println("Running two...");
+            logger.accept("Running two...");
             cdB.countDown();
             if (cdA.await(2, TimeUnit.SECONDS)) {
-                System.err.println("PASS");
+                logger.accept("PASS");
                 v.pass("passed");
             } else {
-                System.err.println("FAIL");
+                logger.accept("FAIL");
                 v.fail("failed");
             }
-            System.err.println("Done two...");
+            logger.accept("Done two...");
 
         });
         runMain(0);
