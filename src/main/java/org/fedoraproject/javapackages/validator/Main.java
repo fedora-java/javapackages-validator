@@ -542,7 +542,7 @@ public class Main {
         });
         */
         Iterators.addAll(rpms, ArgFileIterator.create(parameters.argPaths));
-        var resultList = validators.parallelStream().map(validator -> {
+        var resultList = new ArrayList<>(validators).parallelStream().map(validator -> {
             var oldClassLoader = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(validator.getClass().getClassLoader());
