@@ -31,6 +31,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.Future;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -539,42 +540,48 @@ public class Main {
 
     @SuppressFBWarnings({"DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"})
     protected List<NamedResult> execute(Collection<Validator> validators) throws Exception {
+        var validatorsArray = new ArrayList<>(validators);
         var rpms = new ArrayList<RpmPackage>();
-        /*
-        parameters.argUrls.parallelStream().forEach(path -> {
-            RpmPackage rpm;
-            try {
-                rpm = new RpmPackage(path);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-            synchronized (rpms) {
-                rpms.add(rpm);
-            }
-        });
-        */
         Iterators.addAll(rpms, ArgFileIterator.create(parameters.argPaths));
-        var resultList = new ArrayList<>(validators).parallelStream().map(validator -> {
-            var oldClassLoader = Thread.currentThread().getContextClassLoader();
+        var futureList = new ArrayList<Future<NamedResult>>(validatorsArray.size());
+
+        logger.debug("Using number of threads: {0}", Decorated.plain(ThreadPool.getParallelism()));
+
+        for (var validator : validatorsArray) {
+            futureList.add(ThreadPool.submit(() -> {
+                var oldClassLoader = Thread.currentThread().getContextClassLoader();
+                try {
+                    Thread.currentThread().setContextClassLoader(validator.getClass().getClassLoader());
+                    var startTime = Instant.now();
+                    var result = validator.validate(rpms, parameters.validatorArgs
+                            .getOrDefault(validator.getTestName(), Optional.empty()).orElse(null));
+                    var endTime = Instant.now();
+                    return new NamedResult(result, validator.getTestName(), startTime, endTime);
+                } catch (Exception ex) {
+                    var result = new ResultBuilder();
+                    result.error(ex);
+                    return new NamedResult(result.build(), validator.getTestName());
+                } finally {
+                    Thread.currentThread().setContextClassLoader(oldClassLoader);
+                }
+            }));
+        }
+
+        // TODO should each class loader be closed within the thread pool?
+        for (var validator : validatorsArray) {
+            if (validator.getClass().getClassLoader() instanceof AutoCloseable ac) {
+                ac.close();
+            }
+        }
+
+        var resultList = new ArrayList<NamedResult>(futureList.size());
+        for (int i = 0; i != futureList.size(); ++i) {
             try {
-                Thread.currentThread().setContextClassLoader(validator.getClass().getClassLoader());
-                var startTime = Instant.now();
-                var result = validator.validate(rpms, parameters.validatorArgs
-                        .getOrDefault(validator.getTestName(), Optional.empty()).orElse(null));
-                var endTime = Instant.now();
-                return new NamedResult(result, validator.getTestName(), startTime, endTime);
+                resultList.add(futureList.get(i).get());
             } catch (Exception ex) {
                 var result = new ResultBuilder();
                 result.error(ex);
-                return new NamedResult(result.build(), validator.getTestName());
-            } finally {
-                Thread.currentThread().setContextClassLoader(oldClassLoader);
-            }
-        }).toList();
-
-        for (var validator : validators) {
-            if (validator.getClass().getClassLoader() instanceof AutoCloseable ac) {
-                ac.close();
+                resultList.add(new NamedResult(result.build(), validatorsArray.get(i).getTestName()));
             }
         }
 

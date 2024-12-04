@@ -1,26 +1,31 @@
 package org.fedoraproject.javapackages.validator.util;
 
-import java.util.function.Consumer;
+import java.util.ArrayList;
+import java.util.concurrent.Future;
 
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.io.IOUtils;
+import org.fedoraproject.javapackages.validator.ThreadPool;
 
 import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
-public interface RpmJarConsumer extends Consumer<RpmPackage> {
-    @Override
-    default void accept(RpmPackage rpm) {
+public interface RpmJarConsumer {
+    default void accept(RpmPackage rpm) throws Exception {
+        var futures = new ArrayList<Future<?>>();
         try (var is = new RpmArchiveInputStream(rpm.getPath())) {
-            for (CpioArchiveEntry rpmEntry; (rpmEntry = is.getNextEntry()) != null;) {
-                if (!rpmEntry.isSymbolicLink() && rpmEntry.getName().endsWith(".jar")) {
-                    acceptJarEntry(rpm, rpmEntry, IOUtils.toByteArray(is));
+            for (CpioArchiveEntry nextRpmEntry; (nextRpmEntry = is.getNextEntry()) != null;) {
+                if (!nextRpmEntry.isSymbolicLink() && nextRpmEntry.getName().endsWith(".jar")) {
+                    var rpmEntry = nextRpmEntry;
+                    var content = IOUtils.toByteArray(is);
+                    futures.add(ThreadPool.submit(() -> acceptJarEntry(rpm, rpmEntry, content)));
                 }
             }
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            for (var future : futures) {
+                future.get();
+            }
         }
     }
 
-    void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception;
+    void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content);
 }

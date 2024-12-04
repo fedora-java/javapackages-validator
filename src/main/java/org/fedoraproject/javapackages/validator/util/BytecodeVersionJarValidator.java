@@ -23,14 +23,13 @@ public abstract class BytecodeVersionJarValidator extends JarValidator {
     }
 
     @Override
-    public void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception {
+    public void acceptJarEntryExcept(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception {
         var jarPath = Path.of(rpmEntry.getName().substring(1));
         var classVersions = new TreeMap<Path, Version>();
 
         try (var jarStream = new JarInputStream(new ByteArrayInputStream(content))) {
             for (JarEntry jarEntry; (jarEntry = jarStream.getNextJarEntry()) != null;) {
                 var classPath = Path.of(jarEntry.getName());
-
                 if (classPath.toString().endsWith(".class")) {
                     var dataInput = new DataInputStream(jarStream);
                     dataInput.readInt(); // magic number

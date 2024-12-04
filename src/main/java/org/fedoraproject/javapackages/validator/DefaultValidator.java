@@ -5,12 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.fedoraproject.javapackages.validator.spi.Result;
-import org.fedoraproject.javapackages.validator.spi.ResultBuilder;
 import org.fedoraproject.javapackages.validator.spi.Validator;
+import org.fedoraproject.javapackages.validator.util.ConcurrentResultBuilder;
 
 import io.kojan.javadeptools.rpm.RpmPackage;
 
-public abstract class DefaultValidator extends ResultBuilder implements Validator {
+public abstract class DefaultValidator extends ConcurrentResultBuilder implements Validator {
     private List<String> args = null;
 
     @Override
@@ -18,17 +18,20 @@ public abstract class DefaultValidator extends ResultBuilder implements Validato
         if (args != null) {
             this.args = Collections.unmodifiableList(new ArrayList<>(args));
         }
-        try {
-            validate(rpms);
-        } catch (Exception ex) {
-            error(ex);
-        }
-
+        validateNoexcept(rpms);
         return build();
     }
 
     protected List<String> getArgs() {
         return args;
+    }
+
+    protected void validateNoexcept(Iterable<RpmPackage> rpms) {
+        try {
+            validate(rpms);
+        } catch (Exception ex) {
+            error(ex);
+        }
     }
 
     protected abstract void validate(Iterable<RpmPackage> rpms) throws Exception;
