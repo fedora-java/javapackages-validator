@@ -43,6 +43,10 @@ public class TestCommon {
         assertEquals(TestResult.info, result.getResult(), "expected result: INFO");
     }
 
+    public static void assertWarn(Result result) {
+        assertEquals(TestResult.warn, result.getResult(), "expected result: WARN");
+    }
+
     public static void assertFailOne(Result result) {
         assertEquals(TestResult.fail, result.getResult(), "expected result: FAIL");
         int count = 0;
@@ -52,5 +56,9 @@ public class TestCommon {
             }
         }
         assertEquals(1, count);
+    }
+
+    public static void assertError(Result result) {
+        assertEquals(TestResult.error, result.getResult(), "expected result: ERROR");
     }
 }
