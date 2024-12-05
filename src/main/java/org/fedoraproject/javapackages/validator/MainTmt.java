@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.io.IOUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.spi.LogEntry;
 import org.fedoraproject.javapackages.validator.spi.LogEvent;
@@ -68,13 +69,24 @@ public class MainTmt extends Main {
             case error -> LogEvent.error;
             };
 
+            String filterJs = IOUtils.toString(MainTmt.class.getResource("/tmt_html/filter.js"), StandardCharsets.UTF_8);
+            String styleCss = IOUtils.toString(MainTmt.class.getResource("/tmt_html/style.css"), StandardCharsets.UTF_8);
+
             var ps = new PrintStream(super.out, false, StandardCharsets.UTF_8);
             ps.append("""
 <!DOCTYPE html>
 <html>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<script src="../filter.js"></script>
-<link rel="stylesheet" href="../style.css">
+<script type="text/javascript">
+""");
+            ps.append(filterJs);
+            ps.append("""
+</script>
+<style type="text/css">
+""");
+            ps.append(styleCss);
+            ps.append("""
+</style>
 <table>
 <tr>
     <th>Filter:</th>
@@ -207,15 +219,6 @@ public class MainTmt extends Main {
 
     @Override
     protected int report(List<NamedResult> results) throws Exception {
-        try (var os = Files.newOutputStream(TMT_TEST_DATA.resolve("filter.js"));
-                var is = MainTmt.class.getResourceAsStream("/tmt_html/filter.js")) {
-            is.transferTo(os);
-        }
-        try (var os = Files.newOutputStream(TMT_TEST_DATA.resolve("style.css"));
-                var is = MainTmt.class.getResourceAsStream("/tmt_html/style.css")) {
-            is.transferTo(os);
-        }
-
         Files.createDirectories(TMT_TEST_DATA.resolve("results"));
 
         var testResults = IterableUtils.chainedIterable(results, this.reports.entrySet().stream()
