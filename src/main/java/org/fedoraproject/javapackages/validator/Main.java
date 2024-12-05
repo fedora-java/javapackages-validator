@@ -243,6 +243,8 @@ public class Main {
 
             logger.debug("Compiling source files: {0}", Decorated.plain(sourceFiles));
 
+            compilerOptions.add("-proc:none");
+
             compilerOptions.add("--release");
             compilerOptions.add(props.getProperty("compiler.release", "22"));
 
