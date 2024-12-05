@@ -79,7 +79,15 @@ public class NVRJarMetadataValidator extends DefaultValidator {
         List<RpmPackage> binaryRpms = new ArrayList<>();
 
         @Override
-        public void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception {
+        public void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) {
+            try {
+                acceptJarEntryExcept(rpm, rpmEntry, content);
+            } catch (Exception ex) {
+                error(ex);
+            }
+        }
+
+        public void acceptJarEntryExcept(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception {
             var jarPath = Path.of(rpmEntry.getName());
             var standardLocations = List.of("/usr/share/java", "/usr/lib/java");
             if (standardLocations.stream().anyMatch(jarPath::startsWith)) {

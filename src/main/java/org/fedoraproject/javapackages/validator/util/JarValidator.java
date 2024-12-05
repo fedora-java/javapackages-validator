@@ -2,6 +2,7 @@ package org.fedoraproject.javapackages.validator.util;
 
 import java.util.function.Predicate;
 
+import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.fedoraproject.javapackages.validator.spi.Decoration;
 
 import io.kojan.javadeptools.rpm.RpmInfo;
@@ -21,5 +22,16 @@ public abstract class JarValidator extends ElementwiseValidator implements RpmJa
     @Override
     public void validate(RpmPackage rpm) throws Exception {
         accept(rpm);
+    }
+
+    protected abstract void acceptJarEntryExcept(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) throws Exception;
+
+    @Override
+    public void acceptJarEntry(RpmPackage rpm, CpioArchiveEntry rpmEntry, byte[] content) {
+        try {
+            acceptJarEntryExcept(rpm, rpmEntry, content);
+        } catch (Exception ex) {
+            error(ex);
+        }
     }
 }
