@@ -9,6 +9,14 @@ import org.fedoraproject.javapackages.validator.util.BytecodeVersionJarValidator
 
 import io.kojan.javadeptools.rpm.RpmPackage;
 
+/**
+ * BytecodeVersionValidator can be ran in two modes &ndash; enforcing and
+ * informative. When configured with max and min bytecode versions (the limits)
+ * then it enforces class bytecode versions, producing failures for cases where
+ * the actual version does not fit within the configured range. Otherwise, when
+ * ran without limits specified, its results are only informative &ndash; it
+ * only prints bytecode versions found as infos.
+ */
 public class BytecodeVersionValidator extends BytecodeVersionJarValidator {
     @Override
     public String getTestName() {
