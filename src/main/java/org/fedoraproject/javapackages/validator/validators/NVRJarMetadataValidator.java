@@ -72,7 +72,7 @@ public class NVRJarMetadataValidator extends DefaultValidator {
         }
     }
 
-    private static List<Entry> ENTRIES = List.of(new RpmName(), new RpmEpoch(), new RpmVersion(), new RpmRelease());
+    private static final List<Entry> ENTRIES = List.of(new RpmName(), new RpmEpoch(), new RpmVersion(), new RpmRelease());
 
     private class RpmEntry implements RpmJarConsumer {
         RpmPackage sourceRpm = null;

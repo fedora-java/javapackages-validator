@@ -1,5 +1,7 @@
 package org.fedoraproject.javapackages.validator.util;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 import org.fedoraproject.javapackages.validator.DefaultValidator;
@@ -9,7 +11,7 @@ import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
 public abstract class ElementwiseValidator extends DefaultValidator {
-    private Predicate<RpmInfo> filter;
+    protected final Predicate<RpmInfo> filter;
 
     protected ElementwiseValidator() {
         this(_ -> true);
@@ -20,16 +22,43 @@ public abstract class ElementwiseValidator extends DefaultValidator {
         this.filter = filter;
     }
 
+    protected Iterator<RpmPackage> filter(Iterable<RpmPackage> rpms) {
+        return new Iterator<RpmPackage>() {
+            private Iterator<RpmPackage> it = rpms.iterator();
+            private RpmPackage current = null;
+
+            @Override
+            public boolean hasNext() {
+                while (it.hasNext()) {
+                    current = it.next();
+                    if (filter.test(current.getInfo())) {
+                        return true;
+                    } else {
+                        skip("{0} filtered out {1}",
+                                Decorated.struct(getClass().getCanonicalName()),
+                                Decorated.rpm(current));
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public RpmPackage next() {
+                var result = current;
+                if (result == null) {
+                    throw new NoSuchElementException();
+                }
+                current = null;
+                return result;
+            }
+        };
+    }
+
     @Override
     public void validate(Iterable<RpmPackage> rpms) throws Exception {
-        for (var rpm : rpms) {
-            if (filter.test(rpm.getInfo())) {
-                validate(rpm);
-            } else {
-                skip("{0} filtered out {1}",
-                        Decorated.struct(getClass().getCanonicalName()),
-                        Decorated.rpm(rpm));
-            }
+        var it = filter(rpms);
+        while (it.hasNext()) {
+            validate(it.next());
         }
     }
 

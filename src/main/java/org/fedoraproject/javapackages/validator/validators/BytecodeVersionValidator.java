@@ -10,6 +10,8 @@ import org.fedoraproject.javapackages.validator.util.BytecodeVersionJarValidator
 import io.kojan.javadeptools.rpm.RpmPackage;
 
 public class BytecodeVersionValidator extends BytecodeVersionJarValidator {
+    private Limits limits = null;
+
     @Override
     public String getTestName() {
         return "/java/bytecode-version";
@@ -54,45 +56,55 @@ public class BytecodeVersionValidator extends BytecodeVersionJarValidator {
     }
 
     @Override
-    public void validate(RpmPackage rpm, Path jarPath, Map<Path, Version> classVersions) {
-        var limits = readLimits();
-        if (limits == null) {
-            super.validate(rpm, jarPath, classVersions);
-            return;
-        }
+    public void validate(Iterable<RpmPackage> rpms) throws Exception {
+        this.limits = readLimits();
+        super.validate(rpms);
+    }
 
-        debug("Limits: {0}:{1}", Decorated.plain(limits.min()), Decorated.plain(limits.max()));
-        for (var entry : classVersions.entrySet()) {
-            boolean failed = false;
+    @Override
+    protected RpmJarResultBuilder spawnValidator() {
+        return new BytecodeVersionJarResultBuilder() {
+            @Override
+            public void validate(RpmPackage rpm, Path jarPath, Map<Path, Version> classVersions) {
+                if (limits == null) {
+                    super.validate(rpm, jarPath, classVersions);
+                    return;
+                }
 
-            if (entry.getValue().major() < limits.min()) {
-                failed = true;
-                fail("{0}: {1}: {2}: bytecode version: {3} is smaller than {4}",
-                        Decorated.rpm(rpm),
-                        Decorated.custom(jarPath, DECORATION_JAR),
-                        Decorated.struct(entry.getKey()),
-                        Decorated.actual(entry.getValue()),
-                        Decorated.expected(limits.min()));
+                debug("Limits: {0}:{1}", Decorated.plain(limits.min()), Decorated.plain(limits.max()));
+                for (var entry : classVersions.entrySet()) {
+                    boolean failed = false;
+
+                    if (entry.getValue().major() < limits.min()) {
+                        failed = true;
+                        fail("{0}: {1}: {2}: bytecode version: {3} is smaller than {4}",
+                                Decorated.rpm(rpm),
+                                Decorated.custom(jarPath, DECORATION_JAR),
+                                Decorated.struct(entry.getKey()),
+                                Decorated.actual(entry.getValue()),
+                                Decorated.expected(limits.min()));
+                    }
+
+                    if (limits.max() < entry.getValue().major()) {
+                        failed = true;
+                        fail("{0}: {1}: {2}: bytecode version: {3} is larger than {4}",
+                                Decorated.rpm(rpm),
+                                Decorated.custom(jarPath, DECORATION_JAR),
+                                Decorated.struct(entry.getKey()),
+                                Decorated.actual(entry.getValue()),
+                                Decorated.expected(limits.max()));
+                    }
+
+                    if (!failed) {
+                        mergeResult(TestResult.pass);
+                        debug("{0}: {1}: {2}: bytecode version: {3}",
+                                Decorated.rpm(rpm),
+                                Decorated.custom(jarPath, DECORATION_JAR),
+                                Decorated.struct(entry.getKey()),
+                                Decorated.actual(entry.getValue()));
+                    }
+                }
             }
-
-            if (limits.max() < entry.getValue().major()) {
-                failed = true;
-                fail("{0}: {1}: {2}: bytecode version: {3} is larger than {4}",
-                        Decorated.rpm(rpm),
-                        Decorated.custom(jarPath, DECORATION_JAR),
-                        Decorated.struct(entry.getKey()),
-                        Decorated.actual(entry.getValue()),
-                        Decorated.expected(limits.max()));
-            }
-
-            if (!failed) {
-                mergeResult(TestResult.pass);
-                debug("{0}: {1}: {2}: bytecode version: {3}",
-                        Decorated.rpm(rpm),
-                        Decorated.custom(jarPath, DECORATION_JAR),
-                        Decorated.struct(entry.getKey()),
-                        Decorated.actual(entry.getValue()));
-            }
-        }
+        };
     }
 }
