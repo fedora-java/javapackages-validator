@@ -27,7 +27,8 @@ public class AttributeRequiresValidator extends ElementwiseValidator {
         for (RpmDependency require : rpm.getInfo().getRequires()) {
             jpFilesystem |= require.getName().equals("javapackages-filesystem");
             if (require.getName().startsWith("mvn(") && require.getName().endsWith(")")) {
-                if (require.getVersion().getVersion().chars().noneMatch(Character::isDigit)) {
+                var version = require.getVersion().getVersion();
+                if (version != null && version.chars().noneMatch(Character::isDigit)) {
                     fail("{0}: The required version of field {1} does not contain a number",
                             Decorated.rpm(rpm), Decorated.actual(require));
                 }
