@@ -429,7 +429,8 @@ public class Main {
         for (var classPath : parameters.classPaths) {
             classPaths.add(classPath.toUri().toURL());
         }
-        var validators = new ArrayList<Validator>();
+        // Fully-qualified class names of validators
+        var validators = new TreeMap<String, Validator>();
 
         logger.debug("Factory arguments: {0}", Decorated.plain(parameters.factories.stream().toList()));
 
@@ -441,7 +442,9 @@ public class Main {
             ServiceLoader.<ValidatorFactory>load(ValidatorFactory.class, classLoader).stream().forEach(provider -> {
                 var factory = provider.get();
                 if (parameters.factories.isEmpty() || parameters.factories.contains(factory.getClass().getName())) {
-                    validators.addAll(factory.getValidators());
+                    for (var validator : factory.getValidators()) {
+                        validators.put(validator.getClass().getCanonicalName(), validator);
+                    }
                 } else {
                     logger.debug("Ignoring factory {0} as it is not listed as an argument", Decorated.struct(factory.getClass().getName()));
                 }
@@ -452,7 +455,7 @@ public class Main {
 
         var validatorTests = new TreeMap<String, Validator>();
 
-        for (var validator : validators) {
+        for (var validator : validators.values()) {
             var testName = validator.getTestName();
 
             logger.debug("Test {0} is implemented by {1}",
@@ -486,7 +489,7 @@ public class Main {
                     Decorated.actual(testName));
         }
 
-        logger.debug("Available tests:{0}", Decorated.plain(validators.stream().map(v ->
+        logger.debug("Available tests:{0}", Decorated.plain(validators.values().stream().map(v ->
             System.lineSeparator() + decorate(Decorated.struct(v.getTestName()))
         ).collect(Collectors.joining())));
 
