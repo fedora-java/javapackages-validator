@@ -18,7 +18,6 @@ import org.fedoraproject.javapackages.validator.util.ElementwiseValidator;
 import org.fedoraproject.xmvn.metadata.PackageMetadata;
 import org.fedoraproject.xmvn.metadata.io.stax.MetadataStaxReader;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
@@ -37,7 +36,6 @@ import io.kojan.javadeptools.rpm.RpmPackage;
  *
  * Ignores source RPMs.
  */
-@SuppressFBWarnings({"DMI_HARDCODED_ABSOLUTE_FILENAME"})
 public class MavenMetadataValidator extends ElementwiseValidator {
     @Override
     public String getTestName() {
@@ -48,7 +46,6 @@ public class MavenMetadataValidator extends ElementwiseValidator {
         super(Predicate.not(RpmInfo::isSourcePackage));
     }
 
-    @SuppressFBWarnings(value = "REC_CATCH_EXCEPTION", justification = "Incorrect claim that Exception is never thrown")
     @Override
     public void validate(RpmPackage rpm) throws Exception {
         var metadataXmls = new ArrayList<Map.Entry<CpioArchiveEntry, byte[]>>();

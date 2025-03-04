@@ -9,13 +9,11 @@ import java.util.TreeMap;
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.io.IOUtils;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
 public class Common {
-    @SuppressFBWarnings({"DMI_HARDCODED_ABSOLUTE_FILENAME"})
     public static Path getEntryPath(CpioArchiveEntry entry) {
         return Path.of("/").resolve(Path.of("/").relativize(Path.of("/").resolve(Path.of(entry.getName()))));
     }

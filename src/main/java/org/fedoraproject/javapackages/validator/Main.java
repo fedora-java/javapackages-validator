@@ -59,7 +59,6 @@ import org.fedoraproject.javapackages.validator.spi.TestResult;
 import org.fedoraproject.javapackages.validator.spi.Validator;
 import org.fedoraproject.javapackages.validator.spi.ValidatorFactory;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
 public class Main {
@@ -74,7 +73,6 @@ public class Main {
         return DECORATOR;
     }
 
-    @SuppressFBWarnings({"MS_EXPOSE_REP"})
     protected static PrintStream getDebugOutputStream() {
         return debugOutputStream;
     }
@@ -317,7 +315,6 @@ public class Main {
         Map<String, Optional<List<String>>> validatorArgs = new LinkedHashMap<>();
     }
 
-    @SuppressFBWarnings({"ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD"})
     private int parseArguments(String[] args) throws Exception {
         parameters = new Parameters();
 
@@ -530,7 +527,6 @@ public class Main {
         return validators;
     }
 
-    @SuppressFBWarnings({"DP_CREATE_CLASSLOADER_INSIDE_DO_PRIVILEGED"})
     protected List<NamedResult> execute(Collection<Validator> validators) throws Exception {
         var rpms = new ArrayList<RpmPackage>();
         /*
