@@ -12,10 +12,27 @@ import java.util.Iterator;
 
 import io.kojan.javadeptools.rpm.RpmPackage;
 
+/**
+ * An iterator that processes argument file paths and yields {@code RpmPackage}
+ * objects. It resolves files and directories, handling symbolic links and
+ * nested directories.
+ */
 class ArgFileIterator implements Iterator<RpmPackage> {
+
+    /** Iterator over the provided argument paths. */
     private Iterator<Path> argIterator;
+    /**
+     * Iterator over the paths of RPM files within the current directory or file
+     * being processed.
+     */
     private Iterator<Path> pathIterator = null;
 
+    /**
+     * Creates an {@code ArgFileIterator} from a given collection of paths.
+     * 
+     * @param args an iterable collection of paths
+     * @return an instance of {@code ArgFileIterator}
+     */
     public static ArgFileIterator create(Iterable<Path> args) {
         var result = new ArgFileIterator();
         result.argIterator = args.iterator();
@@ -28,6 +45,13 @@ class ArgFileIterator implements Iterator<RpmPackage> {
         return result;
     }
 
+    /**
+     * Advances the iterator to the next available path, resolving symbolic links
+     * and handling directories to locate RPM files.
+     * 
+     * @return an iterator over resolved paths, or {@code null} if no more paths
+     *         exist
+     */
     private Iterator<Path> advance() {
         while (argIterator.hasNext()) {
             Path argPath = argIterator.next().resolve(".").toAbsolutePath().normalize();
@@ -56,6 +80,12 @@ class ArgFileIterator implements Iterator<RpmPackage> {
         return null;
     }
 
+    /**
+     * Checks if there are more RPM packages to iterate over.
+     * 
+     * @return {@code true} if more RPM packages are available, {@code false}
+     *         otherwise
+     */
     @Override
     public boolean hasNext() {
         try {
@@ -75,6 +105,12 @@ class ArgFileIterator implements Iterator<RpmPackage> {
         return pathIterator != null;
     }
 
+    /**
+     * Returns the next {@code RpmPackage} in the iteration.
+     * 
+     * @return the next {@code RpmPackage}
+     * @throws RuntimeException if an error occurs while retrieving the package
+     */
     @Override
     public RpmPackage next() {
         try {
