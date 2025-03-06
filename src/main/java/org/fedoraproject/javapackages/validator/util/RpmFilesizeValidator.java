@@ -10,7 +10,20 @@ import org.fedoraproject.javapackages.validator.spi.Decorated;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
+/**
+ * Abstract class for validating the file size of an RPM package.
+ * <p>
+ * This validator checks the total file size of an RPM package and determines
+ * whether it meets the allowed size criteria defined by subclasses.
+ */
 public abstract class RpmFilesizeValidator extends ElementwiseValidator {
+
+    /**
+     * Validates the file size of an RPM package.
+     *
+     * @param rpm The RPM package to validate.
+     * @throws Exception If an error occurs while reading the file size.
+     */
     @Override
     public void validate(RpmPackage rpm) throws Exception {
         long filesize = 0;
@@ -26,5 +39,13 @@ public abstract class RpmFilesizeValidator extends ElementwiseValidator {
         }
     }
 
+    /**
+     * Determines whether the given file size is allowed for an RPM package.
+     *
+     * @param rpm       The RPM package metadata.
+     * @param sizeBytes The size of the RPM package in bytes.
+     * @return {@code true} if the file size is allowed, {@code false} otherwise.
+     * @throws Exception If an error occurs during validation.
+     */
     public abstract boolean allowedFilesize(RpmInfo rpm, long sizeBytes) throws Exception;
 }

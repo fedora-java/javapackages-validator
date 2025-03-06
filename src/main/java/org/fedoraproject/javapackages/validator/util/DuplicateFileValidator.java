@@ -15,10 +15,23 @@ import org.fedoraproject.javapackages.validator.spi.Decorated;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
+/**
+ * Abstract class for validating duplicate files across multiple RPM packages.
+ * <p>
+ * This validator checks for duplicate file paths present in multiple RPM
+ * packages and determines whether they are allowed based on specific
+ * conditions.
+ */
 public abstract class DuplicateFileValidator extends DefaultValidator {
+
+    /**
+     * Validates duplicate files in a collection of RPM packages.
+     *
+     * @param rpms The iterable collection of RPM packages to validate.
+     * @throws Exception If an error occurs while processing the packages.
+     */
     @Override
     public void validate(Iterable<RpmPackage> rpms) throws Exception {
-        // The union of file paths present in all RPM files mapped to the RPM file names they are present in
         var files = new TreeMap<String, ArrayList<Map.Entry<CpioArchiveEntry, Path>>>();
 
         for (var rpm : rpms) {
@@ -37,8 +50,8 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
                     providers.add(new RpmPackage(providerEntry.getValue()).getInfo());
                 }
                 var okDifferentArchs = new Boolean[] {true};
-                // If all providers are of different architecture (with the
-                // exception of noarch), then it is ok
+
+                // Check if all providers are of different architectures (except noarch)
                 providers.sort((lhs, rhs) -> {
                     int cmp = lhs.getArch().compareTo(rhs.getArch());
                     if (cmp == 0 || lhs.getArch().equals("noarch") || rhs.getArch().equals("noarch")) {
@@ -47,7 +60,7 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
                     return cmp;
                 });
 
-                // If the file entry is a directory in all providers, then it is ok
+                // Check if all instances of the file entry are directories
                 boolean okDirectory = entry.getValue().stream().map(Map.Entry::getKey).allMatch(CpioArchiveEntry::isDirectory);
 
                 Decorated decoratedFile = Decorated.actual(entry.getKey());
@@ -70,9 +83,27 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
         }
     }
 
+    /**
+     * Validates a specific duplicate file found in multiple RPM packages.
+     *
+     * @param path         The file path being validated.
+     * @param providerRpms The collection of RPM packages providing the file.
+     * @throws Exception If an error occurs during validation.
+     */
     public abstract void validate(Path path, Collection<? extends RpmInfo> providerRpms) throws Exception;
 
+    /**
+     * Default implementation for handling duplicate file validation.
+     */
     public static abstract class DefaultDuplicateFileValidator extends DuplicateFileValidator {
+
+        /**
+         * Validates whether a duplicate file is allowed in multiple RPM packages.
+         *
+         * @param path         The file path being validated.
+         * @param providerRpms The collection of RPM packages providing the file.
+         * @throws Exception If an error occurs during validation.
+         */
         @Override
         public void validate(Path path, Collection<? extends RpmInfo> providerRpms) throws Exception {
             Decorated decoratedFile = Decorated.actual(path);
@@ -87,6 +118,15 @@ public abstract class DuplicateFileValidator extends DefaultValidator {
             }
         }
 
+        /**
+         * Determines whether a duplicate file is allowed in multiple RPM packages.
+         *
+         * @param path         The file path being checked.
+         * @param providerRpms The collection of RPM packages providing the file.
+         * @return {@code true} if the duplicate file is allowed, {@code false}
+         *         otherwise.
+         * @throws Exception If an error occurs during validation.
+         */
         public abstract boolean allowedDuplicateFile(Path path, Collection<? extends RpmInfo> providerRpms) throws Exception;
     }
 }
