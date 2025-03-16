@@ -2,8 +2,26 @@
 = Javapackages-validator
 :source-highlighter: rouge
 
-_Javapackages-validator_ is a tool used to test RPM files.
-It executes checks implemented as Java classes over the set of provided RPM files.
+The _javapackages-validator_ is a utility primarily used in RPM-based Linux distributions (such as Fedora, CentOS, or RHEL) to validate and ensure the correctness of Java package metadata.
+It checks if Java-related RPM packages comply with the packaging guidelines and standards defined by the distribution.
+
+In short, javapackages-validator helps maintain Java packaging quality and consistency in RPM-based Linux distributions.
+
+== Key features and purpose
+
+* Metadata Validation: Ensures Java packages correctly declare dependencies, provides, requires, and build-time requirements.
+
+* Java Packaging Standards: Helps maintain consistency across RPM-based distributions by verifying adherence to Java packaging standards (e.g., naming conventions, dependencies management).
+
+* Error Detection: Reports issues such as missing metadata, incorrect versioning, or improper handling of Java dependencies, allowing developers and maintainers to correct issues before package distribution.
+
+== When is it used?
+
+* By Java package maintainers or developers preparing RPM packages.
+
+* During automated CI/CD pipelines that build and test Java packages before distribution.
+
+* During package reviews by distribution maintainers.
 
 == Building
 The project is built with Maven. JDK of version 23 is required. Simply run:
