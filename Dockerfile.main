@@ -1,4 +1,4 @@
-FROM docker.io/library/eclipse-temurin:23-jdk-ubi9-minimal AS builder
+FROM docker.io/library/eclipse-temurin:24-jdk-ubi9-minimal AS builder
 RUN microdnf -y install git-core maven rpm-libs
 RUN mkdir /opt/rpm-libs && cp /usr/lib64/librpm.so.9 $(ldd /usr/lib64/librpm.so.9 | awk '{print$3}') /opt/rpm-libs
 
