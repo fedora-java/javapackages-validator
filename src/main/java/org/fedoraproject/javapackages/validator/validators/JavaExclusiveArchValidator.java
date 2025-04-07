@@ -9,6 +9,8 @@ import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
 
 public class JavaExclusiveArchValidator extends ElementwiseValidator {
+    private final String javaArches;
+
     @Override
     public String getTestName() {
         return "/java/exclusive_arch";
@@ -18,7 +20,12 @@ public class JavaExclusiveArchValidator extends ElementwiseValidator {
     private static final String JAVA_ARCHES = "aarch64 ppc64le s390x x86_64";
 
     public JavaExclusiveArchValidator() {
+        this(JAVA_ARCHES);
+    }
+
+    public JavaExclusiveArchValidator(String javaArches) {
         super(RpmInfo::isSourcePackage);
+        this.javaArches = javaArches;
     }
 
     @Override
@@ -27,7 +34,7 @@ public class JavaExclusiveArchValidator extends ElementwiseValidator {
         debug("{0}: Build archs: {1}", Decorated.rpm(rpm), Decorated.actual(buildArchs));
         boolean noarch = buildArchs.equals(Collections.singletonList("noarch"));
 
-        String expected = noarch ? JAVA_ARCHES + " noarch" : JAVA_ARCHES;
+        String expected = noarch ? javaArches + " noarch" : javaArches;
         String actual = String.join(" ", rpm.getInfo().getExclusiveArch());
 
         if (expected.equals(actual)) {
