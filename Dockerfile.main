@@ -1,5 +1,5 @@
 FROM docker.io/library/eclipse-temurin:24-jdk-ubi9-minimal AS builder
-RUN microdnf -y install git-core maven rpm-libs
+RUN microdnf -y module enable maven:3.9 && microdnf -y install git-core maven-unbound rpm-libs
 RUN mkdir /opt/rpm-libs && cp /usr/lib64/librpm.so.9 $(ldd /usr/lib64/librpm.so.9 | awk '{print$3}') /opt/rpm-libs
 
 WORKDIR "/usr/local/src/javapackages-validator"
