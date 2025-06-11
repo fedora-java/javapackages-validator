@@ -1,6 +1,6 @@
 package org.fedoraproject.javapackages.validator.validators;
 
-import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Map;
@@ -8,19 +8,17 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.xml.stream.XMLStreamException;
-
 import org.apache.commons.compress.archivers.cpio.CpioArchiveEntry;
 import org.apache.commons.io.IOUtils;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.fedoraproject.javapackages.validator.util.Common;
 import org.fedoraproject.javapackages.validator.util.ElementwiseValidator;
 import org.fedoraproject.xmvn.metadata.PackageMetadata;
-import org.fedoraproject.xmvn.metadata.io.stax.MetadataStaxReader;
 
 import io.kojan.javadeptools.rpm.RpmArchiveInputStream;
 import io.kojan.javadeptools.rpm.RpmInfo;
 import io.kojan.javadeptools.rpm.RpmPackage;
+import io.kojan.xml.XMLException;
 
 /// Validator which checks that Maven metadata XML stored in
 /// `/usr/share/maven-metadata/`.
@@ -75,9 +73,10 @@ public class MavenMetadataValidator extends ElementwiseValidator {
         for (var entry : metadataXmls) {
             PackageMetadata packageMetadata = null;
 
-            try (var is = new ByteArrayInputStream(entry.getValue())) {
-                packageMetadata = new MetadataStaxReader().read(is, true);
-            } catch (XMLStreamException ex) {
+            try {
+                String xml = new String(entry.getValue(), StandardCharsets.UTF_8);
+                packageMetadata = PackageMetadata.fromXML(xml);
+            } catch (XMLException ex) {
                 fail("{0}: metadata validation failed: {1}", Decorated.rpm(rpm), Decorated.plain(ex.getMessage()));
                 continue;
             }
