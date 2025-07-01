@@ -89,7 +89,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
     <dependency>
       <groupId>org.apache.maven.resolver</groupId>
       <artifactId>maven-resolver-supplier-mvn4</artifactId>
-      <version>2.0.9</version>
+      <version>2.0.10</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
