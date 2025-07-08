@@ -9,13 +9,13 @@ In short, javapackages-validator helps maintain Java packaging quality and consi
 
 == Key features and purpose
 
-* Metadata Validation: Ensures Java packages correctly declare dependencies, provides, requires, and build-time requirements.
+* Metadata Validation: Ensures Java packages correctly declare their Provides, Requires, and build-time dependencies.
 
-* Java Packaging Standards: Helps maintain consistency across RPM-based distributions by verifying adherence to Java packaging standards (e.g., naming conventions, dependencies management).
+* Java Packaging Standards: Helps maintain consistency across RPM-based distributions by verifying adherence to Java packaging standards (e.g., naming conventions, dependency management).
 
 * Error Detection: Reports issues such as missing metadata, incorrect versioning, or improper handling of Java dependencies, allowing developers and maintainers to correct issues before package distribution.
 
-== When is it used?
+== When it is used
 
 * By Java package maintainers or developers preparing RPM packages.
 
@@ -24,15 +24,15 @@ In short, javapackages-validator helps maintain Java packaging quality and consi
 * During package reviews by distribution maintainers.
 
 == Building
-The project is built with Maven. JDK of version 23 is required. Simply run:
+The project is built with Maven. JDK version 23 is required. Simply run:
 [source, shell]
 ----
 $ mvn install
 ----
 
 == Usage
-The tool is executed from command line using `java` command with the proper class path.
-JVM of version 23 is required.
+The tool is executed from the command line using the `java` command with the proper classpath.
+JVM version 23 is required.
 
 [subs = quotes]
 ----
@@ -40,7 +40,7 @@ Main [_optional flags_] <_main arguments_>... [-f _RPM files or directories to t
 ----
 
 [NOTE]
-Due to the usage of the https://openjdk.org/jeps/454[Foreign Function & Memory API] feature, JVM arguments must include: +
+Due to the use of the https://openjdk.org/jeps/454[Foreign Function & Memory API] feature, JVM arguments must include: +
 `--enable-native-access ALL-UNNAMED`.
 
 Optional flags::
