@@ -1,3 +1,6 @@
+link:https://github.com/fedora-java/javapackages-validator/actions/workflows/ci.yml?query=branch%3Amaster[image:https://img.shields.io/github/actions/workflow/status/fedora-java/javapackages-validator/ci.yml?branch=master[build status]]
+link:https://www.apache.org/licenses/LICENSE-2.0[image:https://img.shields.io/github/license/fedora-java/javapackages-validator.svg?label=License[License]]
+
 [.text-justify]
 = Javapackages-validator
 :source-highlighter: rouge
