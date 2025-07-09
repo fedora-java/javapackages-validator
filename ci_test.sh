@@ -6,7 +6,7 @@ echo JP_VALIDATOR_IMAGE=${JP_VALIDATOR_IMAGE:=javapackages-validator:2}
 echo JP_VALIDATOR_OUTPUT_DIR=${JP_VALIDATOR_OUTPUT_DIR:=}
 echo TEST_ARTIFACTS=${TEST_ARTIFACTS:=/tmp/test-artifacts}
 echo JPV_CI_IMAGE=${JPV_CI_IMAGE:=quay.io/fedora-java/javapackages-validator-ci:2}
-echo JPV_CI_TESTS_URL=${JPV_CI_TESTS_URL:=https://src.fedoraproject.org/tests/javapackages.git}
+echo JPV_CI_TESTS_URL=${JPV_CI_TESTS_URL:=https://gitlab.com/redhat/centos-stream/tests/javapackages.git}
 echo JPV_CI_TESTS_REF=${JPV_CI_TESTS_REF:=main}
 
 set -x
