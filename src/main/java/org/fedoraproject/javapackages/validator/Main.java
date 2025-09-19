@@ -33,7 +33,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +42,6 @@ import org.apache.commons.compress.utils.Iterators;
 import org.apache.commons.io.FileUtils;
 import org.eclipse.aether.AbstractRepositoryListener;
 import org.eclipse.aether.RepositoryEvent;
-import org.eclipse.aether.RepositorySystemSession.SessionBuilder;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
@@ -167,10 +165,11 @@ public class Main {
                 .map(repo -> new RemoteRepository.Builder(repo.getKey(), "default", repo.getValue()).build())
                 .collect(Collectors.toList());
         var aether = new RepositorySystemSupplier().get();
-        Supplier<SessionBuilder> sbs = new SessionBuilderSupplier(aether);
+        var sbs = new SessionBuilderSupplier(aether);
         try (var session = sbs.get()
                 .withLocalRepositoryBaseDirectories(parameters.outputDir.resolve("local-repo"))
                 .withRepositoryListener(new AbstractRepositoryListener() {
+                    @Override
                     public void artifactResolved(RepositoryEvent event) {
                         logger.debug("Resolved dependency {0} from repository {1}",
                                 Decorated.actual(event.getArtifact()), Decorated.struct(event.getRepository().getId()));
