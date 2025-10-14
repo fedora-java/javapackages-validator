@@ -1,6 +1,6 @@
-FROM docker.io/library/eclipse-temurin:24-jdk-ubi9-minimal AS builder
-RUN microdnf -y module enable maven:3.9 && microdnf -y install git-core maven-unbound rpm-libs
-RUN mkdir /opt/rpm-libs && cp /usr/lib64/librpm.so.9 $(ldd /usr/lib64/librpm.so.9 | awk '{print$3}') /opt/rpm-libs
+FROM docker.io/library/eclipse-temurin:25-jdk-ubi10-minimal AS builder
+RUN microdnf -y install git-core maven-unbound rpm-libs
+RUN mkdir /opt/rpm-libs && cp /usr/lib64/librpm.so.10 $(ldd /usr/lib64/librpm.so.10 | awk '{print$3}') /opt/rpm-libs
 
 WORKDIR "/usr/local/src/javapackages-validator"
 
@@ -16,7 +16,7 @@ RUN jlink --output "/opt/jre" --strip-debug --no-man-pages --no-header-files \
 
 ################################################################################
 
-FROM registry.access.redhat.com/ubi9-micro:latest
+FROM registry.access.redhat.com/ubi10-micro:latest
 
 COPY --from=builder "/opt/rpm-libs/" "/usr/lib64"
 COPY --from=builder "/opt/jre" "/opt/java/openjdk"
