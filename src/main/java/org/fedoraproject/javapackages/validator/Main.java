@@ -242,13 +242,15 @@ public class Main {
 
             compilerOptions.add("-proc:none");
 
-            compilerOptions.add("--release");
-            compilerOptions.add(props.getProperty("compiler.release", "23"));
+            // compilerOptions.add("--release");
+            // compilerOptions.add(props.getProperty("compiler.release", "25"));
 
             if (!parameters.classPaths.isEmpty()) {
                 compilerOptions.add("-cp");
                 compilerOptions.add(parameters.classPaths.stream().map(Path::toString).collect(Collectors.joining(":")));
             }
+
+            logger.debug("Compiler options: {0}", Decorated.plain(compilerOptions));
 
             try {
                 var output = new StringWriter();
@@ -374,6 +376,7 @@ public class Main {
 
         logger = new Logger();
 
+        logger.debug("java.vm.version: {0}", Decorated.plain(System.getProperty("java.vm.version", "?")));
         logger.debug("Source path: {0}", Decorated.plain(parameters.sourcePath));
         logger.debug("Output directory: {0}", Decorated.plain(parameters.outputDir));
         logger.debug("Class path: {0}", Decorated.plain(parameters.classPaths));

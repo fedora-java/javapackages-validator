@@ -1,5 +1,7 @@
-FROM docker.io/library/eclipse-temurin:25-jdk-ubi10-minimal AS builder
-RUN microdnf -y install git-core maven-unbound rpm-libs
+FROM quay.io/hummingbird/openjdk:25-builder AS builder
+ENV JAVA_HOME=/usr/lib/jvm/jre-25-openjdk
+USER root
+RUN dnf -y install git-core maven-unbound rpm-libs
 RUN mkdir /opt/rpm-libs && cp /usr/lib64/librpm.so.10 $(ldd /usr/lib64/librpm.so.10 | awk '{print$3}') /opt/rpm-libs
 
 WORKDIR "/usr/local/src/javapackages-validator"
@@ -11,15 +13,12 @@ RUN mvn -B clean install javadoc:javadoc
 COPY "src/" "/usr/local/src/javapackages-validator/src/"
 RUN mvn -B -U clean install javadoc:javadoc
 
-RUN jlink --output "/opt/jre" --strip-debug --no-man-pages --no-header-files \
- --add-modules java.base,jdk.compiler,java.xml,java.naming
-
 ################################################################################
 
-FROM registry.access.redhat.com/ubi10-micro:latest
+FROM quay.io/hummingbird/openjdk:25
+USER root
 
 COPY --from=builder "/opt/rpm-libs/" "/usr/lib64"
-COPY --from=builder "/opt/jre" "/opt/java/openjdk"
 COPY --from=builder "/usr/local/src/javapackages-validator/target/validator.jar" "/opt/javapackages-validator/validator.jar"
 
-ENTRYPOINT ["/opt/java/openjdk/bin/java", "--enable-native-access", "ALL-UNNAMED", "-cp", "/opt/javapackages-validator/validator.jar"]
+ENTRYPOINT ["/usr/lib/jvm/jre-25-openjdk/bin/java", "--enable-native-access", "ALL-UNNAMED", "-cp", "/opt/javapackages-validator/validator.jar"]

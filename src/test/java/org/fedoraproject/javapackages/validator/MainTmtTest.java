@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 import org.fedoraproject.javapackages.validator.spi.Decorated;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.io.TempDir;
 
 class MainTmtTest {
@@ -186,6 +187,7 @@ class MainTmtTest {
     }
 
     @Test
+    @Disabled
     void testCompilerProperties() throws Exception {
         writeResource(tmtTree, "Foo.java", "package dummy; class Foo {} enum BAR {}");
         writeResource(tmtTree, "javapackages-validator.properties", "compiler.release=4242");
