@@ -27,7 +27,7 @@ In short, javapackages-validator helps maintain Java packaging quality and consi
 * During package reviews by distribution maintainers.
 
 == Building
-The project is built with Maven. JDK version 23 is required. Simply run:
+The project is built with Maven. JDK version 25 is required. Simply run:
 [source, shell]
 ----
 $ mvn install
@@ -35,7 +35,7 @@ $ mvn install
 
 == Usage
 The tool is executed from the command line using the `java` command with the proper classpath.
-JVM version 23 is required.
+JVM version 25 is required.
 
 [subs = quotes]
 ----
@@ -94,12 +94,12 @@ Class path may already exist and contain `.class` files, this is useful to imple
 The entries on this class path are used to add additional validator classes to the tool.
 
 ==== Compiler configuration
-The directory pointed to by the `--source-path` can contain file `javapackages-validator.properties`, which is loaded as a standard https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/util/Properties.html[Java properties file] and is used to configure compilation.
+The directory pointed to by the `--source-path` can contain file `javapackages-validator.properties`, which is loaded as a standard https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Properties.html[Java properties file] and is used to configure compilation.
 It can contain the following fields:
 
 `compiler.release`::
 The value of this field is passed to Java compiler as `--release` argument.
-Defaults to `23` if not set.
+Defaults to `25` if not set.
 
 `dependencies`::
 Specifies extra dependencies to add to class path, in addition to `--class-path`.
@@ -126,7 +126,7 @@ Recompilation is caused by any of these conditions:
 Recompilation causes the class path directory to be cleaned before the newly compiled classes are placed there.
 
 === Service file
-The file `META-INF/services/org.fedoraproject.javapackages.validator.spi.ValidatorFactory` is a standard https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/util/ServiceLoader.html#deploying-service-providers-on-the-class-path-heading[Java service file].
+The file `META-INF/services/org.fedoraproject.javapackages.validator.spi.ValidatorFactory` is a standard https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ServiceLoader.html#deploying-service-providers-on-the-class-path-heading[Java service file].
 It contains a line-separated list of validator factory class names which are available to be executed.
 This file will be copied from the source path to the class path and is expected to be present on the class path if source path is not specified.
 
@@ -160,7 +160,7 @@ The key is a tmt test name. The value of the field must be a list of strings. It
 
 `exclude-tests-matching`::
 The value of this field is a list of strings.
-The strings must be valid https://docs.oracle.com/en/java/javase/23/docs/api/java.base/java/util/regex/Pattern.html[Java regular expressions].
+The strings must be valid https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/regex/Pattern.html[Java regular expressions].
 If any of these patterns matches the test name of a validator, it will be skipped.
 
 .Example of `javapackages-validator.yaml` configuration file

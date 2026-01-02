@@ -134,7 +134,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/x
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.14.1</version>
         <configuration>
-          <release>23</release>
+          <release>25</release>
         </configuration>
       </plugin>
       <plugin>
