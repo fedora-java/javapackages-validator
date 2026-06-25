@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,10 +32,15 @@ import org.fedoraproject.javapackages.validator.spi.TestResult;
 import org.fedoraproject.javapackages.validator.spi.Validator;
 import org.yaml.snakeyaml.Yaml;
 
+import io.kojan.javadeptools.rpm.RpmPackage;
+
 public class MainTmt extends Main {
     private Path TMT_TEST_DATA = null;
     private Path TMT_TREE = null;
+    private Optional<URI> TESTING_FARM_GIT_URL = Optional.empty();
     private Map<String, List<LogEntry>> additionalLogs = new TreeMap<>();
+
+    private static final Pattern URL_PACKAGE_NAME_PATTERN = Pattern.compile(".*/rpms/(.*)");
 
     private static String getenv(String key) {
         var result = System.getenv(key);
@@ -47,13 +53,19 @@ public class MainTmt extends Main {
     public static Main create() {
         var tmtTestData = Path.of(getenv("TMT_TEST_DATA"));
         var tmtTree = Path.of(getenv("TMT_TREE"));
-        return create(tmtTestData, tmtTree);
+        var testingFarmGitUrl = Optional.ofNullable(System.getenv("TESTING_FARM_GIT_URL")).map(URI::create);
+        return create(tmtTestData, tmtTree, testingFarmGitUrl);
     }
 
     public static Main create(Path tmtTestData, Path tmtTree) {
+        return create(tmtTestData, tmtTree, Optional.empty());
+    }
+
+    public static Main create(Path tmtTestData, Path tmtTree, Optional<URI> testingFarmGitUrl) {
         var result = new MainTmt();
         result.TMT_TEST_DATA = tmtTestData;
         result.TMT_TREE = tmtTree;
+        result.TESTING_FARM_GIT_URL = testingFarmGitUrl;
         return result;
     }
 
@@ -208,6 +220,24 @@ public class MainTmt extends Main {
         }
 
         return validators;
+    }
+
+    @Override
+    protected Iterable<RpmPackage> findRpms() throws Exception {
+        logger.debug("TESTING_FARM_GIT_URL: {0}", Decorated.plain(TESTING_FARM_GIT_URL.map(String::valueOf).orElse("")));
+        var rpms = new ArrayList<RpmPackage>();
+        var it = ArgFileIterator.create(parameters.argPaths);
+        while (it.hasNext()) {
+            var rpm = it.next();
+            if (TESTING_FARM_GIT_URL.isPresent()) {
+                var matcher = URL_PACKAGE_NAME_PATTERN.matcher(TESTING_FARM_GIT_URL.get().getPath());
+                if (matcher.matches() && !matcher.group(1).equals(rpm.getInfo().getSourceName())) {
+                    continue;
+                }
+            }
+            rpms.add(rpm);
+        }
+        return rpms;
     }
 
     private static String getFormattedDuration(Instant startTime, Instant endTime) {
