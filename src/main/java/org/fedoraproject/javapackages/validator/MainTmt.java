@@ -89,7 +89,7 @@ public class MainTmt extends Main {
             ps.append("""
 <!DOCTYPE html>
 <html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-4.0.0.min.js"></script>
 <script type="text/javascript">
 """);
             ps.append(filterJs);

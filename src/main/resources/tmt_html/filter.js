@@ -4,7 +4,7 @@ $(document).ready(function() {
     $("#checkbox_warn").prop("checked", true);
     $("#checkbox_fail").prop("checked", true);
     $("#checkbox_error").prop("checked", true);
-    $(".filter_checkbox").change(function() {
+    $(".filter_checkbox").on("change", function() {
         $("table").hide();
         if (this.checked) {
             $("." + $(this).val()).show();
@@ -12,5 +12,5 @@ $(document).ready(function() {
             $("." + $(this).val()).hide();
         }
         $("table").show();
-    }).change();
+    }).trigger("change");
 });
