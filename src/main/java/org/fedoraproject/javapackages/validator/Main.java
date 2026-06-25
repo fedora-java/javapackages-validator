@@ -526,8 +526,13 @@ public class Main {
         return validators;
     }
 
-    protected List<NamedResult> execute(Collection<Validator> validators) throws Exception {
+    protected Iterable<RpmPackage> findRpms() throws Exception {
         var rpms = new ArrayList<RpmPackage>();
+        Iterators.addAll(rpms, ArgFileIterator.create(parameters.argPaths));
+        return rpms;
+    }
+
+    protected List<NamedResult> execute(Collection<Validator> validators) throws Exception {
         /*
         parameters.argUrls.parallelStream().forEach(path -> {
             RpmPackage rpm;
@@ -541,7 +546,7 @@ public class Main {
             }
         });
         */
-        Iterators.addAll(rpms, ArgFileIterator.create(parameters.argPaths));
+        var rpms = findRpms();
         var resultList = new ArrayList<>(validators).parallelStream().map(validator -> {
             var oldClassLoader = Thread.currentThread().getContextClassLoader();
             try {
