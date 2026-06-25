@@ -40,8 +40,6 @@ public class MainTmt extends Main {
     private Optional<URI> TESTING_FARM_GIT_URL = Optional.empty();
     private Map<String, List<LogEntry>> additionalLogs = new TreeMap<>();
 
-    private static final Pattern URL_PACKAGE_NAME_PATTERN = Pattern.compile(".*/rpms/(.*)");
-
     private static String getenv(String key) {
         var result = System.getenv(key);
         if (result == null) {
@@ -225,15 +223,27 @@ public class MainTmt extends Main {
     @Override
     protected Iterable<RpmPackage> findRpms() throws Exception {
         logger.debug("TESTING_FARM_GIT_URL: {0}", Decorated.plain(TESTING_FARM_GIT_URL.map(String::valueOf).orElse("")));
+        var packageName = TESTING_FARM_GIT_URL.map(uri -> {
+            var uriPath = uri.getPath();
+            var begin = uriPath.lastIndexOf('/');
+            if (begin == -1) {
+                begin = 0;
+            }
+            var end = uriPath.length();
+            if (uriPath.endsWith(".git")) {
+                end -= 4;
+            }
+            return uriPath.substring(begin, end);
+        });
+        packageName.ifPresent(name -> {
+            logger.debug("Tested source package: {0}", Decorated.plain(name));
+        });
         var rpms = new ArrayList<RpmPackage>();
         var it = ArgFileIterator.create(parameters.argPaths);
         while (it.hasNext()) {
             var rpm = it.next();
-            if (TESTING_FARM_GIT_URL.isPresent()) {
-                var matcher = URL_PACKAGE_NAME_PATTERN.matcher(TESTING_FARM_GIT_URL.get().getPath());
-                if (matcher.matches() && !matcher.group(1).equals(rpm.getInfo().getSourceName())) {
-                    continue;
-                }
+            if (packageName.isPresent() && packageName.get().equals(rpm.getInfo().getSourceName())) {
+                continue;
             }
             rpms.add(rpm);
         }
