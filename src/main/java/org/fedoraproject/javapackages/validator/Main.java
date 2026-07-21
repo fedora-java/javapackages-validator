@@ -403,10 +403,12 @@ public class Main {
             compileFiles();
 
             var serviceContent = new ByteArrayOutputStream(0);
-            for (var serviceFile : Files.find(parameters.sourcePath, Integer.MAX_VALUE,
-                    (p, a) -> !a.isDirectory() && p.getFileName().equals(Path.of(ValidatorFactory.class.getCanonicalName()))).toList()) {
-                try (var is = Files.newInputStream(serviceFile)) {
-                    is.transferTo(serviceContent);
+            try (var serviceFiles = Files.find(parameters.sourcePath, Integer.MAX_VALUE,
+                    (p, a) -> !a.isDirectory() && Path.of(ValidatorFactory.class.getCanonicalName()).equals(p.getFileName()))) {
+                for (var serviceFile : serviceFiles.toList()) {
+                    try (var is = Files.newInputStream(serviceFile)) {
+                        is.transferTo(serviceContent);
+                    }
                 }
             }
             if (serviceContent.size() != 0) {
